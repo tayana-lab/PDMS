@@ -46,35 +46,35 @@ export const progressData = {
 export const quickActions = [
   {
     id: 1,
-    title: 'Search Voter',
+    title: 'Voters',
     icon: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=100&h=100&fit=crop',
     route: '/search-voter',
     badge: 0
   },
   {
     id: 2,
-    title: 'Help Desk Request',
+    title: 'Help Desk ',
     icon: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100&h=100&fit=crop',
     route: '/help-desk',
     badge: 5
   },
   {
     id: 3,
-    title: 'Pending Application',
+    title: 'Application',
     icon: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=100&h=100&fit=crop',
     route: '/pending-applications',
     badge: 12
   },
   {
     id: 4,
-    title: 'Event Management',
+    title: 'Event',
     icon: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=100&h=100&fit=crop',
     route: '/events',
     badge: 0
   },
   {
     id: 5,
-    title: 'Survey Forms',
+    title: 'Survey',
     icon: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=100&h=100&fit=crop',
     route: '/surveys',
     badge: 3
