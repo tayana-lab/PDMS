@@ -68,7 +68,7 @@ export default function LoginScreen() {
   };
 
   const handleForgotPassword = () => {
-    router.push('/new-user');
+    router.push('/forgot-pin');
   };
 
   const handleRegister = () => {

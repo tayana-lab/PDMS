@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import { Search, ArrowRight } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -47,6 +48,7 @@ export default function VotersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [voters, setVoters] = useState<Voter[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useAppSettings();
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -67,20 +69,22 @@ export default function VotersScreen() {
   const renderVoter = ({ item }: { item: Voter }) => (
     <Card style={styles.voterCard}>
       <View style={styles.voterHeader}>
-        <Text style={styles.voterName}>{item.name}</Text>
-        <Text style={styles.ward}>{item.ward}</Text>
+        <Text style={[styles.voterName, { color: colors.text.primary }]}>{item.name}</Text>
+        <Text style={[styles.ward, { color: colors.primary }]}>{item.ward}</Text>
       </View>
-      <Text style={styles.voterId}>Voter ID: {item.voterId}</Text>
-      <Text style={styles.address}>{item.address}</Text>
-      <Text style={styles.phone}>{item.phone}</Text>
+      <Text style={[styles.voterId, { color: colors.text.primary }]}>Voter ID: {item.voterId}</Text>
+      <Text style={[styles.address, { color: colors.text.secondary }]}>{item.address}</Text>
+      <Text style={[styles.phone, { color: colors.text.secondary }]}>{item.phone}</Text>
     </Card>
   );
+
+  const styles = createStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Voters</Text>
-        <Text style={styles.subtitle}>Search and manage voter information</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Voters</Text>
+        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Search and manage voter information</Text>
       </View>
 
       {/* Quick Access to Advanced Search */}
@@ -91,21 +95,21 @@ export default function VotersScreen() {
         >
           <View style={styles.advancedSearchContent}>
             <View style={styles.advancedSearchIcon}>
-              <Search size={24} color={Colors.primary} />
+              <Search size={24} color={colors.primary} />
             </View>
             <View style={styles.advancedSearchText}>
-              <Text style={styles.advancedSearchTitle}>Advanced Voter Search</Text>
-              <Text style={styles.advancedSearchDescription}>
+              <Text style={[styles.advancedSearchTitle, { color: colors.text.primary }]}>Advanced Voter Search</Text>
+              <Text style={[styles.advancedSearchDescription, { color: colors.text.secondary }]}>
                 Search with detailed filters and edit voter information
               </Text>
             </View>
-            <ArrowRight size={20} color={Colors.text.light} />
+            <ArrowRight size={20} color={colors.text.light} />
           </View>
         </TouchableOpacity>
       </View>
 
       <View style={styles.searchContainer}>
-        <Text style={styles.sectionTitle}>Quick Search</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Quick Search</Text>
         <Input
           placeholder="Enter name, voter ID, or phone number"
           value={searchQuery}
@@ -128,8 +132,8 @@ export default function VotersScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Search size={48} color={Colors.text.light} />
-            <Text style={styles.emptyText}>
+            <Search size={48} color={colors.text.light} />
+            <Text style={[styles.emptyText, { color: colors.text.light }]}>
               {searchQuery ? 'No voters found' : 'Enter search criteria to find voters'}
             </Text>
           </View>
@@ -139,35 +143,34 @@ export default function VotersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface
+    backgroundColor: colors.surface
   },
   header: {
     padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    backgroundColor: Colors.background
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background
   },
   title: {
     ...Typography.title
   },
   subtitle: {
     ...Typography.caption,
-    color: Colors.text.secondary,
     marginTop: Spacing.xs
   },
   quickAccessContainer: {
     padding: Spacing.lg,
-    backgroundColor: Colors.background
+    backgroundColor: colors.background
   },
   advancedSearchCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border
+    borderColor: colors.border
   },
   advancedSearchContent: {
     flexDirection: 'row',
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.primary + '20',
+    backgroundColor: colors.primary + '20',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -190,12 +193,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs
   },
   advancedSearchDescription: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   },
   searchContainer: {
     padding: Spacing.lg,
-    backgroundColor: Colors.background
+    backgroundColor: colors.background
   },
   sectionTitle: {
     ...Typography.subtitle,
@@ -226,7 +228,6 @@ const styles = StyleSheet.create({
   },
   ward: {
     ...Typography.caption,
-    color: Colors.primary,
     fontWeight: '600'
   },
   voterId: {
@@ -236,12 +237,10 @@ const styles = StyleSheet.create({
   },
   address: {
     ...Typography.caption,
-    color: Colors.text.secondary,
     marginBottom: Spacing.xs
   },
   phone: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   },
   emptyContainer: {
     flex: 1,
@@ -251,7 +250,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.light,
     textAlign: 'center',
     marginTop: Spacing.md
   }

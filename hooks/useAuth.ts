@@ -108,6 +108,16 @@ export function useAuth() {
     }
   };
 
+  const resetPin = async (phone: string, newPin: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'PIN reset failed' };
+    }
+  };
+
   return {
     user,
     isLoading,
@@ -115,6 +125,7 @@ export function useAuth() {
     logout,
     sendOTP,
     verifyOTP,
-    createAccount
+    createAccount,
+    resetPin
   };
 }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { BarChart3, PieChart, TrendingUp, Users, FileText, Calendar } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Typography, Spacing } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 
 interface ReportCard {
@@ -14,81 +15,83 @@ interface ReportCard {
   changeType: 'positive' | 'negative' | 'neutral';
 }
 
-const reportCards: ReportCard[] = [
-  {
-    id: '1',
-    title: 'Total Voters Reached',
-    description: 'This month',
-    icon: <Users size={24} color={Colors.primary} />,
-    value: '2,450',
-    change: '+12%',
-    changeType: 'positive'
-  },
-  {
-    id: '2',
-    title: 'Applications Processed',
-    description: 'This week',
-    icon: <FileText size={24} color={Colors.secondary} />,
-    value: '156',
-    change: '+8%',
-    changeType: 'positive'
-  },
-  {
-    id: '3',
-    title: 'Events Organized',
-    description: 'This month',
-    icon: <Calendar size={24} color={Colors.accent} />,
-    value: '12',
-    change: '-2%',
-    changeType: 'negative'
-  },
-  {
-    id: '4',
-    title: 'Target Achievement',
-    description: 'Overall progress',
-    icon: <TrendingUp size={24} color={Colors.success} />,
-    value: '78%',
-    change: '+5%',
-    changeType: 'positive'
-  }
-];
-
-const reportTypes = [
-  {
-    id: '1',
-    title: 'Voter Analytics',
-    description: 'Detailed voter engagement reports',
-    icon: <BarChart3 size={32} color={Colors.primary} />
-  },
-  {
-    id: '2',
-    title: 'Application Reports',
-    description: 'Status and processing analytics',
-    icon: <PieChart size={32} color={Colors.secondary} />
-  },
-  {
-    id: '3',
-    title: 'Performance Dashboard',
-    description: 'Target vs achievement analysis',
-    icon: <TrendingUp size={32} color={Colors.accent} />
-  },
-  {
-    id: '4',
-    title: 'Event Reports',
-    description: 'Event participation and feedback',
-    icon: <Calendar size={32} color={Colors.success} />
-  }
-];
-
 export default function ReportsScreen() {
+  const { colors } = useAppSettings();
+  
+  const reportCards: ReportCard[] = [
+    {
+      id: '1',
+      title: 'Total Voters Reached',
+      description: 'This month',
+      icon: <Users size={24} color={colors.primary} />,
+      value: '2,450',
+      change: '+12%',
+      changeType: 'positive'
+    },
+    {
+      id: '2',
+      title: 'Applications Processed',
+      description: 'This week',
+      icon: <FileText size={24} color={colors.secondary} />,
+      value: '156',
+      change: '+8%',
+      changeType: 'positive'
+    },
+    {
+      id: '3',
+      title: 'Events Organized',
+      description: 'This month',
+      icon: <Calendar size={24} color={colors.accent} />,
+      value: '12',
+      change: '-2%',
+      changeType: 'negative'
+    },
+    {
+      id: '4',
+      title: 'Target Achievement',
+      description: 'Overall progress',
+      icon: <TrendingUp size={24} color={colors.success} />,
+      value: '78%',
+      change: '+5%',
+      changeType: 'positive'
+    }
+  ];
+
+  const reportTypes = [
+    {
+      id: '1',
+      title: 'Voter Analytics',
+      description: 'Detailed voter engagement reports',
+      icon: <BarChart3 size={32} color={colors.primary} />
+    },
+    {
+      id: '2',
+      title: 'Application Reports',
+      description: 'Status and processing analytics',
+      icon: <PieChart size={32} color={colors.secondary} />
+    },
+    {
+      id: '3',
+      title: 'Performance Dashboard',
+      description: 'Target vs achievement analysis',
+      icon: <TrendingUp size={32} color={colors.accent} />
+    },
+    {
+      id: '4',
+      title: 'Event Reports',
+      description: 'Event participation and feedback',
+      icon: <Calendar size={32} color={colors.success} />
+    }
+  ];
+  
   const getChangeColor = (changeType: string) => {
     switch (changeType) {
       case 'positive':
-        return Colors.success;
+        return colors.success;
       case 'negative':
-        return Colors.error;
+        return colors.error;
       default:
-        return Colors.text.secondary;
+        return colors.text.secondary;
     }
   };
 
@@ -96,15 +99,17 @@ export default function ReportsScreen() {
     console.log('Report pressed:', reportId);
   };
 
+  const styles = createStyles(colors);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Reports & Analytics</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Reports & Analytics</Text>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Key Metrics</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Key Metrics</Text>
           <View style={styles.metricsGrid}>
             {reportCards.map((card) => (
               <Card key={card.id} style={styles.metricCard}>
@@ -114,16 +119,16 @@ export default function ReportsScreen() {
                     {card.change}
                   </Text>
                 </View>
-                <Text style={styles.metricValue}>{card.value}</Text>
-                <Text style={styles.metricTitle}>{card.title}</Text>
-                <Text style={styles.metricDescription}>{card.description}</Text>
+                <Text style={[styles.metricValue, { color: colors.text.primary }]}>{card.value}</Text>
+                <Text style={[styles.metricTitle, { color: colors.text.primary }]}>{card.title}</Text>
+                <Text style={[styles.metricDescription, { color: colors.text.secondary }]}>{card.description}</Text>
               </Card>
             ))}
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Detailed Reports</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Detailed Reports</Text>
           {reportTypes.map((report) => (
             <TouchableOpacity
               key={report.id}
@@ -136,8 +141,8 @@ export default function ReportsScreen() {
                     {report.icon}
                   </View>
                   <View style={styles.reportInfo}>
-                    <Text style={styles.reportTitle}>{report.title}</Text>
-                    <Text style={styles.reportDescription}>{report.description}</Text>
+                    <Text style={[styles.reportTitle, { color: colors.text.primary }]}>{report.title}</Text>
+                    <Text style={[styles.reportDescription, { color: colors.text.secondary }]}>{report.description}</Text>
                   </View>
                 </View>
               </Card>
@@ -149,16 +154,16 @@ export default function ReportsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface
+    backgroundColor: colors.surface
   },
   header: {
     padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    backgroundColor: Colors.background
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background
   },
   title: {
     ...Typography.title
@@ -203,8 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs
   },
   metricDescription: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   },
   reportCard: {
     marginBottom: Spacing.md
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md
@@ -230,7 +234,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs
   },
   reportDescription: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   }
 });

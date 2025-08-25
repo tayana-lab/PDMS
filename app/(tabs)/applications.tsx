@@ -10,7 +10,8 @@ import {
   Alert
 } from 'react-native';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -49,6 +50,7 @@ export default function ApplicationsScreen() {
   const [voterIdInput, setVoterIdInput] = useState<string>('');
   const [showVoterIdModal, setShowVoterIdModal] = useState<boolean>(false);
   const [selectedScheme, setSelectedScheme] = useState<GovernmentScheme | null>(null);
+  const { colors } = useAppSettings();
 
   const filteredSchemes = useMemo(() => {
     let schemes = schemeData.items;
@@ -72,26 +74,26 @@ export default function ApplicationsScreen() {
   const getStatusIcon = (status: string) => {
     switch (status.toUpperCase()) {
       case 'PENDING':
-        return <Clock size={16} color={Colors.warning} />;
+        return <Clock size={16} color={colors.warning} />;
       case 'APPROVED':
-        return <CheckCircle size={16} color={Colors.success} />;
+        return <CheckCircle size={16} color={colors.success} />;
       case 'REJECTED':
-        return <XCircle size={16} color={Colors.error} />;
+        return <XCircle size={16} color={colors.error} />;
       default:
-        return <FileText size={16} color={Colors.text.secondary} />;
+        return <FileText size={16} color={colors.text.secondary} />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
       case 'PENDING':
-        return Colors.warning;
+        return colors.warning;
       case 'APPROVED':
-        return Colors.success;
+        return colors.success;
       case 'REJECTED':
-        return Colors.error;
+        return colors.error;
       default:
-        return Colors.text.secondary;
+        return colors.text.secondary;
     }
   };
 
@@ -132,18 +134,18 @@ export default function ApplicationsScreen() {
       <Card style={styles.schemeCard}>
         <View style={styles.schemeHeader}>
           <View style={styles.schemeInfo}>
-            <Text style={styles.schemeName}>{item.name}</Text>
-            <Text style={styles.schemeCategory}>{item.category}</Text>
+            <Text style={[styles.schemeName, { color: colors.text.primary }]}>{item.name}</Text>
+            <Text style={[styles.schemeCategory, { color: colors.primary }]}>{item.category}</Text>
           </View>
-          <Text style={styles.schemeBudget}>₹{item.budget.toLocaleString()}</Text>
+          <Text style={[styles.schemeBudget, { color: colors.secondary }]}>₹{item.budget.toLocaleString()}</Text>
         </View>
         
-        <Text style={styles.schemeDescription} numberOfLines={3}>
+        <Text style={[styles.schemeDescription, { color: colors.text.secondary }]} numberOfLines={3}>
           {cleanDescription}
         </Text>
         
-        <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
-          <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
+        <Text style={[styles.schemeBeneficiaries, { color: colors.text.secondary }]} numberOfLines={2}>
+          <Text style={[styles.beneficiariesLabel, { color: colors.text.primary }]}>Beneficiaries: </Text>
           {item.beneficiaries}
         </Text>
         
@@ -162,8 +164,8 @@ export default function ApplicationsScreen() {
     <Card style={styles.applicationCard}>
       <View style={styles.applicationHeader}>
         <View style={styles.applicationInfo}>
-          <Text style={styles.applicantName}>{item.name}</Text>
-          <Text style={styles.applicationId}>ID: {item.application_id}</Text>
+          <Text style={[styles.applicantName, { color: colors.text.primary }]}>{item.name}</Text>
+          <Text style={[styles.applicationId, { color: colors.text.secondary }]}>ID: {item.application_id}</Text>
         </View>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
           {getStatusIcon(item.status)}
@@ -174,23 +176,25 @@ export default function ApplicationsScreen() {
       </View>
       
       <View style={styles.applicationDetails}>
-        <Text style={styles.detailText}>Mobile: {item.mobile_number}</Text>
-        <Text style={styles.detailText}>Help Required: {item.required_help}</Text>
-        <Text style={styles.detailText}>
+        <Text style={[styles.detailText, { color: colors.text.secondary }]}>Mobile: {item.mobile_number}</Text>
+        <Text style={[styles.detailText, { color: colors.text.secondary }]}>Help Required: {item.required_help}</Text>
+        <Text style={[styles.detailText, { color: colors.text.secondary }]}>
           Submitted: {new Date(item.created_at).toLocaleDateString()}
         </Text>
       </View>
       
       <TouchableOpacity style={styles.viewDetailsButton}>
-        <Text style={styles.viewDetailsText}>View Details</Text>
+        <Text style={[styles.viewDetailsText, { color: colors.primary }]}>View Details</Text>
       </TouchableOpacity>
     </Card>
   );
 
+  const styles = createStyles(colors);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Applications</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Applications</Text>
       </View>
 
       {/* Tab Navigation */}
@@ -263,7 +267,7 @@ export default function ApplicationsScreen() {
             </ScrollView>
           </View>
           
-          <Text style={styles.sectionTitle}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
             Available Schemes ({filteredSchemes.length})
           </Text>
           
@@ -275,8 +279,8 @@ export default function ApplicationsScreen() {
             contentContainerStyle={styles.listContainer}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <FileText size={48} color={Colors.text.light} />
-                <Text style={styles.emptyText}>No schemes found</Text>
+                <FileText size={48} color={colors.text.light} />
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>No schemes found</Text>
               </View>
             }
           />
@@ -286,7 +290,7 @@ export default function ApplicationsScreen() {
       {/* My Applications Tab */}
       {selectedTab === 'myApplications' && (
         <View style={styles.tabContent}>
-          <Text style={styles.sectionTitle}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
             My Applications ({applicationData.total_count})
           </Text>
           
@@ -298,8 +302,8 @@ export default function ApplicationsScreen() {
             contentContainerStyle={styles.listContainer}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <FileText size={48} color={Colors.text.light} />
-                <Text style={styles.emptyText}>No applications found</Text>
+                <FileText size={48} color={colors.text.light} />
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>No applications found</Text>
               </View>
             }
           />
@@ -310,8 +314,8 @@ export default function ApplicationsScreen() {
       {showVoterIdModal && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Enter Voter ID</Text>
-            <Text style={styles.modalSubtitle}>
+            <Text style={[styles.modalTitle, { color: colors.text.primary }]}>Enter Voter ID</Text>
+            <Text style={[styles.modalSubtitle, { color: colors.text.secondary }]}>
               Applying for: {selectedScheme?.name}
             </Text>
             
@@ -347,23 +351,23 @@ export default function ApplicationsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    backgroundColor: Colors.background
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background
   },
   title: {
     ...Typography.title
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     marginHorizontal: Spacing.md,
     marginTop: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -377,15 +381,15 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   activeTab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
   },
   tabText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   activeTabText: {
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   tabContent: {
     flex: 1,
@@ -404,22 +408,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     marginRight: Spacing.sm,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.round,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   activeFilterChip: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   filterChipText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   activeFilterChipText: {
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   sectionTitle: {
     ...Typography.subtitle,
@@ -447,29 +451,24 @@ const styles = StyleSheet.create({
   },
   schemeCategory: {
     ...Typography.caption,
-    color: Colors.primary,
     fontWeight: '600',
   },
   schemeBudget: {
     ...Typography.body,
-    color: Colors.secondary,
     fontWeight: '700',
   },
   schemeDescription: {
     ...Typography.body,
-    color: Colors.text.secondary,
     marginBottom: Spacing.sm,
     lineHeight: 20,
   },
   schemeBeneficiaries: {
     ...Typography.caption,
-    color: Colors.text.secondary,
     marginBottom: Spacing.md,
     lineHeight: 18,
   },
   beneficiariesLabel: {
     fontWeight: '600',
-    color: Colors.text.primary,
   },
   applyButton: {
     alignSelf: 'flex-start',
@@ -493,7 +492,6 @@ const styles = StyleSheet.create({
   },
   applicationId: {
     ...Typography.caption,
-    color: Colors.text.secondary,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -513,7 +511,6 @@ const styles = StyleSheet.create({
   },
   detailText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
   },
   viewDetailsButton: {
     alignSelf: 'flex-start',
@@ -521,7 +518,6 @@ const styles = StyleSheet.create({
   },
   viewDetailsText: {
     ...Typography.caption,
-    color: Colors.primary,
     fontWeight: '600',
   },
   emptyContainer: {
@@ -532,7 +528,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.light,
     textAlign: 'center',
     marginTop: Spacing.md
   },
@@ -548,7 +543,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   modalContent: {
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     marginHorizontal: Spacing.lg,
@@ -562,7 +557,6 @@ const styles = StyleSheet.create({
   },
   modalSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
