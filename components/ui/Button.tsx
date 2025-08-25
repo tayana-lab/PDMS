@@ -82,8 +82,10 @@ const styles = StyleSheet.create({
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: Platform.OS === 'android' ? 0 : 1,
-    borderColor: Colors.primary
+    ...(Platform.OS === 'ios' && {
+      borderWidth: 1,
+      borderColor: Colors.primary
+    })
   },
   ghost: {
     backgroundColor: 'transparent'

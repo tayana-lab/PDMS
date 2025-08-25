@@ -22,13 +22,15 @@ export default function MarketingCarousel() {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % marketingAds.length;
-        scrollViewRef.current?.scrollTo({
-          x: nextIndex * (cardWidth + Spacing.lg),
-          animated: true
-        });
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({
+            x: nextIndex * cardWidth,
+            animated: true
+          });
+        }
         return nextIndex;
       });
-    }, 3500);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);

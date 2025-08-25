@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   imageContainer: {
-    height: 200,
+    height: 240,
     position: 'relative',
     backgroundColor: Colors.background
   },
@@ -310,32 +310,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: Spacing.lg,
-    paddingHorizontal: Spacing.md
+    paddingHorizontal: Spacing.md,
+    paddingBottom: 40
   },
   leaderImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    marginBottom: Spacing.md,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: Spacing.sm,
     borderWidth: 3,
-    borderColor: Colors.primary
+    borderColor: Colors.primary,
+    backgroundColor: Colors.surface
   },
   leaderName: {
     ...Typography.subtitle,
     color: Colors.text.primary,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: 2
   },
   leaderPosition: {
     ...Typography.caption,
     color: Colors.text.secondary,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 12
   },
   indicators: {
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: Spacing.md,
-    width: '100%'
+    bottom: 8,
+    width: '100%',
+    zIndex: 10
   },
   indicator: {
     width: 8,
