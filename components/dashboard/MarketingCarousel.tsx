@@ -23,7 +23,7 @@ export default function MarketingCarousel() {
         const nextIndex = (prevIndex + 1) % marketingAds.length;
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
-            x: nextIndex * width, // full width per page
+            x: nextIndex * (width - (Spacing.lg * 2)),
             animated: true
           });
         }
@@ -36,36 +36,38 @@ export default function MarketingCarousel() {
 
   const handleEventPress = (eventId: number) => {
     console.log('Event pressed:', eventId);
+    // Navigate to event details
   };
 
   return (
     <View style={styles.container}>
+      
+      
       <ScrollView
         ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(event) => {
-          const index = Math.round(event.nativeEvent.contentOffset.x / width);
+          const index = Math.round(event.nativeEvent.contentOffset.x / (width - (Spacing.lg * 2) + Spacing.lg));
           setCurrentIndex(index);
         }}
+        contentContainerStyle={styles.scrollContainer}
       >
         {marketingAds.map((ad) => (
-          <View key={ad.id} style={{ width }}> 
-            {/* full screen page */}
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => handleEventPress(ad.id)}
-              activeOpacity={0.9}
-            >
-              <Image source={{ uri: ad.image }} style={styles.image} />
-              <View style={styles.content}>
-                <Text style={styles.eventTitle}>{ad.title}</Text>
-                <Text style={styles.description}>{ad.description}</Text>
-                <Text style={styles.date}>{ad.date}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            key={ad.id}
+            style={styles.card}
+            onPress={() => handleEventPress(ad.id)}
+            activeOpacity={0.9}
+          >
+            <Image source={{ uri: ad.image }} style={styles.image} />
+            <View style={styles.content}>
+              <Text style={styles.eventTitle}>{ad.title}</Text>
+              <Text style={styles.description}>{ad.description}</Text>
+              <Text style={styles.date}>{ad.date}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -88,9 +90,17 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.lg
   },
+  title: {
+    ...Typography.subtitle,
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.lg
+  },
+  scrollContainer: {
+    paddingHorizontal: Spacing.lg
+  },
   card: {
-    flex: 1,
-    marginHorizontal: Spacing.lg, // keep spacing INSIDE the card, not on the ScrollView
+    width: width - (Spacing.lg * 2),
+    marginRight: Spacing.lg,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
