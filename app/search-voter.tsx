@@ -105,6 +105,7 @@ export default function SearchVoterScreen() {
   }, [searchQuery, selectedFilter]);
 
   const handleVoterSelect = (voter: Voter) => {
+    alert("clicked"
     setSelectedVoter(voter);
   };
 
