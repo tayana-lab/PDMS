@@ -23,7 +23,7 @@ export default function MarketingCarousel() {
         const nextIndex = (prevIndex + 1) % marketingAds.length;
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
-            x: nextIndex * (width - (Spacing.lg * 2)),
+            x: nextIndex * width, // 🔹 use full screen width
             animated: true
           });
         }
@@ -41,18 +41,15 @@ export default function MarketingCarousel() {
 
   return (
     <View style={styles.container}>
-      
-      
       <ScrollView
         ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(event) => {
-          const index = Math.round(event.nativeEvent.contentOffset.x / (width - (Spacing.lg * 2) + Spacing.lg));
+          const index = Math.round(event.nativeEvent.contentOffset.x / width);
           setCurrentIndex(index);
         }}
-        contentContainerStyle={styles.scrollContainer}
       >
         {marketingAds.map((ad) => (
           <TouchableOpacity
@@ -90,23 +87,15 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.lg
   },
-  title: {
-    ...Typography.subtitle,
-    marginBottom: Spacing.md,
-    paddingHorizontal: Spacing.lg
-  },
-  scrollContainer: {
-    paddingHorizontal: Spacing.lg
-  },
   card: {
-    width: width - (Spacing.lg * 2),
-    marginRight: Spacing.lg,
+    width: width, // 🔹 full screen width
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.medium,
     borderWidth: 1,
     borderColor: Colors.border
+    // ❌ removed marginRight
   },
   image: {
     width: '100%',
