@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { Phone, MessageSquare, Lock } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 
 
@@ -25,6 +26,7 @@ interface StepItem {
 }
 
 export default function OnboardingScreen() {
+  const { colors } = useAppSettings();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('steps');
   const [mobileNumber, setMobileNumber] = useState('');
   const [otp, setOtp] = useState('');
