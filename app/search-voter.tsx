@@ -304,7 +304,7 @@ export default function SearchVoterScreen() {
           {renderPartyInclinationIcon(selectedVoter.partyInclination)}
         </View>
 
-        {/* Inline Row Format Details */}
+        {/* Compact Inline Row Format Details */}
         <View style={styles.selectedVoterDetails}>
           <View style={styles.inlineDetailRow}>
             <Text style={styles.inlineDetailLabel}>VOTER ID</Text>
@@ -893,13 +893,17 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   selectedVoterCard: {
-    padding: Spacing.lg,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.md,
   },
   selectedVoterHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
   selectedVoterInfo: {
     flex: 1,
@@ -914,7 +918,8 @@ const styles = StyleSheet.create({
   },
   selectedVoterDetails: {
     marginBottom: Spacing.lg,
-    gap: Spacing.md,
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.xs,
   },
   partyIcon: {
     width: 28,
@@ -944,31 +949,34 @@ const styles = StyleSheet.create({
   inlineDetailRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: Spacing.sm,
-    minHeight: 24,
+    marginBottom: Spacing.xs,
+    minHeight: 20,
+    paddingVertical: 2,
   },
   inlineDetailLabel: {
     ...Typography.caption,
     color: Colors.text.secondary,
     fontWeight: '700',
-    fontSize: 12,
+    fontSize: 11,
     textTransform: 'uppercase',
-    width: 120,
-    letterSpacing: 0.5,
+    width: 110,
+    letterSpacing: 0.3,
   },
   inlineDetailSeparator: {
     ...Typography.body,
     color: Colors.text.secondary,
     fontWeight: '600',
-    marginHorizontal: Spacing.sm,
-    width: 8,
+    marginHorizontal: Spacing.xs,
+    width: 6,
+    fontSize: 14,
   },
   inlineDetailValue: {
     ...Typography.body,
     color: Colors.text.primary,
     fontWeight: '500',
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
+    lineHeight: 18,
   },
   selectedDetailRow: {
     gap: Spacing.xs,
@@ -989,17 +997,18 @@ const styles = StyleSheet.create({
   editInputInline: {
     flex: 1,
     marginLeft: 0,
-    paddingVertical: Spacing.xs,
-    fontSize: 15,
+    paddingVertical: 2,
+    fontSize: 14,
+    minHeight: 18,
   },
   partyInclinationOptions: {
     flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
+    gap: Spacing.xs,
+    flex: 1,
   },
   partyOption: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -1020,6 +1029,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.sm,
     flexWrap: 'wrap',
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
   },
   selectedActionButton: {
     flex: 1,
