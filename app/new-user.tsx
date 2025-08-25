@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   center: { 
     flex: 1, 
     justifyContent: "center", 
-    //paddingHorizontal: 20 
+    paddingHorizontal: 24
   },
   loginCard: {
     backgroundColor: "rgba(255,255,255,0.9)",
