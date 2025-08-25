@@ -5,18 +5,17 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
   StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Phone, MessageSquare, Lock, CreditCard } from 'lucide-react-native';
+import { Phone, MessageSquare, Lock } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 
-const { width } = Dimensions.get('window');
 
-type OnboardingStep = 'steps' | 'mobile' | 'otp' | 'pin' | 'pan';
+
+type OnboardingStep = 'steps' | 'mobile' | 'otp' | 'pin';
 
 interface StepItem {
   id: string;
@@ -30,39 +29,30 @@ export default function OnboardingScreen() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [otp, setOtp] = useState('');
   const [pin, setPin] = useState('');
-  const [panNumber, setPanNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const steps: StepItem[] = [
     {
       id: 'mobile',
-      icon: <Phone size={24} color={currentStep === 'mobile' ? '#007AFF' : '#8E8E93'} />,
+      icon: <Phone size={32} color={currentStep === 'mobile' ? '#007AFF' : '#8E8E93'} />,
       title: 'Mobile',
       isActive: currentStep === 'mobile',
     },
     {
       id: 'otp',
-      icon: <MessageSquare size={24} color={currentStep === 'otp' ? '#007AFF' : '#8E8E93'} />,
+      icon: <MessageSquare size={32} color={currentStep === 'otp' ? '#007AFF' : '#8E8E93'} />,
       title: 'OTP',
       isActive: currentStep === 'otp',
     },
     {
       id: 'pin',
-      icon: <Lock size={24} color={currentStep === 'pin' ? '#007AFF' : '#8E8E93'} />,
+      icon: <Lock size={32} color={currentStep === 'pin' ? '#007AFF' : '#8E8E93'} />,
       title: 'PIN',
       isActive: currentStep === 'pin',
     },
-    {
-      id: 'pan',
-      icon: <CreditCard size={24} color={currentStep === 'pan' ? '#007AFF' : '#8E8E93'} />,
-      title: 'PAN',
-      isActive: currentStep === 'pan',
-    },
   ];
 
-  const handleStepPress = (stepId: string) => {
-    setCurrentStep(stepId as OnboardingStep);
-  };
+
 
   const handleMobileSubmit = async () => {
     if (!mobileNumber.trim() || mobileNumber.length !== 10) {
@@ -94,49 +84,36 @@ export default function OnboardingScreen() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setCurrentStep('pan');
-    }, 1000);
-  };
-
-  const handlePanSubmit = async () => {
-    if (!panNumber.trim() || panNumber.length !== 10) {
-      return;
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
       router.replace('/(tabs)');
     }, 1000);
   };
 
+
+
   const renderStepsView = () => (
     <View style={styles.stepsContainer}>
-      <Text style={styles.stepsTitle}>Complete Your Registration</Text>
-      <Text style={styles.stepsSubtitle}>Follow these steps to set up your account</Text>
+      <Text style={styles.stepsTitle}>New User Registration</Text>
+      <Text style={styles.stepsSubtitle}>Follow these simple steps to get started</Text>
       
-      <View style={styles.stepsGrid}>
+      <View style={styles.stepsRow}>
         {steps.map((step, index) => (
-          <TouchableOpacity
-            key={step.id}
-            style={[
-              styles.stepCard,
-              step.isActive && styles.stepCardActive
-            ]}
-            onPress={() => handleStepPress(step.id)}
-          >
+          <View key={step.id} style={styles.stepWrapper}>
             <View style={[
-              styles.stepIconContainer,
-              step.isActive && styles.stepIconContainerActive
+              styles.stepCircle,
+              step.isActive && styles.stepCircleActive
             ]}>
               {step.icon}
             </View>
             <Text style={[
-              styles.stepTitle,
-              step.isActive && styles.stepTitleActive
+              styles.stepLabel,
+              step.isActive && styles.stepLabelActive
             ]}>
               {step.title}
             </Text>
-          </TouchableOpacity>
+            {index < steps.length - 1 && (
+              <View style={styles.stepConnector} />
+            )}
+          </View>
         ))}
       </View>
       
@@ -152,7 +129,6 @@ export default function OnboardingScreen() {
     <View style={styles.formContainer}>
       <View style={styles.stepIndicator}>
         <View style={[styles.stepDot, styles.stepDotActive]} />
-        <View style={styles.stepDot} />
         <View style={styles.stepDot} />
         <View style={styles.stepDot} />
       </View>
@@ -195,7 +171,6 @@ export default function OnboardingScreen() {
         <View style={[styles.stepDot, styles.stepDotCompleted]} />
         <View style={[styles.stepDot, styles.stepDotActive]} />
         <View style={styles.stepDot} />
-        <View style={styles.stepDot} />
       </View>
       
       <Text style={styles.formTitle}>Verify OTP</Text>
@@ -233,7 +208,6 @@ export default function OnboardingScreen() {
         <View style={[styles.stepDot, styles.stepDotCompleted]} />
         <View style={[styles.stepDot, styles.stepDotCompleted]} />
         <View style={[styles.stepDot, styles.stepDotActive]} />
-        <View style={styles.stepDot} />
       </View>
       
       <Text style={styles.formTitle}>Set PIN</Text>
@@ -253,7 +227,7 @@ export default function OnboardingScreen() {
       </View>
       
       <Button
-        title="Set PIN"
+        title="Complete Registration"
         onPress={handlePinSubmit}
         loading={isLoading}
         disabled={pin.length !== 4}
@@ -266,43 +240,7 @@ export default function OnboardingScreen() {
     </View>
   );
 
-  const renderPanView = () => (
-    <View style={styles.formContainer}>
-      <View style={styles.stepIndicator}>
-        <View style={[styles.stepDot, styles.stepDotCompleted]} />
-        <View style={[styles.stepDot, styles.stepDotCompleted]} />
-        <View style={[styles.stepDot, styles.stepDotCompleted]} />
-        <View style={[styles.stepDot, styles.stepDotActive]} />
-      </View>
-      
-      <Text style={styles.formTitle}>Enter PAN Details</Text>
-      <Text style={styles.formSubtitle}>Provide your PAN number for verification</Text>
-      
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>PAN Number</Text>
-        <Input
-          value={panNumber}
-          onChangeText={setPanNumber}
-          placeholder="Enter PAN number"
-          maxLength={10}
-          autoCapitalize="characters"
-          style={styles.panInput}
-        />
-      </View>
-      
-      <Button
-        title="Complete Registration"
-        onPress={handlePanSubmit}
-        loading={isLoading}
-        disabled={panNumber.length !== 10}
-        style={styles.submitButton}
-      />
-      
-      <TouchableOpacity onPress={() => setCurrentStep('pin')}>
-        <Text style={styles.backText}>Back to PIN</Text>
-      </TouchableOpacity>
-    </View>
-  );
+
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -314,8 +252,6 @@ export default function OnboardingScreen() {
         return renderOtpView();
       case 'pin':
         return renderPinView();
-      case 'pan':
-        return renderPanView();
       default:
         return renderStepsView();
     }
@@ -365,50 +301,50 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
-  stepsGrid: {
+  stepsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 20,
-    marginBottom: 40,
-  },
-  stepCard: {
-    width: (width - 60) / 2,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    marginBottom: 60,
+    paddingHorizontal: 20,
   },
-  stepCardActive: {
-    borderColor: '#007AFF',
-    backgroundColor: '#F0F8FF',
+  stepWrapper: {
+    alignItems: 'center',
+    flex: 1,
+    position: 'relative',
   },
-  stepIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  stepCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: '#F2F2F7',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
-  stepIconContainerActive: {
-    backgroundColor: '#E3F2FD',
+  stepCircleActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
   },
-  stepTitle: {
-    fontSize: 16,
+  stepLabel: {
+    fontSize: 14,
     fontWeight: '600',
     color: '#8E8E93',
+    textAlign: 'center',
   },
-  stepTitleActive: {
+  stepLabelActive: {
     color: '#007AFF',
+  },
+  stepConnector: {
+    position: 'absolute',
+    top: 32,
+    right: -50,
+    width: 100,
+    height: 2,
+    backgroundColor: '#E5E5EA',
+    zIndex: -1,
   },
   startButton: {
     width: '100%',
@@ -490,9 +426,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 8,
   },
-  panInput: {
-    textTransform: 'uppercase',
-  },
+
   submitButton: {
     borderRadius: 12,
     paddingVertical: 16,
