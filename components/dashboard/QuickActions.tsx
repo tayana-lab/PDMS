@@ -15,7 +15,7 @@ export default function QuickActions() {
     }
     // router.push(route);
   };
-  return (
+   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
       <ScrollView 
@@ -24,10 +24,13 @@ export default function QuickActions() {
         contentContainerStyle={styles.scrollContent}
         style={styles.actionsScroll}
       >
-        {quickActions.map((action) => (
+        {quickActions.map((action, idx) => (
           <TouchableOpacity
             key={action.id}
-            style={styles.actionCard}
+            style={[
+              styles.actionCard,
+              idx !== quickActions.length - 1 && { marginRight: Spacing.md } // add spacing only between cards
+            ]}
             onPress={() => handleActionPress(action.route)}
             activeOpacity={0.8}
           >
@@ -63,18 +66,17 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
-    gap: Spacing.md
+    flexDirection: 'row'
   },
   actionCard: {
-    width: 120, // increased from 100 to fit longer text
+    width: cardWidth, // 🔹 3 cards per screen
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
     ...Shadows.small,
     borderWidth: 1,
-    borderColor: Colors.border,
-    marginRight: Spacing.md
+    borderColor: Colors.border
   },
   iconContainer: {
     position: 'relative',
