@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
-  Platform
+  Platform,
+  TextInput
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -156,7 +157,12 @@ export default function SearchVoterScreen() {
     const partyStatus = getPartyStatus(voter.partyInclination);
     
     return (
-      <View key={voter.id} style={styles.voterCard} testID={`voter-card-${voter.id}`}>
+      <TouchableOpacity 
+        key={voter.id} 
+        style={styles.voterCard} 
+        testID={`voter-card-${voter.id}`}
+        onPress={() => handleVoterSelect(voter)}
+      >
         <View style={styles.voterCardContent}>
           <View style={styles.voterCardLeft}>
             <View style={styles.profileImageContainer}>
@@ -208,14 +214,18 @@ export default function SearchVoterScreen() {
               
               <View style={styles.detailRow}>
                 <Text style={styles.detailIcon}>📅</Text>
-                <Text style={styles.detailText}>Last: {voter.lastInteractionDate} by {voter.karyakartaName}</Text>
+                <Text style={styles.detailText}>Last: {voter.lastInteractionDate}</Text>
               </View>
             </View>
             
             <View style={styles.actionButtons}>
               <TouchableOpacity 
                 style={styles.actionButton}
-                onPress={() => handleEdit()}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleVoterSelect(voter);
+                  handleEdit();
+                }}
               >
                 <Edit size={16} color={Colors.primary} />
                 <Text style={styles.actionButtonText}>Edit</Text>
@@ -226,7 +236,10 @@ export default function SearchVoterScreen() {
                   styles.actionButton,
                   !voter.mobileNumber && styles.disabledActionButton
                 ]}
-                onPress={() => handleCall(voter.mobileNumber)}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleCall(voter.mobileNumber);
+                }}
                 disabled={!voter.mobileNumber}
               >
                 <Phone size={16} color={voter.mobileNumber ? Colors.secondary : Colors.text.light} />
@@ -238,10 +251,14 @@ export default function SearchVoterScreen() {
               
               <TouchableOpacity 
                 style={styles.actionButton}
-                onPress={() => handleHelpDesk()}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleVoterSelect(voter);
+                  handleHelpDesk();
+                }}
               >
-                <Grid3X3 size={16} color={Colors.accent} />
-                <Text style={[styles.actionButtonText, { color: Colors.accent }]}>Apps</Text>
+                <HelpCircle size={16} color={Colors.accent} />
+                <Text style={[styles.actionButtonText, { color: Colors.accent }]}>HelpDesk</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -250,7 +267,7 @@ export default function SearchVoterScreen() {
             {renderPartyInclinationIcon(voter.partyInclination)}
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -430,12 +447,13 @@ export default function SearchVoterScreen() {
           <View style={styles.searchContainer}>
             <View style={styles.searchInputContainer}>
               <Search size={20} color={Colors.text.light} style={styles.searchIcon} />
-              <Input
+              <TextInput
                 placeholder="Search by Name, Voter ID, or Mobile..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 style={styles.searchInput}
                 testID="search-input"
+                placeholderTextColor={Colors.text.light}
               />
               <TouchableOpacity style={styles.micButton}>
                 <Mic size={20} color={Colors.text.white} />
@@ -497,9 +515,22 @@ export default function SearchVoterScreen() {
           </View>
         )}
 
-        {filteredVoters.length > 0 && (
+        {filteredVoters.length > 0 && !selectedVoter && (
           <View style={styles.resultsSection}>
             {filteredVoters.map(renderVoterCard)}
+          </View>
+        )}
+        
+        {selectedVoter && (
+          <View style={styles.selectedSection}>
+            <TouchableOpacity 
+              style={styles.backToResults}
+              onPress={() => setSelectedVoter(null)}
+            >
+              <ArrowLeft size={16} color={Colors.primary} />
+              <Text style={styles.backToResultsText}>Back to Results</Text>
+            </TouchableOpacity>
+            {renderSelectedVoterDetails()}
           </View>
         )}
       </ScrollView>
@@ -539,10 +570,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    marginBottom: 0,
+    fontSize: 16,
+    color: Colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
     backgroundColor: 'transparent',
     borderWidth: 0,
-    paddingHorizontal: 0,
+    minHeight: 44,
   },
   micButton: {
     backgroundColor: Colors.primary,
