@@ -42,7 +42,7 @@ export default function MarketingCarousel() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Upcoming Events</Text>
+      
       
       <ScrollView
         ref={scrollViewRef}
