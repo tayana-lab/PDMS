@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, StatusBar, Platform } from 'react-native';
+import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, StatusBar, Platform, Animated, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { LogOut, Settings, HelpCircle, User, Menu } from 'lucide-react-native';
+import { LogOut, Settings, HelpCircle, User, Menu, X } from 'lucide-react-native';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/layout/Header';
@@ -10,13 +10,32 @@ import MarketingCarousel from '@/components/dashboard/MarketingCarousel';
 import ProgressDashboard from '@/components/dashboard/ProgressDashboard';
 import QuickActions from '@/components/dashboard/QuickActions';
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SIDEBAR_WIDTH = 280;
+
 export default function HomeScreen() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [sidebarAnimation] = useState(new Animated.Value(-SIDEBAR_WIDTH));
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
 
   const handleProfilePress = () => {
     setShowProfileMenu(true);
+    Animated.timing(sidebarAnimation, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeSidebar = () => {
+    Animated.timing(sidebarAnimation, {
+      toValue: -SIDEBAR_WIDTH,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowProfileMenu(false);
+    });
   };
 
   const handleNotificationPress = () => {
@@ -51,8 +70,9 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar 
-        backgroundColor={Colors.primary} 
-        barStyle="light-content" 
+        backgroundColor={Colors.background} 
+        barStyle="dark-content" 
+        translucent={false}
       />
       
       <View style={[styles.safeContainer, { paddingTop: insets.top }]}>
@@ -76,45 +96,71 @@ export default function HomeScreen() {
       <Modal
         visible={showProfileMenu}
         transparent
-        animationType="slide"
-        onRequestClose={() => setShowProfileMenu(false)}
+        animationType="none"
+        onRequestClose={closeSidebar}
       >
-        <TouchableOpacity 
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowProfileMenu(false)}
-        >
-          <View style={[styles.profileMenu, { marginTop: insets.top + 80 }]}>
-            <View style={styles.menuHeader}>
-              <Menu size={24} color={Colors.primary} />
-              <Text style={styles.menuTitle}>Menu</Text>
-            </View>
-            {menuItems.map((item, index) => {
-              const IconComponent = item.icon;
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.menuItem}
-                  onPress={() => {
-                    setShowProfileMenu(false);
-                    item.onPress();
-                  }}
-                >
-                  <IconComponent 
-                    size={20} 
-                    color={item.danger ? Colors.error : Colors.text.primary} 
-                  />
-                  <Text style={[
-                    styles.menuItemText,
-                    item.danger && { color: Colors.error }
-                  ]}>
-                    {item.label}
-                  </Text>
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity 
+            style={styles.overlay}
+            activeOpacity={1}
+            onPress={closeSidebar}
+          />
+          <Animated.View 
+            style={[
+              styles.sidebar,
+              {
+                transform: [{ translateX: sidebarAnimation }],
+                paddingTop: insets.top
+              }
+            ]}
+          >
+            <View style={styles.sidebarHeader}>
+              <View style={styles.sidebarHeaderContent}>
+                <View style={styles.profileSection}>
+                  <View style={styles.profileAvatar}>
+                    <User size={32} color={Colors.surface} />
+                  </View>
+                  <View style={styles.profileInfo}>
+                    <Text style={styles.profileName}>Karyakarta Name</Text>
+                    <Text style={styles.profileRole}>BJP Member</Text>
+                  </View>
+                </View>
+                <TouchableOpacity onPress={closeSidebar} style={styles.closeButton}>
+                  <X size={24} color={Colors.text.primary} />
                 </TouchableOpacity>
-              );
-            })}
-          </View>
-        </TouchableOpacity>
+              </View>
+            </View>
+            
+            <View style={styles.menuSection}>
+              {menuItems.map((item, index) => {
+                const IconComponent = item.icon;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.sidebarMenuItem}
+                    onPress={() => {
+                      closeSidebar();
+                      setTimeout(() => item.onPress(), 300);
+                    }}
+                  >
+                    <View style={styles.menuItemIcon}>
+                      <IconComponent 
+                        size={22} 
+                        color={item.danger ? Colors.error : Colors.text.primary} 
+                      />
+                    </View>
+                    <Text style={[
+                      styles.sidebarMenuItemText,
+                      item.danger && { color: Colors.error }
+                    ]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </Animated.View>
+        </View>
       </Modal>
     </View>
   );
@@ -123,7 +169,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primary
+    backgroundColor: Colors.background
   },
   safeContainer: {
     flex: 1,
@@ -138,45 +184,78 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start'
+    flexDirection: 'row'
   },
-  profileMenu: {
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  sidebar: {
+    width: SIDEBAR_WIDTH,
     backgroundColor: Colors.surface,
-    marginLeft: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.md,
-    minWidth: 220,
-    maxWidth: 280,
+    height: '100%',
     ...Shadows.large,
-    borderWidth: 1,
-    borderColor: Colors.border
+    elevation: 16
   },
-  menuHeader: {
+  sidebarHeader: {
+    backgroundColor: Colors.primary,
+    paddingBottom: Spacing.lg
+  },
+  sidebarHeaderContent: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.md
+  },
+  profileAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md
+  },
+  profileInfo: {
+    flex: 1
+  },
+  profileName: {
+    ...Typography.subtitle,
+    color: Colors.surface,
+    fontWeight: '600',
+    marginBottom: 2
+  },
+  profileRole: {
+    ...Typography.caption,
+    color: 'rgba(255, 255, 255, 0.8)'
+  },
+  closeButton: {
+    position: 'absolute',
+    top: Spacing.md,
+    right: Spacing.lg,
+    padding: Spacing.xs
+  },
+  menuSection: {
+    paddingTop: Spacing.lg
+  },
+  sidebarMenuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    marginBottom: Spacing.sm
+    borderBottomColor: Colors.border
   },
-  menuTitle: {
-    ...Typography.subtitle,
-    marginLeft: Spacing.md,
-    fontWeight: '600',
-    color: Colors.primary
+  menuItemIcon: {
+    width: 40,
+    alignItems: 'center'
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md
-  },
-  menuItemText: {
+  sidebarMenuItemText: {
     ...Typography.body,
-    marginLeft: Spacing.md,
-    fontWeight: '500'
+    fontWeight: '500',
+    color: Colors.text.primary
   }
 });

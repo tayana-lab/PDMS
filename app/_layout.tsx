@@ -30,7 +30,7 @@ function RootLayoutNav() {
 
   return (
     <>
-      <StatusBar style="light" backgroundColor="#FF6B35" />
+      <StatusBar style="dark" backgroundColor="#FFFFFF" />
       <Stack screenOptions={{ headerBackTitle: "Back" }}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
