@@ -39,13 +39,15 @@ export default function LoginScreen() {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % leaders.length;
-        scrollViewRef.current?.scrollTo({
-          x: nextIndex * width,
-          animated: true
-        });
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({
+            x: nextIndex * width,
+            animated: true
+          });
+        }
         return nextIndex;
       });
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -299,20 +301,24 @@ const styles = StyleSheet.create({
     flex: 1
   },
   imageContainer: {
-    height: 180,
-    position: 'relative'
+    height: 200,
+    position: 'relative',
+    backgroundColor: Colors.background
   },
   imageSlide: {
     width,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Spacing.xl
+    paddingTop: Spacing.lg,
+    paddingHorizontal: Spacing.md
   },
   leaderImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: Spacing.sm
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    marginBottom: Spacing.md,
+    borderWidth: 3,
+    borderColor: Colors.primary
   },
   leaderName: {
     ...Typography.subtitle,
