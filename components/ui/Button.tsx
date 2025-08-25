@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, Platform, View } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 
 interface ButtonProps {
@@ -53,10 +53,10 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={actualVariant === 'primary' ? Colors.text.white : Colors.primary} />
       ) : (
-        <>
+        <View style={styles.content}>
           {icon}
           <Text style={textStyles}>{title}</Text>
-        </>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -67,7 +67,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    ...Shadows.small
+    ...(Platform.OS === 'ios' ? Shadows.small : { elevation: 2 })
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs
   },
   primary: {
     backgroundColor: Colors.primary
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: Platform.OS === 'android' ? 1.5 : 1,
     borderColor: Colors.primary
   },
   ghost: {

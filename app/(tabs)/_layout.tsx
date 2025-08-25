@@ -3,8 +3,11 @@ import { Home, Users, FileText, BarChart3, User } from 'lucide-react-native';
 import React from 'react';
 import { Platform } from 'react-native';
 import { Colors } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tabs
       screenOptions={{
@@ -14,13 +17,23 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.background,
           borderTopColor: Colors.border,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+          borderTopWidth: 1,
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
           paddingTop: 8,
-          height: Platform.OS === 'ios' ? 80 : 60
+          height: Platform.OS === 'ios' ? 80 + insets.bottom : 60,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '600'
+          fontWeight: '600',
+          marginBottom: Platform.OS === 'android' ? 4 : 0
+        },
+        tabBarIconStyle: {
+          marginTop: Platform.OS === 'android' ? 4 : 0
         }
       }}
     >

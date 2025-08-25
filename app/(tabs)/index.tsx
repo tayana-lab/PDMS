@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert } from 'react-native';
+import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, StatusBar, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { LogOut, Settings, HelpCircle, User } from 'lucide-react-native';
+import { LogOut, Settings, HelpCircle, User, Menu } from 'lucide-react-native';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/layout/Header';
 import MarketingCarousel from '@/components/dashboard/MarketingCarousel';
-import ProgressDashboard from '@/components/dashboard/ProgressDashboard';
 import QuickActions from '@/components/dashboard/QuickActions';
 
 export default function HomeScreen() {
@@ -49,23 +48,29 @@ export default function HomeScreen() {
   ];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <Header
-        onProfilePress={handleProfilePress}
-        onNotificationPress={handleNotificationPress}
-        notificationCount={5}
+    <View style={styles.container}>
+      <StatusBar 
+        backgroundColor={Colors.primary} 
+        barStyle={Platform.OS === 'ios' ? 'light-content' : 'light-content'} 
       />
       
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <MarketingCarousel />
-        <ProgressDashboard />
-        <QuickActions />
-      </ScrollView>
+      <View style={[styles.safeContainer, { paddingTop: insets.top }]}>
+        <Header
+          onProfilePress={handleProfilePress}
+          onNotificationPress={handleNotificationPress}
+          notificationCount={5}
+        />
+        
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <MarketingCarousel />
+          <QuickActions />
+        </ScrollView>
+      </View>
 
       <Modal
         visible={showProfileMenu}
         transparent
-        animationType="fade"
+        animationType="slide"
         onRequestClose={() => setShowProfileMenu(false)}
       >
         <TouchableOpacity 
@@ -73,7 +78,11 @@ export default function HomeScreen() {
           activeOpacity={1}
           onPress={() => setShowProfileMenu(false)}
         >
-          <View style={styles.profileMenu}>
+          <View style={[styles.profileMenu, { marginTop: insets.top + 60 }]}>
+            <View style={styles.menuHeader}>
+              <Menu size={24} color={Colors.primary} />
+              <Text style={styles.menuTitle}>Menu</Text>
+            </View>
             {menuItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
@@ -108,6 +117,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.primary
+  },
+  safeContainer: {
+    flex: 1,
     backgroundColor: Colors.surface
   },
   content: {
@@ -122,12 +135,27 @@ const styles = StyleSheet.create({
   },
   profileMenu: {
     backgroundColor: Colors.background,
-    marginTop: 100,
     marginLeft: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.sm,
-    minWidth: 180,
+    paddingVertical: Spacing.md,
+    minWidth: 220,
+    maxWidth: 280,
     ...Shadows.large
+  },
+  menuHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    marginBottom: Spacing.sm
+  },
+  menuTitle: {
+    ...Typography.subtitle,
+    marginLeft: Spacing.md,
+    fontWeight: '600',
+    color: Colors.primary
   },
   menuItem: {
     flexDirection: 'row',

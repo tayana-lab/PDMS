@@ -1,5 +1,6 @@
-import React from 'react';
-import { TextInput, View, Text, StyleSheet, TextInputProps } from 'react-native';
+import React, { useState } from 'react';
+import { TextInput, View, Text, StyleSheet, TextInputProps, TouchableOpacity } from 'react-native';
+import { Eye, EyeOff } from 'lucide-react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 
 interface InputProps extends TextInputProps {
@@ -10,7 +11,17 @@ interface InputProps extends TextInputProps {
   containerStyle?: any;
 }
 
-export default function Input({ label, error, leftIcon, rightIcon, containerStyle, style, ...props }: InputProps) {
+export default function Input({ label, error, leftIcon, rightIcon, containerStyle, style, secureTextEntry, ...props }: InputProps) {
+  const [isSecure, setIsSecure] = useState(secureTextEntry);
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    setIsSecure(!isSecure);
+  };
+  
+  const shouldShowToggle = secureTextEntry && props.keyboardType === 'numeric';
+  
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -20,14 +31,24 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
           style={[
             styles.input,
             leftIcon && styles.inputWithLeftIcon,
-            rightIcon && styles.inputWithRightIcon,
+            (rightIcon || shouldShowToggle) && styles.inputWithRightIcon,
             error && styles.inputError,
             style
           ]}
           placeholderTextColor={Colors.text.light}
+          secureTextEntry={isSecure}
           {...props}
         />
-        {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
+        {shouldShowToggle && (
+          <TouchableOpacity style={styles.rightIcon} onPress={togglePasswordVisibility}>
+            {showPassword ? (
+              <Eye size={20} color={Colors.text.light} />
+            ) : (
+              <EyeOff size={20} color={Colors.text.light} />
+            )}
+          </TouchableOpacity>
+        )}
+        {rightIcon && !shouldShowToggle && <View style={styles.rightIcon}>{rightIcon}</View>}
       </View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>

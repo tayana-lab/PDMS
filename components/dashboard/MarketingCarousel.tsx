@@ -20,16 +20,18 @@ export default function MarketingCarousel() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % marketingAds.length;
-      setCurrentIndex(nextIndex);
-      scrollViewRef.current?.scrollTo({
-        x: nextIndex * cardWidth,
-        animated: true
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % marketingAds.length;
+        scrollViewRef.current?.scrollTo({
+          x: nextIndex * cardWidth,
+          animated: true
+        });
+        return nextIndex;
       });
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, []);
 
   const handleEventPress = (eventId: number) => {
     console.log('Event pressed:', eventId);

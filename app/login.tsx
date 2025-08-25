@@ -7,7 +7,10 @@ import {
   Image,
   Dimensions,
   Alert,
-  SafeAreaView
+  SafeAreaView,
+  StatusBar,
+  Platform,
+  KeyboardAvoidingView
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
@@ -106,105 +109,118 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={false}
-        >
-          {leaders.map((leader) => (
-            <View key={leader.id} style={styles.imageSlide}>
-              <Image source={{ uri: leader.image }} style={styles.leaderImage} />
-              <Text style={styles.leaderName}>{leader.name}</Text>
-              <Text style={styles.leaderPosition}>{leader.position}</Text>
-            </View>
-          ))}
-        </ScrollView>
-        
-        <View style={styles.indicators}>
-          {leaders.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.indicator,
-                index === currentImageIndex && styles.activeIndicator
-              ]}
-            />
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.formContainer}>
-        <Card style={styles.loginCard}>
-          <View style={styles.logoContainer}>
-            <Text style={styles.appTitle}>BJP Karyakarta</Text>
-            <Text style={styles.appSubtitle}>Digital Platform</Text>
+      <StatusBar 
+        backgroundColor={Colors.primary} 
+        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'} 
+      />
+      
+      <KeyboardAvoidingView 
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.imageContainer}>
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={false}
+          >
+            {leaders.map((leader) => (
+              <View key={leader.id} style={styles.imageSlide}>
+                <Image source={{ uri: leader.image }} style={styles.leaderImage} />
+                <Text style={styles.leaderName}>{leader.name}</Text>
+                <Text style={styles.leaderPosition}>{leader.position}</Text>
+              </View>
+            ))}
+          </ScrollView>
+          
+          <View style={styles.indicators}>
+            {leaders.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.indicator,
+                  index === currentImageIndex && styles.activeIndicator
+                ]}
+              />
+            ))}
           </View>
+        </View>
 
-          <Input
-            label="Phone Number"
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="Enter your phone number"
-            keyboardType="phone-pad"
-            maxLength={10}
-          />
+        <View style={styles.formContainer}>
+          <Card style={styles.loginCard}>
+            <View style={styles.logoContainer}>
+              <Text style={styles.appTitle}>BJP Karyakarta</Text>
+              <Text style={styles.appSubtitle}>Digital Platform</Text>
+            </View>
 
-          {!isNewUser ? (
             <Input
-              label="PIN"
-              value={pin}
-              onChangeText={setPin}
-              placeholder="Enter your PIN"
-              secureTextEntry
-              keyboardType="numeric"
-              maxLength={4}
+              label="Phone Number"
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="Enter your phone number"
+              keyboardType="phone-pad"
+              maxLength={10}
               returnKeyType="done"
             />
-          ) : (
-            <Input
-              label="OTP"
-              value={otp}
-              onChangeText={setOtp}
-              placeholder="Enter OTP"
-              keyboardType="numeric"
-              maxLength={4}
-              returnKeyType="done"
-            />
-          )}
 
-          <Button
-            title={isNewUser ? "Verify OTP" : "Login"}
-            onPress={handleLogin}
-            loading={isLoading}
-            style={styles.loginButton}
-          />
+            {!isNewUser ? (
+              <Input
+                label="PIN"
+                value={pin}
+                onChangeText={setPin}
+                placeholder="Enter your PIN"
+                secureTextEntry
+                keyboardType="numeric"
+                maxLength={4}
+                returnKeyType="done"
+                textContentType="password"
+              />
+            ) : (
+              <Input
+                label="OTP"
+                value={otp}
+                onChangeText={setOtp}
+                placeholder="Enter OTP"
+                keyboardType="numeric"
+                maxLength={4}
+                returnKeyType="done"
+                textContentType="oneTimeCode"
+              />
+            )}
 
-          {!isNewUser && (
             <Button
-              title="New User? Get OTP"
-              onPress={handleSendOTP}
-              variant="outline"
-              disabled={isLoading}
-              style={styles.otpButton}
+              title={isNewUser ? "Verify OTP" : "Login"}
+              onPress={handleLogin}
+              loading={isLoading}
+              style={styles.loginButton}
             />
-          )}
 
-          {isNewUser && (
-            <Button
-              title="Back to Login"
-              onPress={() => {
-                setIsNewUser(false);
-                setOtp('');
-              }}
-              variant="ghost"
-              style={styles.backButton}
-            />
-          )}
-        </Card>
-      </View>
+            {!isNewUser && (
+              <Button
+                title="New User"
+                onPress={handleSendOTP}
+                variant="outline"
+                disabled={isLoading}
+                style={styles.otpButton}
+              />
+            )}
+
+            {isNewUser && (
+              <Button
+                title="Back to Login"
+                onPress={() => {
+                  setIsNewUser(false);
+                  setOtp('');
+                }}
+                variant="ghost"
+                style={styles.backButton}
+              />
+            )}
+          </Card>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -214,8 +230,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background
   },
+  keyboardContainer: {
+    flex: 1
+  },
   imageContainer: {
-    height: 300,
+    height: 220,
     position: 'relative'
   },
   imageSlide: {
@@ -225,10 +244,10 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl
   },
   leaderImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: Spacing.md
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: Spacing.sm
   },
   leaderName: {
     ...Typography.subtitle,
