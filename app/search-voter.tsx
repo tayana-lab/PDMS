@@ -8,8 +8,7 @@ import {
   Linking,
   Alert,
   Platform,
-  TextInput,
-  Image
+  TextInput
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -416,29 +415,25 @@ export default function SearchVoterScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
-          headerShown: false,
+          title: 'Search Voter',
+          headerShown: true,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <ArrowLeft size={24} color={Colors.text.primary} />
+            </TouchableOpacity>
+          ),
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerTitleStyle: {
+            ...Typography.title,
+            fontWeight: '600',
+          },
         }}
       />
-      
-      {/* Custom Header */}
-      <SafeAreaView edges={['top']} style={styles.header}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <ArrowLeft size={24} color={Colors.text.white} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Search Voter</Text>
-          <View style={styles.bjpLogo}>
-            <Image 
-              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
-              style={styles.bjpLogoImage}
-              resizeMode="contain"
-            />
-          </View>
-        </View>
-      </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Section */}
@@ -532,7 +527,7 @@ export default function SearchVoterScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -541,41 +536,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  header: {
-    backgroundColor: Colors.primary,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    minHeight: 56,
-  },
   backButton: {
-    padding: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  headerTitle: {
-    ...Typography.title,
-    color: Colors.text.white,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: Spacing.md,
-  },
-  bjpLogo: {
-    width: 32,
-    height: 32,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.text.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 4,
-  },
-  bjpLogoImage: {
-    width: 24,
-    height: 24,
+    padding: Spacing.sm,
+    marginLeft: -Spacing.sm,
   },
   content: {
     flex: 1,
