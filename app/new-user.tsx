@@ -128,6 +128,8 @@ export default function NewUserScreen() {
     }
   };
 
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -140,7 +142,7 @@ export default function NewUserScreen() {
             </TouchableOpacity>
           ),
           headerStyle: {
-            backgroundColor: '#FF6B35',
+            backgroundColor: colors.primary,
           },
           headerTitleStyle: {
             fontSize: 18,
@@ -150,10 +152,10 @@ export default function NewUserScreen() {
           headerTintColor: colors.text.white,
         }}
       />
-      <StatusBar barStyle="light-content" backgroundColor="#FF6B35" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       <LinearGradient
-        colors={["#FF6B35", "#FF8A65", "#FFAB91"]}
+        colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
         style={styles.gradientBackground}
       >
         <SafeAreaView style={styles.safeArea}>
@@ -184,7 +186,7 @@ export default function NewUserScreen() {
                   ]}>
                     <StepIcon 
                       size={16} 
-                      color={isActive || isCompleted ? '#fff' : '#FF6B35'} 
+                      color={isActive || isCompleted ? '#fff' : colors.primary} 
                     />
                   </View>
                   <Text style={[
@@ -303,7 +305,7 @@ export default function NewUserScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: { 
     flex: 1 
   },
@@ -340,11 +342,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   stepIconActive: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: colors.primary,
     borderColor: '#fff',
   },
   stepIconCompleted: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
     borderColor: '#fff',
   },
   stepIconInactive: {
@@ -375,7 +377,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   stepConnectorCompleted: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
   },
   center: { 
     flex: 1, 
@@ -383,25 +385,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 26
   },
   loginCard: {
-    backgroundColor: "rgba(255,255,255,0.9)",
-    borderRadius: 20,
-    padding: 20,
+    backgroundColor: colors.background,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
     width: "100%",
     maxWidth: 380,
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 12,
-    elevation: 2,
+    elevation: 8,
   },
   title: { 
     fontSize: 22, 
     fontWeight: "700", 
-    color: "#FF6B35", 
+    color: colors.primary, 
     textAlign: "center" 
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
+    color: colors.text.secondary,
     textAlign: "center",
     marginBottom: 16,
   },
@@ -413,7 +415,7 @@ const styles = StyleSheet.create({
     gap: 12 
   },
   primaryBtn: { 
-    borderRadius: 14, 
+    borderRadius: BorderRadius.lg, 
     paddingVertical: 12 
   },
   otpInput: {
@@ -430,7 +432,7 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: 12,
-    color: "#666",
+    color: colors.text.secondary,
     textAlign: "center",
     marginTop: 8,
   },

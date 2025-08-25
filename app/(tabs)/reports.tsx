@@ -157,7 +157,7 @@ export default function ReportsScreen() {
 const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface
+    backgroundColor: colors.background
   },
   header: {
     padding: Spacing.lg,

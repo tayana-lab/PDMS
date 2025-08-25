@@ -372,6 +372,8 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginTop: Spacing.md,
     borderRadius: BorderRadius.md,
     padding: Spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   tab: {
     flex: 1,
