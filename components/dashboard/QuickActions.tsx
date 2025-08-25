@@ -1,16 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { quickActions } from '@/constants/mockData';
 import Badge from '@/components/ui/Badge';
 
+const { width: screenWidth } = Dimensions.get('window');
+
 export default function QuickActions() {
-
-  const screenWidth = Dimensions.get('window').width;
-
-// 🔹 Calculate card width to fit exactly 3 per screen (with paddings & gaps)
-const cardWidth = (screenWidth - (Spacing.lg * 2) - (Spacing.md * 2)) / 3;
   
   const handleActionPress = (route: string) => {
     console.log('Navigating to:', route);
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   actionCard: {
-    width: cardWidth, // 🔹 3 cards per screen
+    width: (screenWidth - (Spacing.lg * 2) - (Spacing.md * 2)) / 3, // 🔹 3 cards per screen
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,

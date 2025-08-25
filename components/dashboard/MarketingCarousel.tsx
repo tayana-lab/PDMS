@@ -12,7 +12,6 @@ import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/
 import { marketingAds } from '@/constants/mockData';
 
 const { width } = Dimensions.get('window');
-const cardWidth = width - (Spacing.lg * 2);
 
 export default function MarketingCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,7 +23,7 @@ export default function MarketingCarousel() {
         const nextIndex = (prevIndex + 1) % marketingAds.length;
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
-            x: nextIndex * cardWidth,
+            x: nextIndex * (width - (Spacing.lg * 2)),
             animated: true
           });
         }
@@ -50,7 +49,7 @@ export default function MarketingCarousel() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(event) => {
-          const index = Math.round(event.nativeEvent.contentOffset.x / (cardWidth + Spacing.lg));
+          const index = Math.round(event.nativeEvent.contentOffset.x / (width - (Spacing.lg * 2) + Spacing.lg));
           setCurrentIndex(index);
         }}
         contentContainerStyle={styles.scrollContainer}
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg
   },
   card: {
-    width: cardWidth,
+    width: width - (Spacing.lg * 2),
     marginRight: Spacing.lg,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
