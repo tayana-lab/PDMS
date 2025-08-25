@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit, Phone, HelpCircle, ArrowLeft } from 'lucide-react-native';
+import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3 } from 'lucide-react-native';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -40,15 +40,39 @@ export default function SearchVoterScreen() {
   const [selectedVoter, setSelectedVoter] = useState<Voter | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editData, setEditData] = useState<Partial<Voter>>({});
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
+  
+  const recentSearches = ['Priya Nair', 'TVM001234567', 'Arun Pillai'];
+  const filterOptions = ['All', 'Party Voter', 'Inclined', 'Neutral', 'Anti'];
 
   const filteredVoters = useMemo(() => {
     if (!searchQuery.trim()) return [];
     
-    return mockVoters.filter(voter => 
+    let filtered = mockVoters.filter(voter => 
       voter.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       voter.voterId.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+    
+    // Apply filter
+    if (selectedFilter !== 'All') {
+      filtered = filtered.filter(voter => {
+        switch (selectedFilter) {
+          case 'Party Voter':
+            return voter.partyInclination === 'BJP';
+          case 'Inclined':
+            return voter.partyInclination === 'Inclined';
+          case 'Neutral':
+            return voter.partyInclination === 'Neutral';
+          case 'Anti':
+            return voter.partyInclination === 'Anti';
+          default:
+            return true;
+        }
+      });
+    }
+    
+    return filtered;
+  }, [searchQuery, selectedFilter]);
 
   const handleVoterSelect = (voter: Voter) => {
     setSelectedVoter(voter);
@@ -96,6 +120,21 @@ export default function SearchVoterScreen() {
     }
   };
 
+  const getPartyStatus = (inclination: string) => {
+    switch (inclination) {
+      case 'BJP':
+        return { label: 'Party Voter', color: Colors.primary, bgColor: Colors.primary + '20' };
+      case 'Inclined':
+        return { label: 'Inclined to Party', color: '#FF9500', bgColor: '#FF950020' };
+      case 'Neutral':
+        return { label: 'Neutral', color: '#8E8E93', bgColor: '#8E8E9320' };
+      case 'Anti':
+        return { label: 'Anti Party', color: '#FF3B30', bgColor: '#FF3B3020' };
+      default:
+        return { label: 'Unknown', color: '#8E8E93', bgColor: '#8E8E9320' };
+    }
+  };
+
   const renderPartyInclinationIcon = (inclination: string) => {
     const isInclined = inclination === 'BJP';
     return (
@@ -113,30 +152,107 @@ export default function SearchVoterScreen() {
     );
   };
 
-  const renderVoterCard = (voter: Voter) => (
-    <TouchableOpacity
-      key={voter.id}
-      style={styles.voterCard}
-      onPress={() => handleVoterSelect(voter)}
-      testID={`voter-card-${voter.id}`}
-    >
-      <View style={styles.voterCardHeader}>
-        <View style={styles.voterInfo}>
-          <Text style={styles.voterName}>{voter.name}</Text>
-          <Text style={styles.voterId}>ID: {voter.voterId}</Text>
+  const renderVoterCard = (voter: Voter) => {
+    const partyStatus = getPartyStatus(voter.partyInclination);
+    
+    return (
+      <View key={voter.id} style={styles.voterCard} testID={`voter-card-${voter.id}`}>
+        <View style={styles.voterCardContent}>
+          <View style={styles.voterCardLeft}>
+            <View style={styles.profileImageContainer}>
+              <View style={styles.profileImage}>
+                <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
+              </View>
+            </View>
+          </View>
+          
+          <View style={styles.voterCardCenter}>
+            <View style={styles.voterHeader}>
+              <Text style={styles.voterName}>{voter.name}</Text>
+              <View style={[styles.statusBadge, { backgroundColor: partyStatus.bgColor }]}>
+                <Text style={[styles.statusText, { color: partyStatus.color }]}>
+                  {partyStatus.label}
+                </Text>
+              </View>
+            </View>
+            
+            <Text style={styles.voterSubtitle}>
+              {voter.guardianName} • {voter.age}Y • {voter.gender}
+            </Text>
+            
+            <View style={styles.voterDetails}>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>🆔</Text>
+                <Text style={styles.detailText}>{voter.voterId}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>📱</Text>
+                <Text style={styles.detailText}>{voter.mobileNumber || 'Not available'}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>🏠</Text>
+                <Text style={styles.detailText}>{voter.houseName}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>📍</Text>
+                <Text style={styles.detailText}>{voter.ward}, {voter.assemblyConstituency}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>👤</Text>
+                <Text style={styles.detailText}>{voter.karyakartaName}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <Text style={styles.detailIcon}>📅</Text>
+                <Text style={styles.detailText}>Last: {voter.lastInteractionDate} by {voter.karyakartaName}</Text>
+              </View>
+            </View>
+            
+            <View style={styles.actionButtons}>
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => handleEdit()}
+              >
+                <Edit size={16} color={Colors.primary} />
+                <Text style={styles.actionButtonText}>Edit</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[
+                  styles.actionButton,
+                  !voter.mobileNumber && styles.disabledActionButton
+                ]}
+                onPress={() => handleCall(voter.mobileNumber)}
+                disabled={!voter.mobileNumber}
+              >
+                <Phone size={16} color={voter.mobileNumber ? Colors.secondary : Colors.text.light} />
+                <Text style={[
+                  styles.actionButtonText,
+                  { color: voter.mobileNumber ? Colors.secondary : Colors.text.light }
+                ]}>Call</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => handleHelpDesk()}
+              >
+                <Grid3X3 size={16} color={Colors.accent} />
+                <Text style={[styles.actionButtonText, { color: Colors.accent }]}>Apps</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          
+          <View style={styles.voterCardRight}>
+            {renderPartyInclinationIcon(voter.partyInclination)}
+          </View>
         </View>
-        {renderPartyInclinationIcon(voter.partyInclination)}
       </View>
-      
-      <View style={styles.voterDetails}>
-        <Text style={styles.detailText}>Guardian: {voter.guardianName}</Text>
-        <Text style={styles.detailText}>House: {voter.houseName}</Text>
-        <Text style={styles.detailText}>Mobile: {voter.mobileNumber || 'Not available'}</Text>
-        <Text style={styles.detailText}>Last Contact: {voter.lastInteractionDate}</Text>
-        <Text style={styles.detailText}>Karyakarta: {voter.karyakartaName}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+    );
+  };
 
   const renderSelectedVoterDetails = () => {
     if (!selectedVoter) return null;
@@ -246,19 +362,19 @@ export default function SearchVoterScreen() {
           </View>
         </View>
 
-        <View style={styles.actionButtons}>
+        <View style={styles.selectedActionButtons}>
           {isEditing ? (
             <>
               <Button
                 title="Cancel"
                 onPress={() => setIsEditing(false)}
                 variant="outline"
-                style={styles.actionButton}
+                style={styles.selectedActionButton}
               />
               <Button
                 title="Save"
                 onPress={handleSaveEdit}
-                style={styles.actionButton}
+                style={styles.selectedActionButton}
               />
             </>
           ) : (
@@ -268,7 +384,7 @@ export default function SearchVoterScreen() {
                 onPress={handleEdit}
                 variant="outline"
                 icon={<Edit size={16} color={Colors.primary} />}
-                style={styles.actionButton}
+                style={styles.selectedActionButton}
               />
               <Button
                 title="Call"
@@ -277,7 +393,7 @@ export default function SearchVoterScreen() {
                 disabled={!selectedVoter.mobileNumber}
                 icon={<Phone size={16} color={selectedVoter.mobileNumber ? Colors.text.white : Colors.text.light} />}
                 style={[
-                  styles.actionButton,
+                  styles.selectedActionButton,
                   !selectedVoter.mobileNumber && styles.disabledButton
                 ]}
               />
@@ -286,7 +402,7 @@ export default function SearchVoterScreen() {
                 onPress={handleHelpDesk}
                 variant="secondary"
                 icon={<HelpCircle size={16} color={Colors.text.white} />}
-                style={styles.actionButton}
+                style={styles.selectedActionButton}
               />
             </>
           )}
@@ -311,13 +427,68 @@ export default function SearchVoterScreen() {
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.searchSection}>
-          <Input
-            placeholder="Search by name or voter ID"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={styles.searchInput}
-            testID="search-input"
-          />
+          <View style={styles.searchContainer}>
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color={Colors.text.light} style={styles.searchIcon} />
+              <Input
+                placeholder="Search by Name, Voter ID, or Mobile..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={styles.searchInput}
+                testID="search-input"
+              />
+              <TouchableOpacity style={styles.micButton}>
+                <Mic size={20} color={Colors.text.white} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          
+          {/* Recent Searches */}
+          {!searchQuery.trim() && (
+            <View style={styles.recentSearches}>
+              <Text style={styles.sectionTitle}>Recent Searches</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.chipsContainer}>
+                  {recentSearches.map((search, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.recentChip}
+                      onPress={() => setSearchQuery(search)}
+                    >
+                      <Text style={styles.recentChipText}>{search}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          )}
+          
+          {/* Filter Options */}
+          {searchQuery.trim() && (
+            <View style={styles.filterSection}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.filtersContainer}>
+                  {filterOptions.map((filter) => (
+                    <TouchableOpacity
+                      key={filter}
+                      style={[
+                        styles.filterChip,
+                        selectedFilter === filter && styles.filterChipSelected
+                      ]}
+                      onPress={() => setSelectedFilter(filter)}
+                    >
+                      <Text style={[
+                        styles.filterChipText,
+                        selectedFilter === filter && styles.filterChipTextSelected
+                      ]}>
+                        {filter}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          )}
         </View>
 
         {searchQuery.trim() && filteredVoters.length === 0 && (
@@ -326,23 +497,9 @@ export default function SearchVoterScreen() {
           </View>
         )}
 
-        {filteredVoters.length > 0 && !selectedVoter && (
+        {filteredVoters.length > 0 && (
           <View style={styles.resultsSection}>
-            <Text style={styles.resultsTitle}>Search Results ({filteredVoters.length})</Text>
             {filteredVoters.map(renderVoterCard)}
-          </View>
-        )}
-
-        {selectedVoter && (
-          <View style={styles.selectedSection}>
-            <TouchableOpacity
-              style={styles.backToResults}
-              onPress={() => setSelectedVoter(null)}
-            >
-              <ArrowLeft size={16} color={Colors.primary} />
-              <Text style={styles.backToResultsText}>Back to Results</Text>
-            </TouchableOpacity>
-            {renderSelectedVoterDetails()}
           </View>
         )}
       </ScrollView>
@@ -366,8 +523,84 @@ const styles = StyleSheet.create({
   searchSection: {
     marginBottom: Spacing.lg,
   },
+  searchContainer: {
+    marginBottom: Spacing.md,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    ...Shadows.small,
+  },
+  searchIcon: {
+    marginRight: Spacing.sm,
+  },
   searchInput: {
+    flex: 1,
     marginBottom: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    paddingHorizontal: 0,
+  },
+  micButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: BorderRadius.round,
+    padding: Spacing.sm,
+    marginLeft: Spacing.sm,
+  },
+  recentSearches: {
+    marginBottom: Spacing.md,
+  },
+  sectionTitle: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontWeight: '600',
+  },
+  chipsContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  recentChip: {
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.round,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  recentChipText: {
+    ...Typography.caption,
+    color: Colors.text.primary,
+  },
+  filterSection: {
+    marginTop: Spacing.md,
+  },
+  filtersContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  filterChip: {
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.round,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  filterChipSelected: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  filterChipText: {
+    ...Typography.caption,
+    color: Colors.text.primary,
+    fontWeight: '500',
+  },
+  filterChipTextSelected: {
+    color: Colors.text.white,
   },
   noResults: {
     padding: Spacing.xl,
@@ -379,52 +612,119 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   resultsSection: {
-    marginBottom: Spacing.lg,
-  },
-  resultsTitle: {
-    ...Typography.subtitle,
-    marginBottom: Spacing.md,
+    gap: Spacing.md,
   },
   voterCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
-    marginBottom: Spacing.md,
     ...Shadows.small,
   },
-  voterCardHeader: {
+  voterCardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    gap: Spacing.md,
+  },
+  voterCardLeft: {
+    alignItems: 'center',
+  },
+  profileImageContainer: {
     marginBottom: Spacing.sm,
   },
-  voterInfo: {
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.round,
+    backgroundColor: Colors.primary + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileInitial: {
+    ...Typography.subtitle,
+    color: Colors.primary,
+    fontWeight: '600',
+  },
+  voterCardCenter: {
     flex: 1,
+  },
+  voterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.xs,
   },
   voterName: {
     ...Typography.subtitle,
-    marginBottom: Spacing.xs,
+    fontWeight: '600',
+    flex: 1,
   },
-  voterId: {
+  statusBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    marginLeft: Spacing.sm,
+  },
+  statusText: {
+    ...Typography.caption,
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  voterSubtitle: {
     ...Typography.caption,
     color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
+  },
+  voterCardRight: {
+    alignItems: 'center',
   },
   partyIcon: {
-    width: 40,
-    height: 40,
+    width: 32,
+    height: 32,
     borderRadius: BorderRadius.round,
     justifyContent: 'center',
     alignItems: 'center',
   },
   partyIconText: {
-    fontSize: 20,
+    fontSize: 16,
   },
   voterDetails: {
+    gap: 4,
+    marginBottom: Spacing.md,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
+  },
+  detailIcon: {
+    fontSize: 12,
+    width: 16,
   },
   detailText: {
     ...Typography.caption,
     color: Colors.text.secondary,
+    flex: 1,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: Spacing.lg,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  disabledActionButton: {
+    opacity: 0.5,
+  },
+  actionButtonText: {
+    ...Typography.caption,
+    color: Colors.primary,
+    fontWeight: '500',
   },
   selectedSection: {
     marginBottom: Spacing.lg,
@@ -463,9 +763,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     gap: Spacing.md,
   },
-  detailRow: {
-    gap: Spacing.xs,
-  },
+
   detailLabel: {
     ...Typography.caption,
     color: Colors.text.secondary,
@@ -501,16 +799,19 @@ const styles = StyleSheet.create({
   partyOptionTextSelected: {
     color: Colors.text.white,
   },
-  actionButtons: {
+  selectedActionButtons: {
     flexDirection: 'row',
     gap: Spacing.sm,
     flexWrap: 'wrap',
   },
-  actionButton: {
+  selectedActionButton: {
     flex: 1,
     minWidth: 100,
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  selectedDetailRow: {
+    gap: Spacing.xs,
   },
 });
