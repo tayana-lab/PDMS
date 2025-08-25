@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { Phone, Lock, MessageSquare } from "lucide-react-native";
 import { Colors, Spacing } from "@/constants/theme";
 import { leaders } from "@/constants/leaders";
 import { useAuth } from "@/hooks/useAuth";
@@ -129,17 +130,20 @@ export default function LoginScreen() {
                         label="Phone"
                         value={phone}
                         onChangeText={setPhone}
-                        placeholder="Phone number"
+                        placeholder="Enter phone number"
                         keyboardType="phone-pad"
                         maxLength={10}
+                        leftIcon={<Phone size={20} color={Colors.text.secondary} />}
                       />
                       <Input
                         label="PIN"
                         value={pin}
                         onChangeText={setPin}
-                        placeholder="4-digit PIN"
+                        placeholder="Enter 4-digit PIN"
                         secureTextEntry
+                        keyboardType="numeric"
                         maxLength={4}
+                        leftIcon={<Lock size={20} color={Colors.text.secondary} />}
                       />
                     </>
                   )}
@@ -148,9 +152,10 @@ export default function LoginScreen() {
                       label="Phone"
                       value={phone}
                       onChangeText={setPhone}
-                      placeholder="Phone number"
+                      placeholder="Enter phone number"
                       keyboardType="phone-pad"
                       maxLength={10}
+                      leftIcon={<Phone size={20} color={Colors.text.secondary} />}
                     />
                   )}
                   {step === "otp" && (
@@ -158,9 +163,10 @@ export default function LoginScreen() {
                       label="OTP"
                       value={otp}
                       onChangeText={setOtp}
-                      placeholder="Enter OTP"
+                      placeholder="Enter 4-digit OTP"
                       keyboardType="numeric"
                       maxLength={4}
+                      leftIcon={<MessageSquare size={20} color={Colors.text.secondary} />}
                     />
                   )}
                 </View>

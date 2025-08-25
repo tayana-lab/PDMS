@@ -187,31 +187,29 @@ export default function NewUserScreen() {
             <View style={styles.formContainer}>
               {currentStep === 'mobile' && (
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Mobile Number</Text>
-                  <View style={styles.phoneInputContainer}>
-                    <Phone size={20} color={colors.text.secondary} style={styles.phoneIcon} />
-                    <Input
-                      value={mobile}
-                      onChangeText={setMobile}
-                      placeholder="Enter mobile number"
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                      style={styles.phoneInput}
-                    />
-                  </View>
+                  <Input
+                    label="Mobile Number"
+                    value={mobile}
+                    onChangeText={setMobile}
+                    placeholder="Enter mobile number"
+                    keyboardType="phone-pad"
+                    maxLength={10}
+                    leftIcon={<Phone size={20} color={colors.text.secondary} />}
+                  />
                 </View>
               )}
 
               {currentStep === 'otp' && (
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Verification Code</Text>
                   <Input
+                    label="Verification Code"
                     value={otp}
                     onChangeText={setOtp}
                     placeholder="Enter 4-digit OTP"
                     keyboardType="numeric"
                     maxLength={4}
                     textAlign="center"
+                    leftIcon={<MessageSquare size={20} color={colors.text.secondary} />}
                     style={styles.otpInput}
                   />
                   <Text style={[styles.helperText, { color: colors.text.secondary }]}>
@@ -222,8 +220,8 @@ export default function NewUserScreen() {
 
               {currentStep === 'pin' && (
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Create PIN</Text>
                   <Input
+                    label="Create PIN"
                     value={pin}
                     onChangeText={setPin}
                     placeholder="Enter 4-digit PIN"
@@ -231,10 +229,11 @@ export default function NewUserScreen() {
                     maxLength={4}
                     secureTextEntry
                     textAlign="center"
+                    leftIcon={<Lock size={20} color={colors.text.secondary} />}
                     style={styles.pinInput}
                   />
-                  <Text style={[styles.inputLabel, { color: colors.text.primary, marginTop: Spacing.md }]}>Confirm PIN</Text>
                   <Input
+                    label="Confirm PIN"
                     value={confirmPin}
                     onChangeText={setConfirmPin}
                     placeholder="Re-enter PIN"
@@ -242,7 +241,9 @@ export default function NewUserScreen() {
                     maxLength={4}
                     secureTextEntry
                     textAlign="center"
+                    leftIcon={<Lock size={20} color={colors.text.secondary} />}
                     style={styles.pinInput}
+                    containerStyle={{ marginTop: Spacing.md }}
                   />
                 </View>
               )}
@@ -355,24 +356,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: Spacing.lg,
   },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: Spacing.sm,
-  },
-  phoneInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  phoneIcon: {
-    position: 'absolute',
-    left: Spacing.md,
-    zIndex: 1,
-  },
-  phoneInput: {
-    paddingLeft: 48,
-  },
+
   otpInput: {
     fontSize: 24,
     fontWeight: '600',

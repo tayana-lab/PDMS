@@ -6,14 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  TextInput,
   Image
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Save, MapPin, User, Phone, Home } from 'lucide-react-native';
+import { ArrowLeft, Save, MapPin, Phone, Home } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import Input from '@/components/ui/Input';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { mockVoters } from '@/constants/mockData';
 
@@ -240,57 +240,46 @@ export default function EditVoterScreen() {
             
             {/* Mobile Number */}
             <View style={styles.editFieldContainer}>
-              <View style={styles.fieldHeader}>
-                <Phone size={16} color={Colors.primary} />
-                <Text style={styles.fieldLabel}>Mobile Number</Text>
-              </View>
-              <TextInput
+              <Input
+                label="Mobile Number"
                 value={editData.mobileNumber || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, mobileNumber: text }))}
                 placeholder="Enter mobile number"
-                style={styles.editInput}
                 keyboardType="phone-pad"
                 maxLength={10}
+                leftIcon={<Phone size={20} color={Colors.text.secondary} />}
               />
             </View>
             
             {/* House Name */}
             <View style={styles.editFieldContainer}>
-              <View style={styles.fieldHeader}>
-                <Home size={16} color={Colors.primary} />
-                <Text style={styles.fieldLabel}>House Name</Text>
-              </View>
-              <TextInput
+              <Input
+                label="House Name"
                 value={editData.houseName || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, houseName: text }))}
                 placeholder="Enter house name"
-                style={styles.editInput}
+                leftIcon={<Home size={20} color={Colors.text.secondary} />}
               />
             </View>
             
             {/* Address */}
             <View style={styles.editFieldContainer}>
-              <View style={styles.fieldHeader}>
-                <MapPin size={16} color={Colors.primary} />
-                <Text style={styles.fieldLabel}>Address</Text>
-              </View>
-              <TextInput
+              <Input
+                label="Address"
                 value={editData.address || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, address: text }))}
                 placeholder="Enter complete address"
-                style={[styles.editInput, styles.multilineInput]}
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
+                leftIcon={<MapPin size={20} color={Colors.text.secondary} />}
+                style={styles.multilineInput}
               />
             </View>
             
             {/* Party Inclination */}
             <View style={styles.editFieldContainer}>
-              <View style={styles.fieldHeader}>
-                <User size={16} color={Colors.primary} />
-                <Text style={styles.fieldLabel}>Party Inclination</Text>
-              </View>
+              <Text style={styles.partyInclinationLabel}>Party Inclination</Text>
               <View style={styles.partyInclinationOptions}>
                 {['BJP', 'Inclined', 'Neutral', 'Anti'].map((option) => {
                   const isSelected = editData.partyInclination === option;
@@ -503,31 +492,15 @@ const styles = StyleSheet.create({
   editFieldContainer: {
     marginBottom: Spacing.lg,
   },
-  fieldHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-    gap: Spacing.xs,
-  },
-  fieldLabel: {
-    ...Typography.body,
-    color: Colors.text.primary,
-    fontWeight: '600',
-  },
-  editInput: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    fontSize: 16,
-    color: Colors.text.primary,
-    minHeight: 48,
-  },
+
   multilineInput: {
     minHeight: 80,
-    paddingTop: Spacing.sm,
+  },
+  partyInclinationLabel: {
+    ...Typography.caption,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+    color: Colors.text.primary
   },
   partyInclinationOptions: {
     flexDirection: 'row',

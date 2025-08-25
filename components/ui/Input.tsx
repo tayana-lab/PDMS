@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, StyleSheet, TextInputProps, TouchableOpacity } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -9,9 +9,10 @@ interface InputProps extends TextInputProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   containerStyle?: any;
+  inputContainerStyle?: any;
 }
 
-export default function Input({ label, error, leftIcon, rightIcon, containerStyle, style, secureTextEntry, ...props }: InputProps) {
+export default function Input({ label, error, leftIcon, rightIcon, containerStyle, inputContainerStyle, style, secureTextEntry, ...props }: InputProps) {
   const [isSecure, setIsSecure] = useState(secureTextEntry);
   const [showPassword, setShowPassword] = useState(false);
   
@@ -25,7 +26,7 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, inputContainerStyle]}>
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
         <TextInput
           style={[
@@ -68,19 +69,22 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.small,
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     fontSize: 16,
     color: Colors.text.primary,
-    backgroundColor: Colors.background,
-    minHeight: 44
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    minHeight: 48
   },
   inputWithLeftIcon: {
     paddingLeft: 40
