@@ -10,12 +10,13 @@ import {
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Filter, FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
+import { ArrowLeft, FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
-import { mockHelpDeskApplications, mockGovernmentSchemes } from '@/constants/mockData';
+import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import applicationData from './ApplicationDetails.json';
+import schemeData from './SchemeDetails.json';
 
 interface HelpDeskApplication {
   id: string;
@@ -45,7 +46,7 @@ export default function HelpDeskScreen() {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredSchemes = useMemo(() => {
-    let schemes = mockGovernmentSchemes.items;
+    let schemes = schemeData.items;
     
     if (filterCategory !== 'ALL') {
       schemes = schemes.filter(scheme => scheme.category === filterCategory);
@@ -207,11 +208,11 @@ export default function HelpDeskScreen() {
         {selectedTab === 'applications' && (
           <View style={styles.tabContent}>
             <Text style={styles.sectionTitle}>
-              Recent Help Desk Applications ({mockHelpDeskApplications.total_count})
+              Recent Help Desk Applications ({applicationData.total_count})
             </Text>
             
             <FlatList
-              data={mockHelpDeskApplications.applications}
+              data={applicationData.applications}
               renderItem={renderApplicationItem}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}

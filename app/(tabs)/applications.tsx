@@ -1,64 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+  Alert
+} from 'react-native';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import schemeData from '../SchemeDetails.json';
+import applicationData from '../ApplicationDetails.json';
 
-interface Application {
+interface GovernmentScheme {
   id: string;
-  applicantName: string;
-  type: string;
-  status: 'pending' | 'approved' | 'rejected';
-  submittedDate: string;
+  name: string;
+  category: string;
   description: string;
+  beneficiaries: string;
+  budget: number;
+  status: string;
+  min_age: number;
+  max_age: number;
+  gender: string;
 }
 
-const mockApplications: Application[] = [
-  {
-    id: '1',
-    applicantName: 'Rajesh Kumar',
-    type: 'Ration Card',
-    status: 'pending',
-    submittedDate: '2024-01-15',
-    description: 'New ration card application for family of 4'
-  },
-  {
-    id: '2',
-    applicantName: 'Priya Sharma',
-    type: 'Voter ID',
-    status: 'approved',
-    submittedDate: '2024-01-10',
-    description: 'First time voter registration'
-  },
-  {
-    id: '3',
-    applicantName: 'Amit Singh',
-    type: 'Birth Certificate',
-    status: 'rejected',
-    submittedDate: '2024-01-12',
-    description: 'Birth certificate for newborn child'
-  },
-  {
-    id: '4',
-    applicantName: 'Sunita Devi',
-    type: 'Pension',
-    status: 'pending',
-    submittedDate: '2024-01-18',
-    description: 'Senior citizen pension application'
-  }
-];
+interface MyApplication {
+  id: string;
+  name: string;
+  voter_id: string;
+  mobile_number: string;
+  status: string;
+  application_id: string;
+  created_at: string;
+  scheme_id: string;
+  required_help: string;
+}
 
 export default function ApplicationsScreen() {
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('schemes');
+  const [filterCategory, setFilterCategory] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [voterIdInput, setVoterIdInput] = useState<string>('');
+  const [showVoterIdModal, setShowVoterIdModal] = useState<boolean>(false);
+  const [selectedScheme, setSelectedScheme] = useState<GovernmentScheme | null>(null);
+
+  const filteredSchemes = useMemo(() => {
+    let schemes = schemeData.items;
+    
+    if (filterCategory !== 'ALL') {
+      schemes = schemes.filter(scheme => scheme.category === filterCategory);
+    }
+    
+    if (searchQuery.trim()) {
+      schemes = schemes.filter(scheme => 
+        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        scheme.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return schemes;
+  }, [filterCategory, searchQuery]);
+
+  const categories = ['ALL', 'EMPLOYMENT', 'AGRICULTURE', 'HEALTH', 'EDUCATION', 'SOCIAL_WELFARE'];
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
+    switch (status.toUpperCase()) {
+      case 'PENDING':
         return <Clock size={16} color={Colors.warning} />;
-      case 'approved':
+      case 'APPROVED':
         return <CheckCircle size={16} color={Colors.success} />;
-      case 'rejected':
+      case 'REJECTED':
         return <XCircle size={16} color={Colors.error} />;
       default:
         return <FileText size={16} color={Colors.text.secondary} />;
@@ -66,64 +83,108 @@ export default function ApplicationsScreen() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
+    switch (status.toUpperCase()) {
+      case 'PENDING':
         return Colors.warning;
-      case 'approved':
+      case 'APPROVED':
         return Colors.success;
-      case 'rejected':
+      case 'REJECTED':
         return Colors.error;
       default:
         return Colors.text.secondary;
     }
   };
 
-  const filteredApplications = selectedFilter === 'all' 
-    ? mockApplications 
-    : mockApplications.filter(app => app.status === selectedFilter);
+  const handleApplyScheme = (scheme: GovernmentScheme) => {
+    setSelectedScheme(scheme);
+    setShowVoterIdModal(true);
+  };
 
-  const pendingCount = mockApplications.filter(app => app.status === 'pending').length;
+  const handleVoterIdSubmit = () => {
+    if (!voterIdInput.trim()) {
+      Alert.alert('Error', 'Please enter a valid Voter ID');
+      return;
+    }
+    
+    console.log('Applying for scheme:', selectedScheme?.name);
+    console.log('Voter ID:', voterIdInput);
+    
+    Alert.alert(
+      'Application Submitted',
+      `Your application for ${selectedScheme?.name} has been submitted successfully.\n\nApplication will be processed with voter details for ID: ${voterIdInput}`,
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            setShowVoterIdModal(false);
+            setVoterIdInput('');
+            setSelectedScheme(null);
+          }
+        }
+      ]
+    );
+  };
 
-  const renderApplication = ({ item }: { item: Application }) => (
-    <TouchableOpacity activeOpacity={0.8}>
-      <Card style={styles.applicationCard}>
-        <View style={styles.applicationHeader}>
-          <View style={styles.applicationInfo}>
-            <Text style={styles.applicantName}>{item.applicantName}</Text>
-            <Text style={styles.applicationType}>{item.type}</Text>
+  const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => {
+    const cleanDescription = item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...';
+    
+    return (
+      <Card style={styles.schemeCard}>
+        <View style={styles.schemeHeader}>
+          <View style={styles.schemeInfo}>
+            <Text style={styles.schemeName}>{item.name}</Text>
+            <Text style={styles.schemeCategory}>{item.category}</Text>
           </View>
-          <View style={styles.statusContainer}>
-            {getStatusIcon(item.status)}
-            <Text style={[styles.status, { color: getStatusColor(item.status) }]}>
-              {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-            </Text>
-          </View>
+          <Text style={styles.schemeBudget}>₹{item.budget.toLocaleString()}</Text>
         </View>
         
-        <Text style={styles.description}>{item.description}</Text>
-        <Text style={styles.date}>Submitted: {item.submittedDate}</Text>
+        <Text style={styles.schemeDescription} numberOfLines={3}>
+          {cleanDescription}
+        </Text>
+        
+        <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
+          <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
+          {item.beneficiaries}
+        </Text>
+        
+        <Button
+          title="Apply"
+          onPress={() => handleApplyScheme(item)}
+          variant="primary"
+          size="small"
+          style={styles.applyButton}
+        />
       </Card>
-    </TouchableOpacity>
-  );
+    );
+  };
 
-  const FilterButton = ({ filter, label, count }: { filter: typeof selectedFilter, label: string, count?: number }) => (
-    <TouchableOpacity
-      style={[
-        styles.filterButton,
-        selectedFilter === filter && styles.activeFilterButton
-      ]}
-      onPress={() => setSelectedFilter(filter)}
-    >
-      <Text style={[
-        styles.filterText,
-        selectedFilter === filter && styles.activeFilterText
-      ]}>
-        {label}
-      </Text>
-      {count !== undefined && count > 0 && (
-        <Badge count={count} size={16} />
-      )}
-    </TouchableOpacity>
+  const renderMyApplicationItem = ({ item }: { item: MyApplication }) => (
+    <Card style={styles.applicationCard}>
+      <View style={styles.applicationHeader}>
+        <View style={styles.applicationInfo}>
+          <Text style={styles.applicantName}>{item.name}</Text>
+          <Text style={styles.applicationId}>ID: {item.application_id}</Text>
+        </View>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+          {getStatusIcon(item.status)}
+          <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+            {item.status}
+          </Text>
+        </View>
+      </View>
+      
+      <View style={styles.applicationDetails}>
+        <Text style={styles.detailText}>Mobile: {item.mobile_number}</Text>
+        <Text style={styles.detailText}>Help Required: {item.required_help}</Text>
+        <Text style={styles.detailText}>
+          Submitted: {new Date(item.created_at).toLocaleDateString()}
+        </Text>
+      </View>
+      
+      <TouchableOpacity style={styles.viewDetailsButton}>
+        <Text style={styles.viewDetailsText}>View Details</Text>
+      </TouchableOpacity>
+    </Card>
   );
 
   return (
@@ -132,26 +193,156 @@ export default function ApplicationsScreen() {
         <Text style={styles.title}>Applications</Text>
       </View>
 
-      <View style={styles.filterContainer}>
-        <FilterButton filter="all" label="All" />
-        <FilterButton filter="pending" label="Pending" count={pendingCount} />
-        <FilterButton filter="approved" label="Approved" />
-        <FilterButton filter="rejected" label="Rejected" />
+      {/* Tab Navigation */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[
+            styles.tab,
+            selectedTab === 'schemes' && styles.activeTab
+          ]}
+          onPress={() => setSelectedTab('schemes')}
+        >
+          <Text style={[
+            styles.tabText,
+            selectedTab === 'schemes' && styles.activeTabText
+          ]}>
+            Schemes
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[
+            styles.tab,
+            selectedTab === 'myApplications' && styles.activeTab
+          ]}
+          onPress={() => setSelectedTab('myApplications')}
+        >
+          <Text style={[
+            styles.tabText,
+            selectedTab === 'myApplications' && styles.activeTabText
+          ]}>
+            My Applications
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filteredApplications}
-        renderItem={renderApplication}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <FileText size={48} color={Colors.text.light} />
-            <Text style={styles.emptyText}>No applications found</Text>
+      {/* Schemes Tab */}
+      {selectedTab === 'schemes' && (
+        <View style={styles.tabContent}>
+          {/* Search and Filter */}
+          <View style={styles.searchFilterContainer}>
+            <Input
+              placeholder="Search schemes..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={styles.searchInput}
+            />
+            
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              style={styles.filterContainer}
+            >
+              {categories.map((category) => (
+                <TouchableOpacity
+                  key={category}
+                  style={[
+                    styles.filterChip,
+                    filterCategory === category && styles.activeFilterChip
+                  ]}
+                  onPress={() => setFilterCategory(category)}
+                >
+                  <Text style={[
+                    styles.filterChipText,
+                    filterCategory === category && styles.activeFilterChipText
+                  ]}>
+                    {category.replace('_', ' ')}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
-        }
-      />
+          
+          <Text style={styles.sectionTitle}>
+            Available Schemes ({filteredSchemes.length})
+          </Text>
+          
+          <FlatList
+            data={filteredSchemes}
+            renderItem={renderSchemeItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <FileText size={48} color={Colors.text.light} />
+                <Text style={styles.emptyText}>No schemes found</Text>
+              </View>
+            }
+          />
+        </View>
+      )}
+
+      {/* My Applications Tab */}
+      {selectedTab === 'myApplications' && (
+        <View style={styles.tabContent}>
+          <Text style={styles.sectionTitle}>
+            My Applications ({applicationData.total_count})
+          </Text>
+          
+          <FlatList
+            data={applicationData.applications}
+            renderItem={renderMyApplicationItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <FileText size={48} color={Colors.text.light} />
+                <Text style={styles.emptyText}>No applications found</Text>
+              </View>
+            }
+          />
+        </View>
+      )}
+
+      {/* Voter ID Input Modal */}
+      {showVoterIdModal && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Enter Voter ID</Text>
+            <Text style={styles.modalSubtitle}>
+              Applying for: {selectedScheme?.name}
+            </Text>
+            
+            <Input
+              placeholder="Enter your Voter ID"
+              value={voterIdInput}
+              onChangeText={setVoterIdInput}
+              style={styles.voterIdInput}
+              autoCapitalize="characters"
+            />
+            
+            <View style={styles.modalButtons}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setShowVoterIdModal(false);
+                  setVoterIdInput('');
+                  setSelectedScheme(null);
+                }}
+                variant="outline"
+                style={styles.modalButton}
+              />
+              <Button
+                title="Submit"
+                onPress={handleVoterIdSubmit}
+                style={styles.modalButton}
+              />
+            </View>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -159,7 +350,7 @@ export default function ApplicationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface
+    backgroundColor: Colors.background,
   },
   header: {
     padding: Spacing.lg,
@@ -170,78 +361,168 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.title
   },
-  filterContainer: {
+  tabContainer: {
     flexDirection: 'row',
-    padding: Spacing.lg,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border
+    backgroundColor: Colors.surface,
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.md,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.xs,
   },
-  filterButton: {
-    flexDirection: 'row',
+  tab: {
+    flex: 1,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
     alignItems: 'center',
+    borderRadius: BorderRadius.sm,
+  },
+  activeTab: {
+    backgroundColor: Colors.primary,
+  },
+  tabText: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    fontWeight: '600',
+  },
+  activeTabText: {
+    color: Colors.text.white,
+  },
+  tabContent: {
+    flex: 1,
+    padding: Spacing.md,
+  },
+  searchFilterContainer: {
+    marginBottom: Spacing.lg,
+  },
+  searchInput: {
+    marginBottom: Spacing.md,
+  },
+  filterContainer: {
+    marginBottom: Spacing.sm,
+  },
+  filterChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: 20,
     marginRight: Spacing.sm,
     backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.round,
     borderWidth: 1,
-    borderColor: Colors.border
+    borderColor: Colors.border,
   },
-  activeFilterButton: {
+  activeFilterChip: {
     backgroundColor: Colors.primary,
-    borderColor: Colors.primary
+    borderColor: Colors.primary,
   },
-  filterText: {
+  filterChipText: {
     ...Typography.caption,
+    color: Colors.text.secondary,
     fontWeight: '600',
-    color: Colors.text.secondary
   },
-  activeFilterText: {
-    color: Colors.text.white
+  activeFilterChipText: {
+    color: Colors.text.white,
+  },
+  sectionTitle: {
+    ...Typography.subtitle,
+    marginBottom: Spacing.md,
   },
   listContainer: {
-    padding: Spacing.lg,
-    flexGrow: 1
+    paddingBottom: Spacing.xl,
+  },
+  schemeCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+  },
+  schemeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.sm,
+  },
+  schemeInfo: {
+    flex: 1,
+  },
+  schemeName: {
+    ...Typography.subtitle,
+    marginBottom: Spacing.xs,
+  },
+  schemeCategory: {
+    ...Typography.caption,
+    color: Colors.primary,
+    fontWeight: '600',
+  },
+  schemeBudget: {
+    ...Typography.body,
+    color: Colors.secondary,
+    fontWeight: '700',
+  },
+  schemeDescription: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
+    lineHeight: 20,
+  },
+  schemeBeneficiaries: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.md,
+    lineHeight: 18,
+  },
+  beneficiariesLabel: {
+    fontWeight: '600',
+    color: Colors.text.primary,
+  },
+  applyButton: {
+    alignSelf: 'flex-start',
   },
   applicationCard: {
-    marginBottom: Spacing.md
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
   },
   applicationHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.sm
+    marginBottom: Spacing.sm,
   },
   applicationInfo: {
-    flex: 1
+    flex: 1,
   },
   applicantName: {
     ...Typography.subtitle,
-    marginBottom: Spacing.xs
+    marginBottom: Spacing.xs,
   },
-  applicationType: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.primary
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  status: {
-    ...Typography.caption,
-    fontWeight: '600',
-    marginLeft: Spacing.xs
-  },
-  description: {
+  applicationId: {
     ...Typography.caption,
     color: Colors.text.secondary,
-    marginBottom: Spacing.sm
   },
-  date: {
-    ...Typography.small,
-    color: Colors.text.light
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    gap: Spacing.xs,
+  },
+  statusText: {
+    ...Typography.caption,
+    fontWeight: '600',
+  },
+  applicationDetails: {
+    gap: Spacing.xs,
+    marginBottom: Spacing.md,
+  },
+  detailText: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+  },
+  viewDetailsButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: Spacing.sm,
+  },
+  viewDetailsText: {
+    ...Typography.caption,
+    color: Colors.primary,
+    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,
@@ -254,5 +535,45 @@ const styles = StyleSheet.create({
     color: Colors.text.light,
     textAlign: 'center',
     marginTop: Spacing.md
-  }
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl,
+    marginHorizontal: Spacing.lg,
+    width: '90%',
+    ...Shadows.large,
+  },
+  modalTitle: {
+    ...Typography.title,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  modalSubtitle: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+  },
+  voterIdInput: {
+    marginBottom: Spacing.lg,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  modalButton: {
+    flex: 1,
+  },
 });
