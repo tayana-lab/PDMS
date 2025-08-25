@@ -157,11 +157,10 @@ export default function SearchVoterScreen() {
     const partyStatus = getPartyStatus(voter.partyInclination);
     
     return (
-      <TouchableOpacity 
+      <View 
         key={voter.id} 
         style={styles.voterCard} 
         testID={`voter-card-${voter.id}`}
-        onPress={() => handleVoterSelect(voter)}
       >
         <View style={styles.voterCardHeader}>
           <View style={styles.voterMainInfo}>
@@ -173,26 +172,35 @@ export default function SearchVoterScreen() {
               <Text style={styles.voterSubtitle}>
                 {voter.guardianName} • {voter.age}Y • {voter.gender}
               </Text>
-              <Text style={styles.voterIdText}>ID: {voter.voterId}</Text>
             </View>
           </View>
-          {renderPartyInclinationIcon(voter.partyInclination)}
+          <View style={styles.partyStatusContainer}>
+            <Text style={[styles.partyStatusText, { color: partyStatus.color }]}>
+              {partyStatus.label}
+            </Text>
+            {renderPartyInclinationIcon(voter.partyInclination)}
+          </View>
         </View>
         
         <View style={styles.voterDetails}>
           <View style={styles.detailRow}>
-            <Text style={styles.detailIcon}>📱</Text>
+            <Grid3X3 size={14} color={Colors.text.secondary} />
+            <Text style={styles.detailText}>{voter.voterId}</Text>
+          </View>
+          
+          <View style={styles.detailRow}>
+            <Phone size={14} color={Colors.text.secondary} />
             <Text style={styles.detailText}>{voter.mobileNumber || 'Not available'}</Text>
           </View>
           
           <View style={styles.detailRow}>
             <Text style={styles.detailIcon}>🏠</Text>
-            <Text style={styles.detailText}>{voter.houseName}</Text>
+            <Text style={styles.detailText}>{voter.houseName}, {voter.ward}</Text>
           </View>
           
           <View style={styles.detailRow}>
             <Text style={styles.detailIcon}>📍</Text>
-            <Text style={styles.detailText}>{voter.ward}, {voter.assemblyConstituency}</Text>
+            <Text style={styles.detailText}>{voter.address}, {voter.assemblyConstituency}</Text>
           </View>
           
           <View style={styles.detailRow}>
@@ -202,15 +210,14 @@ export default function SearchVoterScreen() {
           
           <View style={styles.detailRow}>
             <Text style={styles.detailIcon}>📅</Text>
-            <Text style={styles.detailText}>Last: {voter.lastInteractionDate}</Text>
+            <Text style={styles.detailText}>Last: {voter.lastInteractionDate} by {voter.karyakartaName}</Text>
           </View>
         </View>
         
         <View style={styles.actionButtons}>
           <TouchableOpacity 
             style={styles.actionButton}
-            onPress={(e) => {
-              e.stopPropagation();
+            onPress={() => {
               handleVoterSelect(voter);
               handleEdit();
             }}
@@ -224,10 +231,7 @@ export default function SearchVoterScreen() {
               styles.actionButton,
               !voter.mobileNumber && styles.disabledActionButton
             ]}
-            onPress={(e) => {
-              e.stopPropagation();
-              handleCall(voter.mobileNumber);
-            }}
+            onPress={() => handleCall(voter.mobileNumber)}
             disabled={!voter.mobileNumber}
           >
             <Phone size={16} color={voter.mobileNumber ? Colors.secondary : Colors.text.light} />
@@ -239,17 +243,16 @@ export default function SearchVoterScreen() {
           
           <TouchableOpacity 
             style={styles.actionButton}
-            onPress={(e) => {
-              e.stopPropagation();
+            onPress={() => {
               handleVoterSelect(voter);
               handleHelpDesk();
             }}
           >
             <HelpCircle size={16} color={Colors.accent} />
-            <Text style={[styles.actionButtonText, { color: Colors.accent }]}>HelpDesk</Text>
+            <Text style={[styles.actionButtonText, { color: Colors.accent }]}>Apps</Text>
           </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
@@ -633,15 +636,17 @@ const styles = StyleSheet.create({
   voterCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.md,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     ...Shadows.small,
-    marginBottom: Spacing.md
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   voterCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.md
+    marginBottom: Spacing.lg
   },
   voterMainInfo: {
     flexDirection: 'row',
@@ -649,8 +654,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md
   },
   profileImage: {
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     borderRadius: BorderRadius.round,
     backgroundColor: Colors.primary + '20',
     justifyContent: 'center',
@@ -667,36 +672,41 @@ const styles = StyleSheet.create({
   voterName: {
     ...Typography.subtitle,
     fontWeight: '600',
-    marginBottom: 2
+    marginBottom: 4,
+    color: Colors.text.primary
   },
   voterSubtitle: {
     ...Typography.caption,
     color: Colors.text.secondary,
     marginBottom: 2
   },
-  voterIdText: {
+  partyStatusContainer: {
+    alignItems: 'flex-end',
+    gap: 4
+  },
+  partyStatusText: {
     ...Typography.caption,
-    color: Colors.primary,
-    fontWeight: '500'
+    fontWeight: '600',
+    fontSize: 11
   },
   partyIcon: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: BorderRadius.round,
     justifyContent: 'center',
     alignItems: 'center',
   },
   partyIconText: {
-    fontSize: 16,
+    fontSize: 14,
   },
   voterDetails: {
-    gap: 6,
-    marginBottom: Spacing.md,
+    gap: 8,
+    marginBottom: Spacing.lg,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: 8,
   },
   detailIcon: {
     fontSize: 12,
@@ -706,6 +716,7 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.text.secondary,
     flex: 1,
+    fontSize: 13
   },
   actionButtons: {
     flexDirection: 'row',
@@ -715,13 +726,14 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
   },
   actionButton: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     gap: 4,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background
+    backgroundColor: 'transparent',
+    minWidth: 60
   },
   disabledActionButton: {
     opacity: 0.5,
@@ -730,6 +742,7 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.primary,
     fontWeight: '500',
+    fontSize: 11
   },
   selectedSection: {
     marginBottom: Spacing.lg,
