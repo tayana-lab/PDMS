@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   center: { 
     flex: 1, 
     justifyContent: "center", 
-    paddingHorizontal: 20 
+    //paddingHorizontal: 20 
   },
   loginCard: {
     backgroundColor: "rgba(255,255,255,0.9)",
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 2,
   },
   title: { 
     fontSize: 22, 
