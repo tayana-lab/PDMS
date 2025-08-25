@@ -428,6 +428,7 @@ export default function SearchVoterScreen() {
           ),
           headerStyle: {
             backgroundColor: Colors.background,
+             height: 56,
           },
           headerTitleStyle: {
             fontSize: 18,
