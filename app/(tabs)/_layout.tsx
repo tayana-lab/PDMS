@@ -15,12 +15,12 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors.text.light,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: Colors.background,
+          backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom + 4 : 8,
           paddingTop: 8,
-          height: Platform.OS === 'ios' ? 80 + insets.bottom : 60,
+          height: Platform.OS === 'ios' ? 84 + insets.bottom : 64,
           elevation: 8,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
@@ -28,12 +28,12 @@ export default function TabLayout() {
           shadowRadius: 4
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '600',
-          marginBottom: Platform.OS === 'android' ? 4 : 0
+          marginBottom: Platform.OS === 'android' ? 2 : 0
         },
         tabBarIconStyle: {
-          marginTop: Platform.OS === 'android' ? 4 : 0
+          marginTop: Platform.OS === 'android' ? 2 : 0
         }
       }}
     >

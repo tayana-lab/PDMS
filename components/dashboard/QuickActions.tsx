@@ -19,12 +19,8 @@ export default function QuickActions() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
-      <ScrollView 
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {quickActions.map((action) => (
+      <View style={styles.actionsGrid}>
+        {quickActions.slice(0, 6).map((action) => (
           <TouchableOpacity
             key={action.id}
             style={styles.actionCard}
@@ -38,7 +34,31 @@ export default function QuickActions() {
             <Text style={styles.actionLabel}>{action.title}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
+      
+      {quickActions.length > 6 && (
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          style={styles.additionalActions}
+        >
+          {quickActions.slice(6).map((action) => (
+            <TouchableOpacity
+              key={action.id}
+              style={styles.actionCard}
+              onPress={() => handleActionPress(action.route)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.iconContainer}>
+                <Image source={{ uri: action.icon }} style={styles.actionIcon} />
+                {action.badge > 0 && <Badge count={action.badge} />}
+              </View>
+              <Text style={styles.actionLabel}>{action.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -52,19 +72,29 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingHorizontal: Spacing.lg
   },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.lg,
+    justifyContent: 'space-between'
+  },
+  additionalActions: {
+    marginTop: Spacing.md
+  },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
     gap: Spacing.md
   },
   actionCard: {
-    width: 120,
-    backgroundColor: Colors.background,
+    width: '31%',
+    backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
     ...Shadows.small,
     borderWidth: 1,
-    borderColor: Colors.border
+    borderColor: Colors.border,
+    marginBottom: Spacing.md
   },
   iconContainer: {
     position: 'relative',

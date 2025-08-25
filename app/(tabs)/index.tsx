@@ -7,6 +7,7 @@ import { Colors, Spacing, Typography, BorderRadius, Shadows } from '@/constants/
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/layout/Header';
 import MarketingCarousel from '@/components/dashboard/MarketingCarousel';
+import ProgressDashboard from '@/components/dashboard/ProgressDashboard';
 import QuickActions from '@/components/dashboard/QuickActions';
 
 export default function HomeScreen() {
@@ -51,7 +52,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar 
         backgroundColor={Colors.primary} 
-        barStyle={Platform.OS === 'ios' ? 'light-content' : 'light-content'} 
+        barStyle="light-content" 
       />
       
       <View style={[styles.safeContainer, { paddingTop: insets.top }]}>
@@ -61,8 +62,13 @@ export default function HomeScreen() {
           notificationCount={5}
         />
         
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <MarketingCarousel />
+          <ProgressDashboard />
           <QuickActions />
         </ScrollView>
       </View>
@@ -78,7 +84,7 @@ export default function HomeScreen() {
           activeOpacity={1}
           onPress={() => setShowProfileMenu(false)}
         >
-          <View style={[styles.profileMenu, { marginTop: insets.top + 60 }]}>
+          <View style={[styles.profileMenu, { marginTop: insets.top + 80 }]}>
             <View style={styles.menuHeader}>
               <Menu size={24} color={Colors.primary} />
               <Text style={styles.menuTitle}>Menu</Text>
@@ -121,11 +127,14 @@ const styles = StyleSheet.create({
   },
   safeContainer: {
     flex: 1,
-    backgroundColor: Colors.surface
+    backgroundColor: Colors.background
   },
   content: {
-    flex: 1,
-    paddingTop: Spacing.md
+    flex: 1
+  },
+  scrollContent: {
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl
   },
   modalOverlay: {
     flex: 1,
@@ -134,13 +143,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start'
   },
   profileMenu: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
     marginLeft: Spacing.lg,
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.md,
     minWidth: 220,
     maxWidth: 280,
-    ...Shadows.large
+    ...Shadows.large,
+    borderWidth: 1,
+    borderColor: Colors.border
   },
   menuHeader: {
     flexDirection: 'row',

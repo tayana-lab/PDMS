@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 import { router } from 'expo-router';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Colors, Typography, Spacing } from '@/constants/theme';
 import { leaders } from '@/constants/leaders';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
@@ -22,12 +22,14 @@ import Card from '@/components/ui/Card';
 
 const { width } = Dimensions.get('window');
 
+type LoginStep = 'login' | 'mobile' | 'otp';
+
 export default function LoginScreen() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
   const [otp, setOtp] = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
+  const [step, setStep] = useState<LoginStep>('login');
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   
@@ -54,33 +56,19 @@ export default function LoginScreen() {
       return;
     }
 
-    if (!isNewUser && !pin.trim()) {
+    if (!pin.trim()) {
       Alert.alert('Error', 'Please enter your PIN');
-      return;
-    }
-
-    if (isNewUser && !otp.trim()) {
-      Alert.alert('Error', 'Please enter the OTP');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      if (isNewUser) {
-        const result = await verifyOTP(phone, otp);
-        if (result.success) {
-          router.replace('/(tabs)');
-        } else {
-          Alert.alert('Error', result.error || 'OTP verification failed');
-        }
+      const result = await login(phone, pin);
+      if (result.success) {
+        router.replace('/(tabs)');
       } else {
-        const result = await login(phone, pin);
-        if (result.success) {
-          router.replace('/(tabs)');
-        } else {
-          Alert.alert('Error', result.error || 'Login failed');
-        }
+        Alert.alert('Error', result.error || 'Login failed');
       }
     } catch (error) {
       Alert.alert('Error', 'Something went wrong. Please try again.');
@@ -89,7 +77,14 @@ export default function LoginScreen() {
     }
   };
 
-  const handleSendOTP = async () => {
+  const handleNewUser = () => {
+    setStep('mobile');
+    setPhone('');
+    setPin('');
+    setOtp('');
+  };
+
+  const handleMobileSubmit = async () => {
     if (!phone.trim()) {
       Alert.alert('Error', 'Please enter your phone number');
       return;
@@ -100,12 +95,43 @@ export default function LoginScreen() {
     setIsLoading(false);
 
     if (result.success) {
-      setIsNewUser(true);
+      setStep('otp');
       Alert.alert('Success', `OTP sent to ${phone}. Use 1234 for demo.`);
     } else {
       Alert.alert('Error', result.error || 'Failed to send OTP');
     }
   };
+
+  const handleOTPVerify = async () => {
+    if (!otp.trim()) {
+      Alert.alert('Error', 'Please enter the OTP');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await verifyOTP(phone, otp);
+      if (result.success) {
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert('Error', result.error || 'OTP verification failed');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBackToLogin = () => {
+    setStep('login');
+    setPhone('');
+    setPin('');
+    setOtp('');
+  };
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -155,68 +181,107 @@ export default function LoginScreen() {
               <Text style={styles.appSubtitle}>Digital Platform</Text>
             </View>
 
-            <Input
-              label="Phone Number"
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Enter your phone number"
-              keyboardType="phone-pad"
-              maxLength={10}
-              returnKeyType="done"
-            />
+            {step === 'login' && (
+              <>
+                <Input
+                  label="Phone Number"
+                  value={phone}
+                  onChangeText={setPhone}
+                  placeholder="Enter your phone number"
+                  keyboardType="phone-pad"
+                  maxLength={10}
+                  returnKeyType="next"
+                />
 
-            {!isNewUser ? (
-              <Input
-                label="PIN"
-                value={pin}
-                onChangeText={setPin}
-                placeholder="Enter your PIN"
-                secureTextEntry
-                keyboardType="numeric"
-                maxLength={4}
-                returnKeyType="done"
-                textContentType="password"
-              />
-            ) : (
-              <Input
-                label="OTP"
-                value={otp}
-                onChangeText={setOtp}
-                placeholder="Enter OTP"
-                keyboardType="numeric"
-                maxLength={4}
-                returnKeyType="done"
-                textContentType="oneTimeCode"
-              />
+                <Input
+                  label="PIN"
+                  value={pin}
+                  onChangeText={setPin}
+                  placeholder="Enter your PIN"
+                  secureTextEntry
+                  keyboardType="numeric"
+                  maxLength={4}
+                  returnKeyType="done"
+                  textContentType="password"
+                />
+
+                <Button
+                  title="Login"
+                  onPress={handleLogin}
+                  loading={isLoading}
+                  style={styles.loginButton}
+                />
+
+                <Button
+                  title="New User"
+                  onPress={handleNewUser}
+                  variant="outline"
+                  disabled={isLoading}
+                  style={styles.otpButton}
+                />
+              </>
             )}
 
-            <Button
-              title={isNewUser ? "Verify OTP" : "Login"}
-              onPress={handleLogin}
-              loading={isLoading}
-              style={styles.loginButton}
-            />
+            {step === 'mobile' && (
+              <>
+                <Text style={styles.stepTitle}>Enter Mobile Number</Text>
+                <Input
+                  label="Phone Number"
+                  value={phone}
+                  onChangeText={setPhone}
+                  placeholder="Enter your phone number"
+                  keyboardType="phone-pad"
+                  maxLength={10}
+                  returnKeyType="done"
+                  autoFocus
+                />
 
-            {!isNewUser && (
-              <Button
-                title="New User"
-                onPress={handleSendOTP}
-                variant="outline"
-                disabled={isLoading}
-                style={styles.otpButton}
-              />
+                <Button
+                  title="Send OTP"
+                  onPress={handleMobileSubmit}
+                  loading={isLoading}
+                  style={styles.loginButton}
+                />
+
+                <Button
+                  title="Back to Login"
+                  onPress={handleBackToLogin}
+                  variant="ghost"
+                  style={styles.backButton}
+                />
+              </>
             )}
 
-            {isNewUser && (
-              <Button
-                title="Back to Login"
-                onPress={() => {
-                  setIsNewUser(false);
-                  setOtp('');
-                }}
-                variant="ghost"
-                style={styles.backButton}
-              />
+            {step === 'otp' && (
+              <>
+                <Text style={styles.stepTitle}>Enter OTP</Text>
+                <Text style={styles.stepSubtitle}>OTP sent to {phone}</Text>
+                <Input
+                  label="OTP"
+                  value={otp}
+                  onChangeText={setOtp}
+                  placeholder="Enter OTP"
+                  keyboardType="numeric"
+                  maxLength={4}
+                  returnKeyType="done"
+                  textContentType="oneTimeCode"
+                  autoFocus
+                />
+
+                <Button
+                  title="Verify OTP"
+                  onPress={handleOTPVerify}
+                  loading={isLoading}
+                  style={styles.loginButton}
+                />
+
+                <Button
+                  title="Back"
+                  onPress={() => setStep('mobile')}
+                  variant="ghost"
+                  style={styles.backButton}
+                />
+              </>
             )}
           </Card>
         </View>
@@ -234,7 +299,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   imageContainer: {
-    height: 220,
+    height: 180,
     position: 'relative'
   },
   imageSlide: {
@@ -305,5 +370,18 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginTop: Spacing.sm
+  },
+  stepTitle: {
+    ...Typography.subtitle,
+    color: Colors.text.primary,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+    fontWeight: '600'
+  },
+  stepSubtitle: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg
   }
 });
