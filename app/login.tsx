@@ -12,13 +12,13 @@ import {
   Platform,
   KeyboardAvoidingView
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { leaders } from '@/constants/leaders';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
 
 const { width } = Dimensions.get('window');
 
@@ -136,264 +136,399 @@ export default function LoginScreen() {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar 
-        backgroundColor={Colors.primary} 
-        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'} 
+        backgroundColor="transparent" 
+        barStyle="light-content"
+        translucent
       />
       
-      <KeyboardAvoidingView 
-        style={styles.keyboardContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <LinearGradient
+        colors={['#FF6B35', '#FF8A65', '#FFAB91']}
+        style={styles.gradientBackground}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        <View style={styles.imageContainer}>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
+        <SafeAreaView style={styles.safeArea}>
+          <KeyboardAvoidingView 
+            style={styles.keyboardContainer}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            {leaders.map((leader) => (
-              <View key={leader.id} style={styles.imageSlide}>
-                <Image source={{ uri: leader.image }} style={styles.leaderImage} />
-                <Text style={styles.leaderName}>{leader.name}</Text>
-                <Text style={styles.leaderPosition}>{leader.position}</Text>
+            <View style={styles.headerContainer}>
+              <View style={styles.brandContainer}>
+                <View style={styles.logoCircle}>
+                  <Text style={styles.logoText}>BJP</Text>
+                </View>
+                <Text style={styles.brandTitle}>BJP Karyakarta</Text>
+                <Text style={styles.brandSubtitle}>Digital Platform</Text>
               </View>
-            ))}
-          </ScrollView>
-          
-          <View style={styles.indicators}>
-            {leaders.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.indicator,
-                  index === currentImageIndex && styles.activeIndicator
-                ]}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.formContainer}>
-          <Card style={styles.loginCard}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.appTitle}>BJP Karyakarta</Text>
-              <Text style={styles.appSubtitle}>Digital Platform</Text>
             </View>
 
-            {step === 'login' && (
-              <>
-                <Input
-                  label="Phone Number"
-                  value={phone}
-                  onChangeText={setPhone}
-                  placeholder="Enter your phone number"
-                  keyboardType="phone-pad"
-                  maxLength={10}
-                  returnKeyType="next"
-                />
+            <View style={styles.imageContainer}>
+              <ScrollView
+                ref={scrollViewRef}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                scrollEnabled={false}
+                style={styles.carousel}
+              >
+                {leaders.map((leader) => (
+                  <View key={leader.id} style={styles.imageSlide}>
+                    <View style={styles.leaderImageContainer}>
+                      <Image source={{ uri: leader.image }} style={styles.leaderImage} />
+                      <View style={styles.imageOverlay} />
+                    </View>
+                    <View style={styles.leaderInfo}>
+                      <Text style={styles.leaderName}>{leader.name}</Text>
+                      <Text style={styles.leaderPosition}>{leader.position}</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+              
+              <View style={styles.indicators}>
+                {leaders.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.indicator,
+                      index === currentImageIndex && styles.activeIndicator
+                    ]}
+                  />
+                ))}
+              </View>
+            </View>
 
-                <Input
-                  label="PIN"
-                  value={pin}
-                  onChangeText={setPin}
-                  placeholder="Enter your PIN"
-                  secureTextEntry
-                  keyboardType="numeric"
-                  maxLength={4}
-                  returnKeyType="done"
-                  textContentType="password"
-                />
+            <View style={styles.formContainer}>
+              <View style={styles.loginCard}>
+                {step === 'login' && (
+                  <>
+                    <View style={styles.welcomeContainer}>
+                      <Text style={styles.welcomeTitle}>Welcome Back</Text>
+                      <Text style={styles.welcomeSubtitle}>Sign in to continue</Text>
+                    </View>
 
-                <Button
-                  title="Login"
-                  onPress={handleLogin}
-                  loading={isLoading}
-                  style={styles.loginButton}
-                />
+                    <View style={styles.inputContainer}>
+                      <Input
+                        label="Phone Number"
+                        value={phone}
+                        onChangeText={setPhone}
+                        placeholder="Enter your phone number"
+                        keyboardType="phone-pad"
+                        maxLength={10}
+                        returnKeyType="next"
+                      />
 
-                <Button
-                  title="New User"
-                  onPress={handleNewUser}
-                  variant="outline"
-                  disabled={isLoading}
-                  style={styles.otpButton}
-                />
-              </>
-            )}
+                      <Input
+                        label="PIN"
+                        value={pin}
+                        onChangeText={setPin}
+                        placeholder="Enter your PIN"
+                        secureTextEntry
+                        keyboardType="numeric"
+                        maxLength={4}
+                        returnKeyType="done"
+                        textContentType="password"
+                      />
+                    </View>
 
-            {step === 'mobile' && (
-              <>
-                <Text style={styles.stepTitle}>Enter Mobile Number</Text>
-                <Input
-                  label="Phone Number"
-                  value={phone}
-                  onChangeText={setPhone}
-                  placeholder="Enter your phone number"
-                  keyboardType="phone-pad"
-                  maxLength={10}
-                  returnKeyType="done"
-                  autoFocus
-                />
+                    <View style={styles.buttonContainer}>
+                      <Button
+                        title="Sign In"
+                        onPress={handleLogin}
+                        loading={isLoading}
+                        style={styles.primaryButton}
+                      />
 
-                <Button
-                  title="Send OTP"
-                  onPress={handleMobileSubmit}
-                  loading={isLoading}
-                  style={styles.loginButton}
-                />
+                      <View style={styles.dividerContainer}>
+                        <View style={styles.divider} />
+                        <Text style={styles.dividerText}>or</Text>
+                        <View style={styles.divider} />
+                      </View>
 
-                <Button
-                  title="Back to Login"
-                  onPress={handleBackToLogin}
-                  variant="ghost"
-                  style={styles.backButton}
-                />
-              </>
-            )}
+                      <Button
+                        title="New User Registration"
+                        onPress={handleNewUser}
+                        variant="outline"
+                        disabled={isLoading}
+                        style={styles.secondaryButton}
+                      />
+                    </View>
+                  </>
+                )}
 
-            {step === 'otp' && (
-              <>
-                <Text style={styles.stepTitle}>Enter OTP</Text>
-                <Text style={styles.stepSubtitle}>OTP sent to {phone}</Text>
-                <Input
-                  label="OTP"
-                  value={otp}
-                  onChangeText={setOtp}
-                  placeholder="Enter OTP"
-                  keyboardType="numeric"
-                  maxLength={4}
-                  returnKeyType="done"
-                  textContentType="oneTimeCode"
-                  autoFocus
-                />
+                {step === 'mobile' && (
+                  <>
+                    <View style={styles.welcomeContainer}>
+                      <Text style={styles.welcomeTitle}>New Registration</Text>
+                      <Text style={styles.welcomeSubtitle}>Enter your mobile number to get started</Text>
+                    </View>
 
-                <Button
-                  title="Verify OTP"
-                  onPress={handleOTPVerify}
-                  loading={isLoading}
-                  style={styles.loginButton}
-                />
+                    <View style={styles.inputContainer}>
+                      <Input
+                        label="Phone Number"
+                        value={phone}
+                        onChangeText={setPhone}
+                        placeholder="Enter your phone number"
+                        keyboardType="phone-pad"
+                        maxLength={10}
+                        returnKeyType="done"
+                        autoFocus
+                      />
+                    </View>
 
-                <Button
-                  title="Back"
-                  onPress={() => setStep('mobile')}
-                  variant="ghost"
-                  style={styles.backButton}
-                />
-              </>
-            )}
-          </Card>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+                    <View style={styles.buttonContainer}>
+                      <Button
+                        title="Send OTP"
+                        onPress={handleMobileSubmit}
+                        loading={isLoading}
+                        style={styles.primaryButton}
+                      />
+
+                      <Button
+                        title="Back to Login"
+                        onPress={handleBackToLogin}
+                        variant="ghost"
+                        style={styles.backButton}
+                      />
+                    </View>
+                  </>
+                )}
+
+                {step === 'otp' && (
+                  <>
+                    <View style={styles.welcomeContainer}>
+                      <Text style={styles.welcomeTitle}>Verify OTP</Text>
+                      <Text style={styles.welcomeSubtitle}>Enter the OTP sent to {phone}</Text>
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <Input
+                        label="OTP"
+                        value={otp}
+                        onChangeText={setOtp}
+                        placeholder="Enter 4-digit OTP"
+                        keyboardType="numeric"
+                        maxLength={4}
+                        returnKeyType="done"
+                        textContentType="oneTimeCode"
+                        autoFocus
+                      />
+                    </View>
+
+                    <View style={styles.buttonContainer}>
+                      <Button
+                        title="Verify & Continue"
+                        onPress={handleOTPVerify}
+                        loading={isLoading}
+                        style={styles.primaryButton}
+                      />
+
+                      <Button
+                        title="Back"
+                        onPress={() => setStep('mobile')}
+                        variant="ghost"
+                        style={styles.backButton}
+                      />
+                    </View>
+                  </>
+                )}
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1
+  },
+  gradientBackground: {
+    flex: 1
+  },
+  safeArea: {
     flex: 1,
-    backgroundColor: Colors.background
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   keyboardContainer: {
     flex: 1
   },
+  headerContainer: {
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.lg,
+    alignItems: 'center'
+  },
+  brandContainer: {
+    alignItems: 'center'
+  },
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: Colors.text.white,
+    letterSpacing: 1
+  },
+  brandTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.text.white,
+    textAlign: 'center',
+    marginBottom: Spacing.xs
+  },
+  brandSubtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center'
+  },
   imageContainer: {
-    height: 240,
+    height: 180,
     position: 'relative',
-    backgroundColor: Colors.background
+    marginBottom: Spacing.lg
+  },
+  carousel: {
+    flex: 1
   },
   imageSlide: {
     width,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Spacing.lg,
-    paddingHorizontal: Spacing.md,
-    paddingBottom: 40
+    paddingHorizontal: Spacing.lg
+  },
+  leaderImageContainer: {
+    position: 'relative',
+    marginBottom: Spacing.md
   },
   leaderImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: Spacing.sm,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     borderWidth: 3,
-    borderColor: Colors.primary,
-    backgroundColor: Colors.surface
+    borderColor: 'rgba(255, 255, 255, 0.8)'
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 45,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+  },
+  leaderInfo: {
+    alignItems: 'center'
   },
   leaderName: {
-    ...Typography.subtitle,
-    color: Colors.text.primary,
-    textAlign: 'center',
+    fontSize: 18,
     fontWeight: '600',
+    color: Colors.text.white,
+    textAlign: 'center',
     marginBottom: 2
   },
   leaderPosition: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    textAlign: 'center',
-    fontSize: 12
+    fontSize: 14,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center'
   },
   indicators: {
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 8,
-    width: '100%',
-    zIndex: 10
+    bottom: 0,
+    width: '100%'
   },
   indicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.text.light,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     marginHorizontal: 4
   },
   activeIndicator: {
-    backgroundColor: Colors.primary
+    backgroundColor: Colors.text.white
   },
   formContainer: {
     flex: 1,
-    padding: Spacing.lg
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.lg
   },
   loginCard: {
-    padding: Spacing.xl
+    backgroundColor: Colors.text.white,
+    borderRadius: 24,
+    padding: Spacing.xl,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8
   },
-  logoContainer: {
+  welcomeContainer: {
     alignItems: 'center',
     marginBottom: Spacing.xl
   },
-  appTitle: {
-    ...Typography.title,
-    color: Colors.primary,
-    fontWeight: '700'
+  welcomeTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.text.primary,
+    textAlign: 'center',
+    marginBottom: Spacing.xs
   },
-  appSubtitle: {
-    ...Typography.caption,
-    color: Colors.secondary,
-    marginTop: Spacing.xs
+  welcomeSubtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: Colors.text.secondary,
+    textAlign: 'center'
   },
-  loginButton: {
-    marginTop: Spacing.md
+  inputContainer: {
+    marginBottom: Spacing.lg
   },
-  otpButton: {
-    marginTop: Spacing.md
+  buttonContainer: {
+    gap: Spacing.md
+  },
+  primaryButton: {
+    borderRadius: 12,
+    paddingVertical: Spacing.md
+  },
+  secondaryButton: {
+    borderRadius: 12,
+    paddingVertical: Spacing.md,
+    borderWidth: 2
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.sm
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.border
+  },
+  dividerText: {
+    marginHorizontal: Spacing.md,
+    fontSize: 14,
+    color: Colors.text.secondary,
+    fontWeight: '500'
   },
   backButton: {
     marginTop: Spacing.sm
-  },
-  stepTitle: {
-    ...Typography.subtitle,
-    color: Colors.text.primary,
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
-    fontWeight: '600'
-  },
-  stepSubtitle: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: Spacing.lg
   }
 });
