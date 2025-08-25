@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Home, Users, FileText, BarChart3, User } from 'lucide-react-native';
 import React from 'react';
+import { Platform } from 'react-native';
 import { Colors } from '@/constants/theme';
 
 export default function TabLayout() {
@@ -13,9 +14,9 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.background,
           borderTopColor: Colors.border,
-          paddingBottom: 8,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
           paddingTop: 8,
-          height: 60
+          height: Platform.OS === 'ios' ? 80 : 60
         },
         tabBarLabelStyle: {
           fontSize: 12,

@@ -27,20 +27,6 @@ function ProgressBar({ achieved, total, label }: ProgressBarProps) {
   );
 }
 
-interface StatCardProps {
-  count: number;
-  label: string;
-}
-
-function StatCard({ count, label }: StatCardProps) {
-  return (
-    <Card style={styles.statCard}>
-      <Text style={styles.statNumber}>{count}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </Card>
-  );
-}
-
 export default function ProgressDashboard() {
   return (
     <View style={styles.container}>
@@ -59,17 +45,6 @@ export default function ProgressDashboard() {
           label={progressData.overallTarget.label}
         />
       </Card>
-
-      <View style={styles.statsRow}>
-        <StatCard
-          count={progressData.votersReached.count}
-          label={progressData.votersReached.label}
-        />
-        <StatCard
-          count={progressData.applicationsProcessed.count}
-          label={progressData.applicationsProcessed.label}
-        />
-      </View>
     </View>
   );
 }
@@ -84,10 +59,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md
   },
   progressCard: {
-    marginBottom: Spacing.md
+    marginBottom: Spacing.lg
   },
   progressContainer: {
-    marginBottom: Spacing.lg
+    marginBottom: Spacing.md
   },
   progressHeader: {
     flexDirection: 'row',
@@ -120,25 +95,5 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '600',
     textAlign: 'right'
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: Spacing.md
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    padding: Spacing.md
-  },
-  statNumber: {
-    ...Typography.title,
-    color: Colors.primary,
-    fontWeight: '700'
-  },
-  statLabel: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    textAlign: 'center',
-    marginTop: Spacing.xs
   }
 });

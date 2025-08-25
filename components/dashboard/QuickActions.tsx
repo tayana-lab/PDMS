@@ -8,46 +8,36 @@ import Badge from '@/components/ui/Badge';
 export default function QuickActions() {
   const handleActionPress = (route: string) => {
     console.log('Navigating to:', route);
-    // router.push(route);
-  };
-
-  const renderActionGrid = () => {
-    const rows = [];
-    for (let i = 0; i < quickActions.length; i += 3) {
-      const rowItems = quickActions.slice(i, i + 3);
-      rows.push(
-        <View key={i} style={styles.row}>
-          {rowItems.map((action) => (
-            <TouchableOpacity
-              key={action.id}
-              style={styles.actionCard}
-              onPress={() => handleActionPress(action.route)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.iconContainer}>
-                <Image source={{ uri: action.icon }} style={styles.actionIcon} />
-                {action.badge > 0 && <Badge count={action.badge} />}
-              </View>
-              <Text style={styles.actionLabel}>{action.title}</Text>
-            </TouchableOpacity>
-          ))}
-          {/* Fill empty slots in the last row */}
-          {rowItems.length < 3 && (
-            Array.from({ length: 3 - rowItems.length }).map((_, index) => (
-              <View key={`empty-${index}`} style={styles.emptySlot} />
-            ))
-          )}
-        </View>
-      );
+    if (route === '/search-voter') {
+      router.push('/search-voter');
+    } else if (route === '/help-desk') {
+      router.push('/help-desk');
     }
-    return rows;
+    // router.push(route);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {renderActionGrid()}
+      <ScrollView 
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {quickActions.map((action) => (
+          <TouchableOpacity
+            key={action.id}
+            style={styles.actionCard}
+            onPress={() => handleActionPress(action.route)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.iconContainer}>
+              <Image source={{ uri: action.icon }} style={styles.actionIcon} />
+              {action.badge > 0 && <Badge count={action.badge} />}
+            </View>
+            <Text style={styles.actionLabel}>{action.title}</Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </View>
   );
@@ -55,25 +45,23 @@ export default function QuickActions() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.lg
   },
   title: {
     ...Typography.subtitle,
-    marginBottom: Spacing.md
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.lg
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.md
+  scrollContent: {
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md
   },
   actionCard: {
-    flex: 1,
+    width: 120,
     backgroundColor: Colors.background,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
-    marginHorizontal: Spacing.xs,
     ...Shadows.small,
     borderWidth: 1,
     borderColor: Colors.border
@@ -91,9 +79,5 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     textAlign: 'center',
     fontWeight: '600'
-  },
-  emptySlot: {
-    flex: 1,
-    marginHorizontal: Spacing.xs
   }
 });

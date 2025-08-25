@@ -161,6 +161,7 @@ export default function LoginScreen() {
               secureTextEntry
               keyboardType="numeric"
               maxLength={4}
+              returnKeyType="done"
             />
           ) : (
             <Input
@@ -170,6 +171,7 @@ export default function LoginScreen() {
               placeholder="Enter OTP"
               keyboardType="numeric"
               maxLength={4}
+              returnKeyType="done"
             />
           )}
 
@@ -185,7 +187,7 @@ export default function LoginScreen() {
               title="New User? Get OTP"
               onPress={handleSendOTP}
               variant="outline"
-              loading={isLoading}
+              disabled={isLoading}
               style={styles.otpButton}
             />
           )}
