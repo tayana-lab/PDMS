@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { User, Phone, MapPin, Settings, LogOut, Edit, Shield, Bell } from 'lucide-react-native';
+import { User, Phone, MapPin, Settings, LogOut, Edit, Shield, Bell, Palette, Globe } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Typography, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import ThemeSelector from '@/components/ui/ThemeSelector';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -15,19 +18,24 @@ interface MenuItemProps {
 }
 
 function MenuItem({ icon, title, onPress, showArrow = true }: MenuItemProps) {
+  const { colors } = useAppSettings();
+  
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.menuItemLeft}>
         {icon}
-        <Text style={styles.menuItemText}>{title}</Text>
+        <Text style={[styles.menuItemText, { color: colors.text.primary }]}>{title}</Text>
       </View>
-      {showArrow && <Text style={styles.arrow}>›</Text>}
+      {showArrow && <Text style={[styles.arrow, { color: colors.text.light }]}>›</Text>}
     </TouchableOpacity>
   );
 }
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const { colors, t, currentLanguage } = useAppSettings();
+  const [showThemeSelector, setShowThemeSelector] = useState<boolean>(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState<boolean>(false);
 
   const handleEditProfile = () => {
     console.log('Edit profile');
@@ -45,6 +53,14 @@ export default function ProfileScreen() {
     console.log('Security');
   };
 
+  const handleTheme = () => {
+    setShowThemeSelector(true);
+  };
+
+  const handleLanguage = () => {
+    setShowLanguageSelector(true);
+  };
+
   const handleLogout = async () => {
     await logout();
     router.replace('/login');
@@ -55,13 +71,13 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.surface }]}>
+      <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>{t('profile')}</Text>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Card style={styles.profileCard}>
+        <Card style={[styles.profileCard, { backgroundColor: colors.background }]}>
           <View style={styles.profileHeader}>
             <Image
               source={{
@@ -70,67 +86,84 @@ export default function ProfileScreen() {
               style={styles.profileImage}
             />
             <View style={styles.profileInfo}>
-              <Text style={styles.userName}>{user.name}</Text>
-              <Text style={styles.userRole}>{user.role}</Text>
+              <Text style={[styles.userName, { color: colors.text.primary }]}>{user.name}</Text>
+              <Text style={[styles.userRole, { color: colors.primary }]}>{user.role}</Text>
             </View>
             <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-              <Edit size={20} color={Colors.primary} />
+              <Edit size={20} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.profileDetails}>
             <View style={styles.detailRow}>
-              <Phone size={16} color={Colors.text.secondary} />
-              <Text style={styles.detailText}>{user.phone}</Text>
+              <Phone size={16} color={colors.text.secondary} />
+              <Text style={[styles.detailText, { color: colors.text.secondary }]}>{user.phone}</Text>
             </View>
             <View style={styles.detailRow}>
-              <MapPin size={16} color={Colors.text.secondary} />
-              <Text style={styles.detailText}>{user.address}</Text>
+              <MapPin size={16} color={colors.text.secondary} />
+              <Text style={[styles.detailText, { color: colors.text.secondary }]}>{user.address}</Text>
             </View>
           </View>
         </Card>
 
-        <Card style={styles.menuCard}>
+        <Card style={[styles.menuCard, { backgroundColor: colors.background }]}>
           <MenuItem
-            icon={<Settings size={20} color={Colors.text.primary} />}
-            title="Settings"
+            icon={<Palette size={20} color={colors.text.primary} />}
+            title={t('theme')}
+            onPress={handleTheme}
+          />
+          <MenuItem
+            icon={<Globe size={20} color={colors.text.primary} />}
+            title={t('language')}
+            onPress={handleLanguage}
+          />
+          <MenuItem
+            icon={<Settings size={20} color={colors.text.primary} />}
+            title={t('settings')}
             onPress={handleSettings}
           />
           <MenuItem
-            icon={<Bell size={20} color={Colors.text.primary} />}
-            title="Notifications"
+            icon={<Bell size={20} color={colors.text.primary} />}
+            title={t('notifications')}
             onPress={handleNotifications}
           />
           <MenuItem
-            icon={<Shield size={20} color={Colors.text.primary} />}
-            title="Security"
+            icon={<Shield size={20} color={colors.text.primary} />}
+            title={t('security')}
             onPress={handleSecurity}
           />
         </Card>
 
         <View style={styles.logoutContainer}>
           <Button
-            title="Logout"
+            title={t('logout')}
             onPress={handleLogout}
             variant="outline"
-            style={styles.logoutButton}
+            style={[styles.logoutButton, { borderColor: colors.error }]}
           />
         </View>
       </ScrollView>
+
+      <ThemeSelector
+        visible={showThemeSelector}
+        onClose={() => setShowThemeSelector(false)}
+      />
+      
+      <LanguageSelector
+        visible={showLanguageSelector}
+        onClose={() => setShowLanguageSelector(false)}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.surface
+    flex: 1
   },
   header: {
     padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    backgroundColor: Colors.background
+    borderBottomWidth: 1
   },
   title: {
     ...Typography.title
@@ -162,7 +195,6 @@ const styles = StyleSheet.create({
   },
   userRole: {
     ...Typography.body,
-    color: Colors.primary,
     fontWeight: '600'
   },
   editButton: {
@@ -177,8 +209,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     ...Typography.body,
-    marginLeft: Spacing.md,
-    color: Colors.text.secondary
+    marginLeft: Spacing.md
   },
   menuCard: {
     marginBottom: Spacing.lg,
@@ -189,8 +220,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border
+    borderBottomWidth: 1
   },
   menuItemLeft: {
     flexDirection: 'row',
@@ -201,13 +231,12 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.md
   },
   arrow: {
-    ...Typography.title,
-    color: Colors.text.light
+    ...Typography.title
   },
   logoutContainer: {
     marginTop: Spacing.lg
   },
   logoutButton: {
-    borderColor: Colors.error
+    // Dynamic border color applied inline
   }
 });

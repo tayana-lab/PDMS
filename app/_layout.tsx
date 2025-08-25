@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/hooks/useAuth";
+import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
 import Loader from "@/components/ui/Loader";
 
 SplashScreen.preventAutoHideAsync();
@@ -12,7 +13,10 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+  const { isLoading: settingsLoading, colors, currentTheme } = useAppSettings();
+
+  const isLoading = authLoading || settingsLoading;
 
   useEffect(() => {
     if (!isLoading) {
@@ -28,9 +32,11 @@ function RootLayoutNav() {
     return <Loader text="Initializing..." />;
   }
 
+  const statusBarStyle = currentTheme === 'dark' ? 'light' : 'dark';
+
   return (
     <>
-      <StatusBar style="dark" backgroundColor="#FFFFFF" />
+      <StatusBar style={statusBarStyle} backgroundColor={colors.background} />
       <Stack screenOptions={{ headerBackTitle: "Back" }}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -49,9 +55,11 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <RootLayoutNav />
-      </GestureHandlerRootView>
+      <AppSettingsProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <RootLayoutNav />
+        </GestureHandlerRootView>
+      </AppSettingsProvider>
     </QueryClientProvider>
   );
 }
