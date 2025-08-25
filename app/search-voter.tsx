@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic } from 'lucide-react-native';
+import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3 } from 'lucide-react-native';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -121,7 +121,20 @@ export default function SearchVoterScreen() {
     }
   };
 
-
+  const getPartyStatus = (inclination: string) => {
+    switch (inclination) {
+      case 'BJP':
+        return { label: 'Party Voter', color: Colors.primary, bgColor: Colors.primary + '20' };
+      case 'Inclined':
+        return { label: 'Inclined to Party', color: '#FF9500', bgColor: '#FF950020' };
+      case 'Neutral':
+        return { label: 'Neutral', color: '#8E8E93', bgColor: '#8E8E9320' };
+      case 'Anti':
+        return { label: 'Anti Party', color: '#FF3B30', bgColor: '#FF3B3020' };
+      default:
+        return { label: 'Unknown', color: '#8E8E93', bgColor: '#8E8E9320' };
+    }
+  };
 
   const renderPartyInclinationIcon = (inclination: string) => {
     const isInclined = inclination === 'BJP';
@@ -141,6 +154,7 @@ export default function SearchVoterScreen() {
   };
 
   const renderVoterCard = (voter: Voter) => {
+    const partyStatus = getPartyStatus(voter.partyInclination);
     
     return (
       <TouchableOpacity 
@@ -517,11 +531,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: Spacing.md,
+    padding: Spacing.md,
   },
   searchSection: {
-    paddingTop: Spacing.md,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   searchContainer: {
     marginBottom: Spacing.md,
@@ -554,7 +567,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
   recentSearches: {
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
     ...Typography.caption,
@@ -579,7 +592,7 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
   },
   filterSection: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.md,
   },
   filtersContainer: {
     flexDirection: 'row',
@@ -615,20 +628,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   resultsSection: {
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   voterCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Shadows.small,
-    marginBottom: Spacing.sm
+    marginBottom: Spacing.md
   },
   voterCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.sm
+    marginBottom: Spacing.md
   },
   voterMainInfo: {
     flexDirection: 'row',
@@ -677,8 +690,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   voterDetails: {
-    gap: 4,
-    marginBottom: Spacing.sm,
+    gap: 6,
+    marginBottom: Spacing.md,
   },
   detailRow: {
     flexDirection: 'row',
@@ -719,7 +732,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   selectedSection: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   backToResults: {
     flexDirection: 'row',
@@ -752,8 +765,8 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
   },
   selectedVoterDetails: {
-    marginBottom: Spacing.md,
-    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    gap: Spacing.md,
   },
 
   detailLabel: {
