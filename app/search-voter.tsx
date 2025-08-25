@@ -44,16 +44,33 @@ export default function SearchVoterScreen() {
   const [editData, setEditData] = useState<Partial<Voter>>({});
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
-  const recentSearches = ['Priya Nair', 'TVM001234567', 'Arun Pillai'];
+  const recentSearches = ['Priya Nair', 'BJP001234', 'Rajesh Kumar', 'Kochi', '9876543210'];
   const filterOptions = ['All', 'Party Voter', 'Inclined', 'Neutral', 'Anti'];
 
   const filteredVoters = useMemo(() => {
     if (!searchQuery.trim()) return [];
     
-    let filtered = mockVoters.filter(voter => 
-      voter.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      voter.voterId.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const query = searchQuery.toLowerCase().trim();
+    
+    let filtered = mockVoters.filter(voter => {
+      // Search in multiple fields for better results
+      const searchFields = [
+        voter.name.toLowerCase(),
+        voter.voterId.toLowerCase(),
+        voter.mobileNumber.toLowerCase(),
+        voter.guardianName.toLowerCase(),
+        voter.houseName.toLowerCase(),
+        voter.address.toLowerCase(),
+        voter.ward.toLowerCase(),
+        voter.assemblyConstituency.toLowerCase(),
+        voter.karyakartaName.toLowerCase(),
+        voter.age.toString(),
+        voter.gender.toLowerCase()
+      ];
+      
+      // Check if query matches any field (partial match)
+      return searchFields.some(field => field.includes(query));
+    });
     
     // Apply filter
     if (selectedFilter !== 'All') {
@@ -73,7 +90,20 @@ export default function SearchVoterScreen() {
       });
     }
     
-    return filtered;
+    // Sort results by relevance (exact name matches first, then partial matches)
+    return filtered.sort((a, b) => {
+      const aNameMatch = a.name.toLowerCase().startsWith(query);
+      const bNameMatch = b.name.toLowerCase().startsWith(query);
+      const aVoterIdMatch = a.voterId.toLowerCase().startsWith(query);
+      const bVoterIdMatch = b.voterId.toLowerCase().startsWith(query);
+      
+      if (aNameMatch && !bNameMatch) return -1;
+      if (!aNameMatch && bNameMatch) return 1;
+      if (aVoterIdMatch && !bVoterIdMatch) return -1;
+      if (!aVoterIdMatch && bVoterIdMatch) return 1;
+      
+      return a.name.localeCompare(b.name);
+    });
   }, [searchQuery, selectedFilter]);
 
   const handleVoterSelect = (voter: Voter) => {
