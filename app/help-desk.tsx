@@ -184,7 +184,7 @@ export default function HelpDeskScreen() {
               styles.tabText,
               selectedTab === 'applications' && styles.activeTabText
             ]}>
-              Recent Applications
+              My Recent Requests
             </Text>
           </TouchableOpacity>
           
@@ -199,7 +199,7 @@ export default function HelpDeskScreen() {
               styles.tabText,
               selectedTab === 'schemes' && styles.activeTabText
             ]}>
-              Government Schemes
+              Available Schemes
             </Text>
           </TouchableOpacity>
         </View>
@@ -208,7 +208,7 @@ export default function HelpDeskScreen() {
         {selectedTab === 'applications' && (
           <View style={styles.tabContent}>
             <Text style={styles.sectionTitle}>
-              Recent Help Desk Applications ({applicationData.total_count})
+              My Recent Requests ({applicationData.total_count})
             </Text>
             
             <FlatList

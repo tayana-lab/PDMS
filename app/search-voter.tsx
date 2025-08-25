@@ -307,7 +307,7 @@ export default function SearchVoterScreen() {
               }}
             >
               <HelpCircle size={16} color={Colors.accent} />
-              <Text style={[styles.actionBtnText, { color: Colors.accent }]}>Apps</Text>
+              <Text style={[styles.actionBtnText, { color: Colors.accent }]}>HelpDesk</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -427,7 +427,7 @@ export default function SearchVoterScreen() {
             ]}
           />
           <Button
-            title="Help Desk"
+            title="HelpDesk"
             onPress={handleHelpDesk}
             variant="secondary"
             icon={<HelpCircle size={16} color={Colors.text.white} />}
