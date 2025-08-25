@@ -51,7 +51,7 @@ export default function ProgressDashboard() {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.lg,
+    //marginBottom: Spacing.lg,
     paddingHorizontal: Spacing.lg
   },
   title: {
