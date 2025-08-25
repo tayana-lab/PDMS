@@ -125,9 +125,7 @@ export default function HomeScreen() {
                     <Text style={styles.profileRole}>BJP Member</Text>
                   </View>
                 </View>
-                <TouchableOpacity onPress={closeSidebar} style={styles.closeButton}>
-                  <X size={24} color={Colors.text.primary} />
-                </TouchableOpacity>
+
               </View>
             </View>
             
@@ -191,6 +189,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   sidebar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
     width: SIDEBAR_WIDTH,
     backgroundColor: Colors.surface,
     height: '100%',
@@ -232,12 +233,7 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: 'rgba(255, 255, 255, 0.8)'
   },
-  closeButton: {
-    position: 'absolute',
-    top: Spacing.md,
-    right: Spacing.lg,
-    padding: Spacing.xs
-  },
+
   menuSection: {
     paddingTop: Spacing.lg
   },

@@ -19,8 +19,13 @@ export default function QuickActions() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
-      <View style={styles.actionsGrid}>
-        {quickActions.slice(0, 6).map((action) => (
+      <ScrollView 
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        style={styles.actionsScroll}
+      >
+        {quickActions.map((action) => (
           <TouchableOpacity
             key={action.id}
             style={styles.actionCard}
@@ -34,31 +39,7 @@ export default function QuickActions() {
             <Text style={styles.actionLabel}>{action.title}</Text>
           </TouchableOpacity>
         ))}
-      </View>
-      
-      {quickActions.length > 6 && (
-        <ScrollView 
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          style={styles.additionalActions}
-        >
-          {quickActions.slice(6).map((action) => (
-            <TouchableOpacity
-              key={action.id}
-              style={styles.actionCard}
-              onPress={() => handleActionPress(action.route)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.iconContainer}>
-                <Image source={{ uri: action.icon }} style={styles.actionIcon} />
-                {action.badge > 0 && <Badge count={action.badge} />}
-              </View>
-              <Text style={styles.actionLabel}>{action.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+      </ScrollView>
     </View>
   );
 }
@@ -72,21 +53,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingHorizontal: Spacing.lg
   },
-  actionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: Spacing.lg,
-    justifyContent: 'space-between'
-  },
-  additionalActions: {
-    marginTop: Spacing.md
+  actionsScroll: {
+    marginTop: Spacing.sm
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
     gap: Spacing.md
   },
   actionCard: {
-    width: '31%',
+    width: 100,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
@@ -94,7 +69,7 @@ const styles = StyleSheet.create({
     ...Shadows.small,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: Spacing.md
+    marginRight: Spacing.md
   },
   iconContainer: {
     position: 'relative',
