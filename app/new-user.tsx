@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -126,7 +125,7 @@ export default function NewUserScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView 
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -267,7 +266,7 @@ export default function NewUserScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -283,8 +282,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
-    marginTop: Spacing.lg,
+    paddingVertical: Spacing.md,
+    marginTop: Spacing.sm,
   },
   stepIndicator: {
     alignItems: 'center',
@@ -315,11 +314,12 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
-    justifyContent: 'center',
+    paddingTop: Spacing.md,
+    justifyContent: 'flex-start',
   },
   card: {
     borderRadius: BorderRadius.xl,
-    padding: Spacing.xl,
+    padding: Spacing.lg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   mainIconContainer: {
     width: 64,
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   formContainer: {
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   inputContainer: {
     marginBottom: Spacing.lg,
