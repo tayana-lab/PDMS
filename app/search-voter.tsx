@@ -292,56 +292,96 @@ export default function SearchVoterScreen() {
 
     return (
       <Card style={styles.selectedVoterCard}>
+        {/* Header with Photo and Basic Info */}
         <View style={styles.selectedVoterHeader}>
+          <View style={styles.selectedProfileImage}>
+            <Text style={styles.selectedProfileInitial}>{selectedVoter.name.charAt(0)}</Text>
+          </View>
           <View style={styles.selectedVoterInfo}>
             <Text style={styles.selectedVoterName}>{selectedVoter.name}</Text>
-            <Text style={styles.selectedVoterId}>ID: {selectedVoter.voterId}</Text>
+            <Text style={styles.selectedVoterId}>S/O: {selectedVoter.guardianName}</Text>
           </View>
           {renderPartyInclinationIcon(selectedVoter.partyInclination)}
         </View>
 
+        {/* Inline Row Format Details */}
         <View style={styles.selectedVoterDetails}>
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Guardian Name:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.guardianName}</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>VOTER ID</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.voterId}</Text>
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>House Name:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.houseName}</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>NAME</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.name}</Text>
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Mobile Number:</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>AGE / GENDER</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.age} / {selectedVoter.gender}</Text>
+          </View>
+          
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>CONSTITUENCY</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.assemblyConstituency}</Text>
+          </View>
+          
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>MOBILE</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
             {isEditing ? (
               <Input
                 value={editData.mobileNumber || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, mobileNumber: text }))}
                 placeholder="Enter mobile number"
-                style={styles.editInput}
+                style={styles.editInputInline}
               />
             ) : (
-              <Text style={styles.selectedDetailValue}>{selectedVoter.mobileNumber || 'Not available'}</Text>
+              <Text style={styles.inlineDetailValue}>{selectedVoter.mobileNumber || 'Not available'}</Text>
             )}
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Address:</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>GUARDIAN</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.guardianName}</Text>
+          </View>
+          
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>HOUSE NAME</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.houseName}</Text>
+          </View>
+          
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>ADDRESS</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
             {isEditing ? (
               <Input
                 value={editData.address || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, address: text }))}
                 placeholder="Enter address"
                 multiline
-                style={styles.editInput}
+                style={styles.editInputInline}
               />
             ) : (
-              <Text style={styles.selectedDetailValue}>{selectedVoter.address}</Text>
+              <Text style={styles.inlineDetailValue}>{selectedVoter.address}</Text>
             )}
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Party Inclination:</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>WARD</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.ward}</Text>
+          </View>
+          
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>PARTY STATUS</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
             {isEditing ? (
               <View style={styles.partyInclinationOptions}>
                 <TouchableOpacity
@@ -370,28 +410,20 @@ export default function SearchVoterScreen() {
                 </TouchableOpacity>
               </View>
             ) : (
-              <Text style={styles.selectedDetailValue}>{selectedVoter.partyInclination}</Text>
+              <Text style={styles.inlineDetailValue}>{selectedVoter.partyInclination}</Text>
             )}
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Last Interaction:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.lastInteractionDate}</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>KARYAKARTA</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.karyakartaName}</Text>
           </View>
           
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Karyakarta:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.karyakartaName}</Text>
-          </View>
-          
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Ward:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.ward}</Text>
-          </View>
-          
-          <View style={styles.selectedDetailRow}>
-            <Text style={styles.selectedDetailLabel}>Assembly:</Text>
-            <Text style={styles.selectedDetailValue}>{selectedVoter.assemblyConstituency}</Text>
+          <View style={styles.inlineDetailRow}>
+            <Text style={styles.inlineDetailLabel}>LAST CONTACT</Text>
+            <Text style={styles.inlineDetailSeparator}>:</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.lastInteractionDate}</Text>
           </View>
         </View>
 
@@ -894,6 +926,50 @@ const styles = StyleSheet.create({
   partyIconText: {
     fontSize: 14,
   },
+  selectedProfileImage: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.round,
+    backgroundColor: Colors.primary + '15',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  selectedProfileInitial: {
+    ...Typography.title,
+    color: Colors.primary,
+    fontWeight: '700',
+    fontSize: 28,
+  },
+  inlineDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.sm,
+    minHeight: 24,
+  },
+  inlineDetailLabel: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    fontWeight: '700',
+    fontSize: 12,
+    textTransform: 'uppercase',
+    width: 120,
+    letterSpacing: 0.5,
+  },
+  inlineDetailSeparator: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    fontWeight: '600',
+    marginHorizontal: Spacing.sm,
+    width: 8,
+  },
+  inlineDetailValue: {
+    ...Typography.body,
+    color: Colors.text.primary,
+    fontWeight: '500',
+    flex: 1,
+    fontSize: 15,
+  },
   selectedDetailRow: {
     gap: Spacing.xs,
     marginBottom: Spacing.sm,
@@ -909,6 +985,12 @@ const styles = StyleSheet.create({
   },
   editInput: {
     marginTop: Spacing.xs,
+  },
+  editInputInline: {
+    flex: 1,
+    marginLeft: 0,
+    paddingVertical: Spacing.xs,
+    fontSize: 15,
   },
   partyInclinationOptions: {
     flexDirection: 'row',
