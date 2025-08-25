@@ -421,7 +421,6 @@ export default function SearchVoterScreen() {
         options={{
           title: 'Search Voter',
           headerShown: true,
-            headerLargeTitle: false, 
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color={Colors.text.primary} />
@@ -429,7 +428,7 @@ export default function SearchVoterScreen() {
           ),
           headerStyle: {
             backgroundColor: Colors.background,
-             height: 56,
+             
           },
           headerTitleStyle: {
             fontSize: 18,
