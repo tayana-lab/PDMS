@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Alert
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
@@ -14,7 +13,7 @@ import { ArrowLeft, FileText, Clock, CheckCircle, XCircle } from 'lucide-react-n
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import applicationData from './ApplicationDetails.json';
 import schemeData from './SchemeDetails.json';
 
@@ -41,7 +40,7 @@ interface GovernmentScheme {
 
 export default function HelpDeskScreen() {
   const { voterId } = useLocalSearchParams();
-  const [selectedTab, setSelectedTab] = useState<'applications' | 'schemes'>('applications');
+
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -65,7 +64,7 @@ export default function HelpDeskScreen() {
   const categories = ['ALL', 'EMPLOYMENT', 'AGRICULTURE', 'HEALTH', 'EDUCATION', 'SOCIAL_WELFARE'];
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
         return Colors.warning;
       case 'APPROVED':
@@ -78,7 +77,7 @@ export default function HelpDeskScreen() {
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
         return <Clock size={16} color={Colors.warning} />;
       case 'APPROVED':
@@ -93,8 +92,6 @@ export default function HelpDeskScreen() {
   const handleApplyScheme = (scheme: GovernmentScheme) => {
     console.log('Applying for scheme:', scheme.name);
     console.log('Voter ID:', voterId);
-    // Here you would navigate to application form with pre-filled data
-    // For now, we'll show an alert since the application form doesn't exist yet
     Alert.alert(
       'Apply for Scheme',
       `You are applying for: ${scheme.name}\n\nThis would normally open an application form with pre-filled voter data.`,
@@ -103,11 +100,11 @@ export default function HelpDeskScreen() {
   };
 
   const renderApplicationItem = ({ item }: { item: HelpDeskApplication }) => (
-    <Card style={styles.applicationCard}>
-      <View style={styles.applicationHeader}>
-        <View style={styles.applicationInfo}>
-          <Text style={styles.applicationName}>{item.name}</Text>
-          <Text style={styles.applicationId}>ID: {item.application_id}</Text>
+    <Card style={styles.requestCard}>
+      <View style={styles.requestHeader}>
+        <View style={styles.requestInfo}>
+          <Text style={styles.requestTitle}>{item.name}</Text>
+          <Text style={styles.requestId}>Request ID: {item.application_id}</Text>
         </View>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
           {getStatusIcon(item.status)}
@@ -117,161 +114,154 @@ export default function HelpDeskScreen() {
         </View>
       </View>
       
-      <View style={styles.applicationDetails}>
-        <Text style={styles.detailText}>Mobile: {item.mobile_number}</Text>
-        <Text style={styles.detailText}>Help Required: {item.required_help}</Text>
-        <Text style={styles.detailText}>
-          Applied: {new Date(item.created_at).toLocaleDateString()}
+      <View style={styles.requestDetails}>
+        <Text style={styles.requestDetailText}>Mobile: {item.mobile_number}</Text>
+        <Text style={styles.requestDetailText}>Help Required: {item.required_help}</Text>
+        <Text style={styles.requestDetailText}>
+          Submitted: {new Date(item.created_at).toLocaleDateString()}
         </Text>
       </View>
+      
+      <TouchableOpacity style={styles.viewRequestButton}>
+        <Text style={styles.viewRequestText}>View Details</Text>
+      </TouchableOpacity>
     </Card>
   );
 
-  const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => (
-    <Card style={styles.schemeCard}>
-      <View style={styles.schemeHeader}>
-        <View style={styles.schemeInfo}>
-          <Text style={styles.schemeName}>{item.name}</Text>
-          <Text style={styles.schemeCategory}>{item.category}</Text>
+  const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => {
+    const cleanDescription = item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...';
+    
+    return (
+      <Card style={styles.schemeCard}>
+        <View style={styles.schemeHeader}>
+          <View style={styles.schemeInfo}>
+            <Text style={styles.schemeName}>{item.name}</Text>
+            <Text style={styles.schemeCategory}>{item.category}</Text>
+          </View>
+          <Text style={styles.schemeBudget}>₹{item.budget.toLocaleString()}</Text>
         </View>
-        <Text style={styles.schemeBudget}>₹{item.budget.toLocaleString()}</Text>
-      </View>
-      
-      <Text style={styles.schemeDescription} numberOfLines={3}>
-        {item.description}
-      </Text>
-      
-      <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
-        <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
-        {item.beneficiaries}
-      </Text>
-      
-      <Button
-        title="Apply"
-        onPress={() => handleApplyScheme(item)}
-        variant="primary"
-        size="small"
-        style={styles.applyButton}
-      />
-    </Card>
-  );
+        
+        <Text style={styles.schemeDescription} numberOfLines={3}>
+          {cleanDescription}
+        </Text>
+        
+        <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
+          <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
+          {item.beneficiaries}
+        </Text>
+        
+        <Button
+          title="Apply"
+          onPress={() => handleApplyScheme(item)}
+          variant="primary"
+          size="small"
+          style={styles.applyButton}
+        />
+      </Card>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
-          title: 'Help Desk',
+          title: 'HelpDesk',
           headerShown: true,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color={Colors.text.primary} />
             </TouchableOpacity>
           ),
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerTitleStyle: {
+            ...Typography.title,
+            fontWeight: '600',
+          },
         }}
       />
       
-      <View style={styles.content}>
-        {/* Tab Navigation */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              selectedTab === 'applications' && styles.activeTab
-            ]}
-            onPress={() => setSelectedTab('applications')}
-          >
-            <Text style={[
-              styles.tabText,
-              selectedTab === 'applications' && styles.activeTabText
-            ]}>
-              My Recent Requests
-            </Text>
-          </TouchableOpacity>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Section A: Recent HelpDesk Requests */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>My Recent Requests</Text>
+            <Text style={styles.sectionCount}>({applicationData.total_count})</Text>
+          </View>
           
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              selectedTab === 'schemes' && styles.activeTab
-            ]}
-            onPress={() => setSelectedTab('schemes')}
-          >
-            <Text style={[
-              styles.tabText,
-              selectedTab === 'schemes' && styles.activeTabText
-            ]}>
-              Available Schemes
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.requestsList}>
+            {applicationData.applications.slice(0, 3).map((item) => (
+              <View key={item.id}>
+                {renderApplicationItem({ item })}
+              </View>
+            ))}
+            
+            {applicationData.applications.length > 3 && (
+              <TouchableOpacity style={styles.viewAllButton}>
+                <Text style={styles.viewAllText}>View All Requests</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
-        {/* Applications Tab */}
-        {selectedTab === 'applications' && (
-          <View style={styles.tabContent}>
-            <Text style={styles.sectionTitle}>
-              My Recent Requests ({applicationData.total_count})
-            </Text>
-            
-            <FlatList
-              data={applicationData.applications}
-              renderItem={renderApplicationItem}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
-            />
+        {/* Section B: Government Schemes */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Available Schemes</Text>
+            <Text style={styles.sectionCount}>({filteredSchemes.length})</Text>
           </View>
-        )}
-
-        {/* Schemes Tab */}
-        {selectedTab === 'schemes' && (
-          <View style={styles.tabContent}>
-            {/* Search and Filter */}
-            <View style={styles.searchFilterContainer}>
-              <Input
-                placeholder="Search schemes..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                style={styles.searchInput}
-              />
-              
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                style={styles.filterContainer}
-              >
-                {categories.map((category) => (
-                  <TouchableOpacity
-                    key={category}
-                    style={[
-                      styles.filterChip,
-                      filterCategory === category && styles.activeFilterChip
-                    ]}
-                    onPress={() => setFilterCategory(category)}
-                  >
-                    <Text style={[
-                      styles.filterChipText,
-                      filterCategory === category && styles.activeFilterChipText
-                    ]}>
-                      {category.replace('_', ' ')}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-            
-            <Text style={styles.sectionTitle}>
-              Available Schemes ({filteredSchemes.length})
-            </Text>
-            
-            <FlatList
-              data={filteredSchemes}
-              renderItem={renderSchemeItem}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
+          
+          {/* Search and Filter */}
+          <View style={styles.searchFilterContainer}>
+            <Input
+              placeholder="Search schemes..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={styles.searchInput}
             />
+            
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              style={styles.filterContainer}
+            >
+              {categories.map((category) => (
+                <TouchableOpacity
+                  key={category}
+                  style={[
+                    styles.filterChip,
+                    filterCategory === category && styles.activeFilterChip
+                  ]}
+                  onPress={() => setFilterCategory(category)}
+                >
+                  <Text style={[
+                    styles.filterChipText,
+                    filterCategory === category && styles.activeFilterChipText
+                  ]}>
+                    {category.replace('_', ' ')}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
-        )}
-      </View>
+          
+          <View style={styles.schemesList}>
+            {filteredSchemes.map((item) => (
+              <View key={item.id}>
+                {renderSchemeItem({ item })}
+              </View>
+            ))}
+            
+            {filteredSchemes.length === 0 && (
+              <View style={styles.emptyContainer}>
+                <FileText size={48} color={Colors.text.light} />
+                <Text style={styles.emptyText}>No schemes found</Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -288,61 +278,59 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  tabContainer: {
+  section: {
+    marginBottom: Spacing.xl,
+  },
+  sectionHeader: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.md,
-    marginTop: Spacing.md,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.xs,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm,
     alignItems: 'center',
-    borderRadius: BorderRadius.sm,
-  },
-  activeTab: {
-    backgroundColor: Colors.primary,
-  },
-  tabText: {
-    ...Typography.body,
-    color: Colors.text.secondary,
-    fontWeight: '600',
-  },
-  activeTabText: {
-    color: Colors.text.white,
-  },
-  tabContent: {
-    flex: 1,
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
   sectionTitle: {
-    ...Typography.subtitle,
-    marginBottom: Spacing.md,
+    ...Typography.title,
+    fontWeight: '700',
+    color: Colors.text.primary,
   },
-  listContainer: {
-    paddingBottom: Spacing.xl,
+  sectionCount: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    marginLeft: Spacing.sm,
   },
-  applicationCard: {
-    marginBottom: Spacing.md,
+  requestsList: {
     padding: Spacing.md,
   },
-  applicationHeader: {
+  schemesList: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
+  },
+  requestCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    ...Shadows.small,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  requestHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.sm,
   },
-  applicationInfo: {
+  requestInfo: {
     flex: 1,
   },
-  applicationName: {
+  requestTitle: {
     ...Typography.subtitle,
+    fontWeight: '600',
     marginBottom: Spacing.xs,
   },
-  applicationId: {
+  requestId: {
     ...Typography.caption,
     color: Colors.text.secondary,
   },
@@ -358,16 +346,41 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     fontWeight: '600',
   },
-  applicationDetails: {
+  requestDetails: {
     gap: Spacing.xs,
+    marginBottom: Spacing.md,
   },
-  detailText: {
+  requestDetailText: {
     ...Typography.caption,
     color: Colors.text.secondary,
+  },
+  viewRequestButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: Spacing.sm,
+  },
+  viewRequestText: {
+    ...Typography.caption,
+    color: Colors.primary,
+    fontWeight: '600',
+  },
+  viewAllButton: {
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    marginTop: Spacing.sm,
+  },
+  viewAllText: {
+    ...Typography.body,
+    color: Colors.primary,
+    fontWeight: '600',
   },
   schemeCard: {
     marginBottom: Spacing.md,
     padding: Spacing.md,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    ...Shadows.small,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   schemeHeader: {
     flexDirection: 'row',
@@ -380,6 +393,7 @@ const styles = StyleSheet.create({
   },
   schemeName: {
     ...Typography.subtitle,
+    fontWeight: '600',
     marginBottom: Spacing.xs,
   },
   schemeCategory: {
@@ -412,6 +426,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   searchFilterContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
     marginBottom: Spacing.lg,
   },
   searchInput: {
@@ -440,5 +456,15 @@ const styles = StyleSheet.create({
   },
   activeFilterChipText: {
     color: Colors.text.white,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    paddingVertical: Spacing.xxl,
+  },
+  emptyText: {
+    ...Typography.body,
+    color: Colors.text.light,
+    textAlign: 'center',
+    marginTop: Spacing.md,
   },
 });
