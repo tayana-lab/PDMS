@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Typography, Spacing } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 interface LoaderProps {
   text?: string;
@@ -8,10 +9,16 @@ interface LoaderProps {
 }
 
 export default function Loader({ text = 'Loading...', size = 'large' }: LoaderProps) {
+  const { colors } = useAppSettings();
+  
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} color={Colors.primary} />
-      {text && <Text style={styles.text}>{text}</Text>}
+      <ActivityIndicator size={size} color={colors.primary} />
+      {text && (
+        <Text style={[styles.text, { color: colors.text.secondary }]}>
+          {text}
+        </Text>
+      )}
     </View>
   );
 }
@@ -25,7 +32,6 @@ const styles = StyleSheet.create({
   },
   text: {
     ...Typography.body,
-    color: Colors.text.secondary,
     marginTop: Spacing.md,
     textAlign: 'center'
   }

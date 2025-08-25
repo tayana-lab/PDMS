@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { progressData } from '@/constants/mockData';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 
 interface ProgressBarProps {
@@ -11,26 +12,29 @@ interface ProgressBarProps {
 }
 
 function ProgressBar({ achieved, total, label }: ProgressBarProps) {
+  const { colors } = useAppSettings();
   const percentage = (achieved / total) * 100;
   
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressHeader}>
-        <Text style={styles.progressLabel}>{label}</Text>
-        <Text style={styles.progressText}>{achieved}/{total}</Text>
+        <Text style={[styles.progressLabel, { color: colors.text.primary }]}>{label}</Text>
+        <Text style={[styles.progressText, { color: colors.text.secondary }]}>{achieved}/{total}</Text>
       </View>
-      <View style={styles.progressBarContainer}>
-        <View style={[styles.progressBar, { width: `${percentage}%` }]} />
+      <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
+        <View style={[styles.progressBar, { width: `${percentage}%`, backgroundColor: colors.primary }]} />
       </View>
-      <Text style={styles.percentageText}>{percentage.toFixed(0)}%</Text>
+      <Text style={[styles.percentageText, { color: colors.primary }]}>{percentage.toFixed(0)}%</Text>
     </View>
   );
 }
 
 export default function ProgressDashboard() {
+  const { colors } = useAppSettings();
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Progress Dashboard</Text>
+      <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
       
       <Card style={styles.progressCard}>
         <ProgressBar
@@ -75,24 +79,20 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   progressText: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   },
   progressBarContainer: {
     height: 8,
-    backgroundColor: Colors.border,
     borderRadius: BorderRadius.sm,
     overflow: 'hidden',
     marginBottom: Spacing.xs
   },
   progressBar: {
     height: '100%',
-    backgroundColor: Colors.primary,
     borderRadius: BorderRadius.sm
   },
   percentageText: {
     ...Typography.small,
-    color: Colors.primary,
     fontWeight: '600',
     textAlign: 'right'
   }

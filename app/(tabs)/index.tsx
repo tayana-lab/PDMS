@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const [sidebarAnimation] = useState(new Animated.Value(-SIDEBAR_WIDTH));
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
-  const { colors } = useAppSettings();
+  const { colors, currentTheme } = useAppSettings();
 
   const handleProfilePress = () => {
     setShowProfileMenu(true);
@@ -70,10 +70,10 @@ export default function HomeScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar 
         backgroundColor={colors.background} 
-        barStyle="dark-content" 
+        barStyle={currentTheme === 'dark' ? 'light-content' : 'dark-content'} 
         translucent={false}
       />
       

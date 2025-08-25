@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { quickActions } from '@/constants/mockData';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Badge from '@/components/ui/Badge';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function QuickActions() {
+  const { colors } = useAppSettings();
   
   const handleActionPress = (route: string) => {
     console.log('Navigating to:', route);
@@ -20,7 +22,7 @@ export default function QuickActions() {
   };
    return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quick Actions</Text>
+      <Text style={[styles.title, { color: colors.text.primary }]}>Quick Actions</Text>
       <ScrollView 
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -32,6 +34,10 @@ export default function QuickActions() {
             key={action.id}
             style={[
               styles.actionCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border
+              },
               idx !== quickActions.length - 1 && { marginRight: Spacing.md } // add spacing only between cards
             ]}
             onPress={() => handleActionPress(action.route)}
@@ -42,7 +48,7 @@ export default function QuickActions() {
               {action.badge > 0 && <Badge count={action.badge} />}
             </View>
             <Text 
-              style={styles.actionLabel} 
+              style={[styles.actionLabel, { color: colors.text.primary }]} 
               numberOfLines={1} 
               ellipsizeMode="tail"
             >
@@ -73,13 +79,11 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     width: (screenWidth - (Spacing.lg * 2) - (Spacing.md * 2)) / 3, // 🔹 3 cards per screen
-    backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
     ...Shadows.small,
-    borderWidth: 1,
-    borderColor: Colors.border
+    borderWidth: 1
   },
   iconContainer: {
     position: 'relative',

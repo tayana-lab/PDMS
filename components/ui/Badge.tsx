@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, BorderRadius } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 interface BadgeProps {
   count: number;
@@ -8,11 +8,27 @@ interface BadgeProps {
 }
 
 export default function Badge({ count, size = 18 }: BadgeProps) {
+  const { colors } = useAppSettings();
+  
   if (count <= 0) return null;
 
   return (
-    <View style={[styles.badge, { width: size, height: size, borderRadius: size / 2 }]}>
-      <Text style={[styles.text, { fontSize: size * 0.6 }]}>
+    <View style={[
+      styles.badge, 
+      { 
+        width: size, 
+        height: size, 
+        borderRadius: size / 2,
+        backgroundColor: colors.error
+      }
+    ]}>
+      <Text style={[
+        styles.text, 
+        { 
+          fontSize: size * 0.6,
+          color: colors.text.white
+        }
+      ]}>
         {count > 99 ? '99+' : count.toString()}
       </Text>
     </View>
@@ -21,7 +37,6 @@ export default function Badge({ count, size = 18 }: BadgeProps) {
 
 const styles = StyleSheet.create({
   badge: {
-    backgroundColor: Colors.error,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -30,7 +45,6 @@ const styles = StyleSheet.create({
     minWidth: 18
   },
   text: {
-    color: Colors.text.white,
     fontWeight: '600',
     fontSize: 10
   }

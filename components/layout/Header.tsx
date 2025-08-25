@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Bell } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '@/constants/theme';
+import { Typography, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Badge from '@/components/ui/Badge';
 
 interface HeaderProps {
@@ -19,13 +20,14 @@ export default function Header({
   notificationCount = 3
 }: HeaderProps) {
   const { user } = useAuth();
+  const { colors } = useAppSettings();
 
   if (!showProfile || !user) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
       <TouchableOpacity style={styles.profileSection} onPress={onProfilePress}>
         <Image
           source={{
@@ -34,13 +36,13 @@ export default function Header({
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userAddress}>{user.address}</Text>
+          <Text style={[styles.userName, { color: colors.text.primary }]}>{user.name}</Text>
+          <Text style={[styles.userAddress, { color: colors.text.secondary }]}>{user.address}</Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-        <Bell size={24} color={Colors.text.primary} />
+        <Bell size={24} color={colors.text.primary} />
         {notificationCount > 0 && <Badge count={notificationCount} />}
       </TouchableOpacity>
     </View>
@@ -54,9 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border
+    borderBottomWidth: 1
   },
   profileSection: {
     flexDirection: 'row',
@@ -77,8 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   userAddress: {
-    ...Typography.caption,
-    color: Colors.text.secondary
+    ...Typography.caption
   },
   notificationButton: {
     position: 'relative',
