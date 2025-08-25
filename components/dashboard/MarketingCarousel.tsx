@@ -50,9 +50,11 @@ export default function MarketingCarousel() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(event) => {
-          const index = Math.round(event.nativeEvent.contentOffset.x / (cardWidth + Spacing.lg));
+          const index = Math.round(event.nativeEvent.contentOffset.x / cardWidth);
           setCurrentIndex(index);
         }}
+        snapToInterval={cardWidth}
+        decelerationRate="fast"
         contentContainerStyle={styles.scrollContainer}
       >
         {marketingAds.map((ad) => (
@@ -97,11 +99,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg
   },
   scrollContainer: {
-    paddingHorizontal: Spacing.lg
+    paddingHorizontal: Spacing.lg,
+    paddingRight: Spacing.lg
   },
   card: {
     width: cardWidth,
-    marginRight: Spacing.lg,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
