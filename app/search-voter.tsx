@@ -14,7 +14,7 @@ import {
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3, MapPin, User, Calendar } from 'lucide-react-native';
-import Input from '@/components/ui/Input';
+
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
@@ -40,8 +40,7 @@ interface Voter {
 export default function SearchVoterScreen() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedVoter, setSelectedVoter] = useState<Voter | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editData, setEditData] = useState<Partial<Voter>>({});
+
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
   const recentSearches = ['Priya Nair', 'BJP001234', 'Rajesh Kumar', 'Kochi', '9876543210'];
@@ -108,11 +107,6 @@ export default function SearchVoterScreen() {
 
   const handleVoterSelect = (voter: Voter) => {
     setSelectedVoter(voter);
-    setEditData({
-      mobileNumber: voter.mobileNumber,
-      address: voter.address,
-      partyInclination: voter.partyInclination
-    });
   };
 
   const handleCall = (phoneNumber: string) => {
@@ -132,16 +126,21 @@ export default function SearchVoterScreen() {
     });
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+  const handleEdit = (voter?: Voter) => {
+    if (voter) {
+      router.push({
+        pathname: '/edit-voter',
+        params: { voterId: voter.id }
+      });
+    } else if (selectedVoter) {
+      router.push({
+        pathname: '/edit-voter',
+        params: { voterId: selectedVoter.id }
+      });
+    }
   };
 
-  const handleSaveEdit = () => {
-    console.log('Saving voter data:', editData);
-    console.log('Geo location should be captured here');
-    setIsEditing(false);
-    Alert.alert('Success', 'Voter information updated successfully!');
-  };
+
 
   const handleHelpDesk = () => {
     if (selectedVoter) {
@@ -273,8 +272,7 @@ export default function SearchVoterScreen() {
               style={[styles.actionBtn, styles.editBtn]}
               onPress={(e) => {
                 e.stopPropagation();
-                handleVoterSelect(voter);
-                handleEdit();
+                handleEdit(voter);
               }}
             >
               <Edit size={16} color={Colors.primary} />
@@ -363,16 +361,7 @@ export default function SearchVoterScreen() {
           <View style={styles.inlineDetailRow}>
             <Text style={styles.inlineDetailLabel}>MOBILE</Text>
             <Text style={styles.inlineDetailSeparator}>:</Text>
-            {isEditing ? (
-              <Input
-                value={editData.mobileNumber || ''}
-                onChangeText={(text) => setEditData(prev => ({ ...prev, mobileNumber: text }))}
-                placeholder="Enter mobile number"
-                style={styles.editInputInline}
-              />
-            ) : (
-              <Text style={styles.inlineDetailValue}>{selectedVoter.mobileNumber || 'Not available'}</Text>
-            )}
+            <Text style={styles.inlineDetailValue}>{selectedVoter.mobileNumber || 'Not available'}</Text>
           </View>
           
           <View style={styles.inlineDetailRow}>
@@ -390,17 +379,7 @@ export default function SearchVoterScreen() {
           <View style={styles.inlineDetailRow}>
             <Text style={styles.inlineDetailLabel}>ADDRESS</Text>
             <Text style={styles.inlineDetailSeparator}>:</Text>
-            {isEditing ? (
-              <Input
-                value={editData.address || ''}
-                onChangeText={(text) => setEditData(prev => ({ ...prev, address: text }))}
-                placeholder="Enter address"
-                multiline
-                style={styles.editInputInline}
-              />
-            ) : (
-              <Text style={styles.inlineDetailValue}>{selectedVoter.address}</Text>
-            )}
+            <Text style={styles.inlineDetailValue}>{selectedVoter.address}</Text>
           </View>
           
           <View style={styles.inlineDetailRow}>
@@ -412,36 +391,7 @@ export default function SearchVoterScreen() {
           <View style={styles.inlineDetailRow}>
             <Text style={styles.inlineDetailLabel}>PARTY STATUS</Text>
             <Text style={styles.inlineDetailSeparator}>:</Text>
-            {isEditing ? (
-              <View style={styles.partyInclinationOptions}>
-                <TouchableOpacity
-                  style={[
-                    styles.partyOption,
-                    editData.partyInclination === 'BJP' && styles.partyOptionSelected
-                  ]}
-                  onPress={() => setEditData(prev => ({ ...prev, partyInclination: 'BJP' }))}
-                >
-                  <Text style={[
-                    styles.partyOptionText,
-                    editData.partyInclination === 'BJP' && styles.partyOptionTextSelected
-                  ]}>BJP</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.partyOption,
-                    editData.partyInclination === 'Independent' && styles.partyOptionSelected
-                  ]}
-                  onPress={() => setEditData(prev => ({ ...prev, partyInclination: 'Independent' }))}
-                >
-                  <Text style={[
-                    styles.partyOptionText,
-                    editData.partyInclination === 'Independent' && styles.partyOptionTextSelected
-                  ]}>Independent</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <Text style={styles.inlineDetailValue}>{selectedVoter.partyInclination}</Text>
-            )}
+            <Text style={styles.inlineDetailValue}>{selectedVoter.partyInclination}</Text>
           </View>
           
           <View style={styles.inlineDetailRow}>
@@ -458,49 +408,31 @@ export default function SearchVoterScreen() {
         </View>
 
         <View style={styles.selectedActionButtons}>
-          {isEditing ? (
-            <>
-              <Button
-                title="Cancel"
-                onPress={() => setIsEditing(false)}
-                variant="outline"
-                style={styles.selectedActionButton}
-              />
-              <Button
-                title="Save"
-                onPress={handleSaveEdit}
-                style={styles.selectedActionButton}
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                title="Edit"
-                onPress={handleEdit}
-                variant="outline"
-                icon={<Edit size={16} color={Colors.primary} />}
-                style={styles.selectedActionButton}
-              />
-              <Button
-                title="Call"
-                onPress={() => handleCall(selectedVoter.mobileNumber)}
-                variant={selectedVoter.mobileNumber ? 'default' : 'outline'}
-                disabled={!selectedVoter.mobileNumber}
-                icon={<Phone size={16} color={selectedVoter.mobileNumber ? Colors.text.white : Colors.text.light} />}
-                style={[
-                  styles.selectedActionButton,
-                  !selectedVoter.mobileNumber && styles.disabledButton
-                ]}
-              />
-              <Button
-                title="Help Desk"
-                onPress={handleHelpDesk}
-                variant="secondary"
-                icon={<HelpCircle size={16} color={Colors.text.white} />}
-                style={styles.selectedActionButton}
-              />
-            </>
-          )}
+          <Button
+            title="Edit"
+            onPress={() => handleEdit()}
+            variant="outline"
+            icon={<Edit size={16} color={Colors.primary} />}
+            style={styles.selectedActionButton}
+          />
+          <Button
+            title="Call"
+            onPress={() => handleCall(selectedVoter.mobileNumber)}
+            variant={selectedVoter.mobileNumber ? 'default' : 'outline'}
+            disabled={!selectedVoter.mobileNumber}
+            icon={<Phone size={16} color={selectedVoter.mobileNumber ? Colors.text.white : Colors.text.light} />}
+            style={[
+              styles.selectedActionButton,
+              !selectedVoter.mobileNumber && styles.disabledButton
+            ]}
+          />
+          <Button
+            title="Help Desk"
+            onPress={handleHelpDesk}
+            variant="secondary"
+            icon={<HelpCircle size={16} color={Colors.text.white} />}
+            style={styles.selectedActionButton}
+          />
         </View>
       </Card>
     );
@@ -992,18 +924,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 12,
     textTransform: 'uppercase',
-    width: 120,
+    width: 110,
     letterSpacing: 0.5,
     textAlign: 'left',
+    flexShrink: 0,
   },
   inlineDetailSeparator: {
     ...Typography.body,
     color: Colors.text.secondary,
     fontWeight: '700',
-    marginHorizontal: Spacing.sm,
-    width: 8,
+    marginHorizontal: Spacing.xs,
+    width: 12,
     fontSize: 14,
     textAlign: 'center',
+    flexShrink: 0,
   },
   inlineDetailValue: {
     ...Typography.body,
@@ -1013,6 +947,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'left',
+    flexWrap: 'wrap',
   },
   selectedDetailRow: {
     gap: Spacing.xs,
