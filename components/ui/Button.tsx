@@ -85,11 +85,12 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.primary
   },
   ghost: {
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
+    borderWidth: 0
   },
   small: {
     paddingHorizontal: Spacing.md,

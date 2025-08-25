@@ -257,11 +257,13 @@ export default function OnboardingScreen() {
     }
   };
 
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F8F9FA" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF']}
+        colors={[colors.surface, colors.background]}
         style={styles.gradient}
       >
         <SafeAreaView style={styles.safeArea}>
@@ -272,7 +274,7 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
   },

@@ -13,7 +13,7 @@ import { ArrowLeft, FileText, Clock, CheckCircle, XCircle } from 'lucide-react-n
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import applicationData from './ApplicationDetails.json';
 import schemeData from './SchemeDetails.json';
@@ -68,26 +68,26 @@ export default function HelpDeskScreen() {
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
       case 'PENDING':
-        return Colors.warning;
+        return colors.warning;
       case 'APPROVED':
-        return Colors.success;
+        return colors.success;
       case 'REJECTED':
-        return Colors.error;
+        return colors.error;
       default:
-        return Colors.text.secondary;
+        return colors.text.secondary;
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status.toUpperCase()) {
       case 'PENDING':
-        return <Clock size={16} color={Colors.warning} />;
+        return <Clock size={16} color={colors.warning} />;
       case 'APPROVED':
-        return <CheckCircle size={16} color={Colors.success} />;
+        return <CheckCircle size={16} color={colors.success} />;
       case 'REJECTED':
-        return <XCircle size={16} color={Colors.error} />;
+        return <XCircle size={16} color={colors.error} />;
       default:
-        return <FileText size={16} color={Colors.text.secondary} />;
+        return <FileText size={16} color={colors.text.secondary} />;
     }
   };
 
@@ -162,6 +162,8 @@ export default function HelpDeskScreen() {
       </Card>
     );
   };
+
+  const styles = createStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -258,7 +260,7 @@ export default function HelpDeskScreen() {
             
             {filteredSchemes.length === 0 && (
               <View style={styles.emptyContainer}>
-                <FileText size={48} color={Colors.text.light} />
+                <FileText size={48} color={colors.text.light} />
                 <Text style={styles.emptyText}>No schemes found</Text>
               </View>
             )}
@@ -269,10 +271,10 @@ export default function HelpDeskScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   backButton: {
     padding: Spacing.xs,
@@ -289,18 +291,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   sectionTitle: {
     ...Typography.title,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sectionCount: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginLeft: Spacing.sm,
   },
   requestsList: {
@@ -313,11 +315,11 @@ const styles = StyleSheet.create({
   requestCard: {
     marginBottom: Spacing.md,
     padding: Spacing.md,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     ...Shadows.small,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   requestHeader: {
     flexDirection: 'row',
@@ -335,7 +337,7 @@ const styles = StyleSheet.create({
   },
   requestId: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -355,7 +357,7 @@ const styles = StyleSheet.create({
   },
   requestDetailText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   viewRequestButton: {
     alignSelf: 'flex-start',
@@ -363,7 +365,7 @@ const styles = StyleSheet.create({
   },
   viewRequestText: {
     ...Typography.caption,
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
   viewAllButton: {
@@ -373,17 +375,17 @@ const styles = StyleSheet.create({
   },
   viewAllText: {
     ...Typography.body,
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
   schemeCard: {
     marginBottom: Spacing.md,
     padding: Spacing.md,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     ...Shadows.small,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   schemeHeader: {
     flexDirection: 'row',
@@ -401,29 +403,29 @@ const styles = StyleSheet.create({
   },
   schemeCategory: {
     ...Typography.caption,
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
   schemeBudget: {
     ...Typography.body,
-    color: Colors.secondary,
+    color: colors.secondary,
     fontWeight: '700',
   },
   schemeDescription: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
     lineHeight: 20,
   },
   schemeBeneficiaries: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
     lineHeight: 18,
   },
   beneficiariesLabel: {
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   applyButton: {
     alignSelf: 'flex-start',
@@ -443,22 +445,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     marginRight: Spacing.sm,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.round,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   activeFilterChip: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   filterChipText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   activeFilterChipText: {
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -466,7 +468,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.light,
+    color: colors.text.light,
     textAlign: 'center',
     marginTop: Spacing.md,
   },

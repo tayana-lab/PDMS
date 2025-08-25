@@ -20,6 +20,7 @@ import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { leaders } from "@/constants/leaders";
 import { useAuth } from "@/hooks/useAuth";
+import Button from "@/components/ui/Button";
 
 const { width } = Dimensions.get("window");
 
@@ -195,28 +196,31 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            <TouchableOpacity
-              style={styles.loginButton}
+            <Button
+              title={isLoading ? "LOGGING IN..." : "LOGIN"}
               onPress={handleLogin}
               disabled={isLoading}
-            >
-              <Text style={styles.loginButtonText}>
-                {isLoading ? "LOGGING IN..." : "LOGIN"}
-              </Text>
-            </TouchableOpacity>
+              loading={isLoading}
+              style={styles.loginButton}
+            />
 
-            <TouchableOpacity onPress={handleForgotPassword}>
-              <Text style={styles.forgotPassword}>Forgot PIN?</Text>
-            </TouchableOpacity>
+            <Button
+              title="Forgot PIN?"
+              onPress={handleForgotPassword}
+              variant="ghost"
+              style={styles.forgotPasswordButton}
+            />
           </View>
 
           {/* Register Section */}
           <View style={styles.registerSection}>
             <Text style={styles.registerText}>
               Don&apos;t have an account?{" "}
-              <Text style={styles.registerLink} onPress={handleRegister}>
-                Register!
-              </Text>
+              <TouchableOpacity onPress={handleRegister}>
+                <Text style={styles.registerLink}>
+                  Register!
+                </Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </ScrollView>
@@ -410,28 +414,16 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   
   loginButton: {
-    backgroundColor: colors.primary,
-    borderRadius: BorderRadius.round,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
     marginTop: Spacing.sm,
     marginBottom: Spacing.md,
-    ...Shadows.small,
   },
   
-  loginButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text.white,
-    letterSpacing: 0.5,
+  forgotPasswordButton: {
+    marginTop: 0,
+    marginBottom: 0,
   },
   
-  forgotPassword: {
-    fontSize: 16,
-    color: colors.primary,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
+
   
   registerSection: {
     alignItems: 'center',
