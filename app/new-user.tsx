@@ -6,16 +6,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  SafeAreaView,
-  StatusBar,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Phone, MessageSquare, Lock, ArrowLeft } from 'lucide-react-native';
+import { Phone, MessageSquare, Lock } from 'lucide-react-native';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { Spacing } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 type Step = 'mobile' | 'otp' | 'pin';
 
@@ -59,10 +57,12 @@ export default function NewUserScreen() {
   const [confirmPin, setConfirmPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
+  const { colors } = useAppSettings();
   const { sendOTP, verifyOTP, createAccount } = useAuth();
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
   const currentStepConfig = steps[currentStepIndex];
+  const IconComponent = currentStepConfig.icon;
 
   const handleNext = async () => {
     setIsLoading(true);
@@ -125,190 +125,157 @@ export default function NewUserScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#FF6B35" />
-        
-        <LinearGradient
-          colors={["#FF6B35", "#FF8A65", "#FFAB91"]}
-          style={styles.gradientBackground}
-        >
-          {/* Custom Header */}
-          <View style={styles.customHeader}>
-            <Button
-              title=""
-              onPress={handleBack}
-              variant="ghost"
-              style={styles.backButton}
-              icon={<ArrowLeft size={24} color="#fff" />}
-            />
-            <Text style={styles.headerTitle}>New User</Text>
-            <View style={styles.headerSpacer} />
-          </View>
-
-          {/* Step Indicators */}
-          <View style={styles.stepIndicatorContainer}>
-            {steps.map((step, index) => {
-              const isActive = index === currentStepIndex;
-              const isCompleted = index < currentStepIndex;
-              const StepIcon = step.icon;
-              
-              return (
-                <View key={step.id} style={styles.stepIndicator}>
-                  <View style={[
-                    styles.stepIconContainer,
-                    isActive && styles.stepIconActive,
-                    isCompleted && styles.stepIconCompleted,
-                    !isActive && !isCompleted && styles.stepIconInactive
-                  ]}>
-                    <StepIcon 
-                      size={16} 
-                      color={isActive ? "#FF6B35" : isCompleted ? "#fff" : "rgba(255,255,255,0.6)"} 
-                    />
-                  </View>
-                  <Text style={[
-                    styles.stepLabel,
-                    { color: isActive ? "#fff" : "rgba(255,255,255,0.7)" }
-                  ]}>
-                    {step.label}
-                  </Text>
-                  {index < steps.length - 1 && (
-                    <View style={[
-                      styles.stepConnector,
-                      { backgroundColor: isCompleted ? "#fff" : "rgba(255,255,255,0.3)" }
-                    ]} />
-                  )}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <KeyboardAvoidingView 
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        {/* Step Indicators */}
+        <View style={styles.stepIndicatorContainer}>
+          {steps.map((step, index) => {
+            const isActive = index === currentStepIndex;
+            const isCompleted = index < currentStepIndex;
+            const StepIcon = step.icon;
+            
+            return (
+              <View key={step.id} style={styles.stepIndicator}>
+                <View style={[
+                  styles.stepIconContainer,
+                  isActive && { backgroundColor: colors.primary },
+                  isCompleted && { backgroundColor: colors.success },
+                  !isActive && !isCompleted && { backgroundColor: colors.border }
+                ]}>
+                  <StepIcon 
+                    size={20} 
+                    color={isActive || isCompleted ? colors.text.white : colors.text.secondary} 
+                  />
                 </View>
-              );
-            })}
-          </View>
-
-          <KeyboardAvoidingView
-            style={styles.keyboardView}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            <View style={styles.center}>
-              <View style={styles.loginCard}>
-                <Text style={styles.title}>
-                  {currentStepConfig.title}
+                <Text style={[
+                  styles.stepLabel,
+                  { color: isActive ? colors.primary : colors.text.secondary }
+                ]}>
+                  {step.label}
                 </Text>
-                <Text style={styles.subtitle}>
-                  {currentStepConfig.subtitle}
-                </Text>
+                {index < steps.length - 1 && (
+                  <View style={[
+                    styles.stepConnector,
+                    { backgroundColor: isCompleted ? colors.success : colors.border }
+                  ]} />
+                )}
+              </View>
+            );
+          })}
+        </View>
 
-                {/* Form Fields using same Input component as login */}
-                <View style={styles.inputGroup}>
-                  {currentStep === 'mobile' && (
+        {/* Main Content Card */}
+        <View style={styles.contentContainer}>
+          <View style={[styles.card, { backgroundColor: colors.surface }]}>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={[styles.mainIconContainer, { backgroundColor: colors.primary }]}>
+                <IconComponent size={32} color={colors.text.white} />
+              </View>
+              <Text style={[styles.title, { color: colors.text.primary }]}>
+                {currentStepConfig.title}
+              </Text>
+              <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                {currentStepConfig.subtitle}
+              </Text>
+            </View>
+
+            {/* Form Fields */}
+            <View style={styles.formContainer}>
+              {currentStep === 'mobile' && (
+                <View style={styles.inputContainer}>
+                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Mobile Number</Text>
+                  <View style={styles.phoneInputContainer}>
+                    <Phone size={20} color={colors.text.secondary} style={styles.phoneIcon} />
                     <Input
-                      label="Mobile Number"
                       value={mobile}
                       onChangeText={setMobile}
                       placeholder="Enter mobile number"
                       keyboardType="phone-pad"
                       maxLength={10}
+                      style={styles.phoneInput}
                     />
-                  )}
-
-                  {currentStep === 'otp' && (
-                    <>
-                      <Input
-                        label="Verification Code"
-                        value={otp}
-                        onChangeText={setOtp}
-                        placeholder="Enter 4-digit OTP"
-                        keyboardType="numeric"
-                        maxLength={4}
-                      />
-                      <Text style={styles.helperText}>
-                        Code sent to +91 {mobile}
-                      </Text>
-                    </>
-                  )}
-
-                  {currentStep === 'pin' && (
-                    <>
-                      <Input
-                        label="Create PIN"
-                        value={pin}
-                        onChangeText={setPin}
-                        placeholder="Enter 4-digit PIN"
-                        keyboardType="numeric"
-                        maxLength={4}
-                        secureTextEntry
-                      />
-                      <Input
-                        label="Confirm PIN"
-                        value={confirmPin}
-                        onChangeText={setConfirmPin}
-                        placeholder="Re-enter PIN"
-                        keyboardType="numeric"
-                        maxLength={4}
-                        secureTextEntry
-                      />
-                    </>
-                  )}
+                  </View>
                 </View>
+              )}
 
-                {/* Action Buttons */}
-                <View style={styles.btnGroup}>
-                  <Button
-                    title={currentStep === 'pin' ? 'Create Account' : 'Continue'}
-                    onPress={handleNext}
-                    loading={isLoading}
-                    style={styles.primaryBtn}
+              {currentStep === 'otp' && (
+                <View style={styles.inputContainer}>
+                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Verification Code</Text>
+                  <Input
+                    value={otp}
+                    onChangeText={setOtp}
+                    placeholder="Enter 4-digit OTP"
+                    keyboardType="numeric"
+                    maxLength={4}
+                    textAlign="center"
+                    style={styles.otpInput}
                   />
-                  {currentStep !== 'mobile' && (
-                    <Button
-                      title="Previous"
-                      onPress={() => {
-                        if (currentStep === 'otp') setCurrentStep('mobile');
-                        else if (currentStep === 'pin') setCurrentStep('otp');
-                      }}
-                      variant="ghost"
-                    />
-                  )}
+                  <Text style={[styles.helperText, { color: colors.text.secondary }]}>
+                    Code sent to +91 {mobile}
+                  </Text>
                 </View>
-              </View>
+              )}
+
+              {currentStep === 'pin' && (
+                <View style={styles.inputContainer}>
+                  <Text style={[styles.inputLabel, { color: colors.text.primary }]}>Create PIN</Text>
+                  <Input
+                    value={pin}
+                    onChangeText={setPin}
+                    placeholder="Enter 4-digit PIN"
+                    keyboardType="numeric"
+                    maxLength={4}
+                    secureTextEntry
+                    textAlign="center"
+                    style={styles.pinInput}
+                  />
+                  <Text style={[styles.inputLabel, { color: colors.text.primary, marginTop: Spacing.md }]}>Confirm PIN</Text>
+                  <Input
+                    value={confirmPin}
+                    onChangeText={setConfirmPin}
+                    placeholder="Re-enter PIN"
+                    keyboardType="numeric"
+                    maxLength={4}
+                    secureTextEntry
+                    textAlign="center"
+                    style={styles.pinInput}
+                  />
+                </View>
+              )}
             </View>
-          </KeyboardAvoidingView>
-        </LinearGradient>
-      </View>
-    </SafeAreaView>
+
+            {/* Action Buttons */}
+            <View style={styles.buttonContainer}>
+              <Button
+                title={currentStep === 'pin' ? 'Create Account' : 'Continue'}
+                onPress={handleNext}
+                loading={isLoading}
+                style={[styles.primaryButton, { backgroundColor: colors.primary }]}
+              />
+              <Button
+                title="Back"
+                onPress={handleBack}
+                variant="ghost"
+                style={styles.backButton}
+              />
+            </View>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { 
-    flex: 1 
+  container: {
+    flex: 1,
   },
-  container: { 
-    flex: 1 
-  },
-  gradientBackground: { 
-    flex: 1 
-  },
-  customHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  keyboardView: {
+    flex: 1,
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
@@ -316,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    marginBottom: Spacing.md,
+    marginTop: Spacing.sm,
   },
   stepIndicator: {
     alignItems: 'center',
@@ -324,82 +291,111 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   stepIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.xs,
-  },
-  stepIconActive: {
-    backgroundColor: '#fff',
-  },
-  stepIconCompleted: {
-    backgroundColor: '#4CAF50',
-  },
-  stepIconInactive: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    marginBottom: Spacing.sm,
   },
   stepLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
   },
   stepConnector: {
     position: 'absolute',
-    top: 18,
-    left: '70%',
-    right: '-70%',
+    top: 24,
+    left: '75%',
+    right: '-75%',
     height: 2,
     zIndex: -1,
   },
-  keyboardView: {
+  contentContainer: {
     flex: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    justifyContent: 'flex-start',
   },
-  center: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    paddingHorizontal: 20 
-  },
-  loginCard: {
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    borderRadius: 20,
-    padding: 24,
-    width: '100%',
-    maxWidth: 380,
+  card: {
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
     shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 8,
   },
-  title: { 
-    fontSize: 22, 
-    fontWeight: '700', 
-    color: '#FF6B35', 
+  header: {
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  mainIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
     textAlign: 'center',
-    marginBottom: 20,
+    lineHeight: 22,
   },
-  inputGroup: { 
-    marginBottom: 20, 
-    gap: 16 
+  formContainer: {
+    marginBottom: Spacing.lg,
+  },
+  inputContainer: {
+    marginBottom: Spacing.lg,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  phoneInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  phoneIcon: {
+    position: 'absolute',
+    left: Spacing.md,
+    zIndex: 1,
+  },
+  phoneInput: {
+    paddingLeft: 48,
+  },
+  otpInput: {
+    fontSize: 24,
+    fontWeight: '600',
+    letterSpacing: 8,
+  },
+  pinInput: {
+    fontSize: 24,
+    fontWeight: '600',
+    letterSpacing: 4,
   },
   helperText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: 14,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
-  btnGroup: { 
-    gap: 12 
+  buttonContainer: {
+    gap: Spacing.md,
   },
-  primaryBtn: { 
-    borderRadius: 14, 
-    paddingVertical: 12 
+  primaryButton: {
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.md,
+  },
+  backButton: {
+    borderRadius: BorderRadius.lg,
   },
 });
