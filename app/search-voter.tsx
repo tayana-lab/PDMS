@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3, MapPin, User, Calendar } from 'lucide-react-native';
+import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3, MapPin, Calendar, Home, Briefcase } from 'lucide-react-native';
 
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -43,7 +43,7 @@ export default function SearchVoterScreen() {
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
-  const recentSearches = ['Priya Nair', 'BJP001234', 'Rajesh Kumar', 'Kochi', '9876543210'];
+  const recentSearches = ['Priya Nair', 'TVM001234567', 'Arun Pillai'];
   const filterOptions = ['All', 'Party Voter', 'Inclined', 'Neutral', 'Anti'];
 
   const filteredVoters = useMemo(() => {
@@ -194,75 +194,58 @@ export default function SearchVoterScreen() {
         onPress={() => handleVoterSelect(voter)}
       >
         <View style={styles.voterCardContent}>
-          {/* Profile Section */}
-          <View style={styles.profileSection}>
-            <View style={styles.profileImage}>
-              <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
-            </View>
-            <View style={styles.voterInfo}>
-              <Text style={styles.voterName}>{voter.name}</Text>
-              <View style={styles.voterMetaRow}>
-                <Text style={styles.voterMeta}>S/O: {voter.guardianName}</Text>
+          {/* Header with Profile and Status */}
+          <View style={styles.voterHeader}>
+            <View style={styles.profileSection}>
+              <View style={styles.profileImage}>
+                <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
               </View>
-              <View style={styles.voterMetaRow}>
-                <Text style={styles.voterMeta}>{voter.age}Y {voter.gender}</Text>
+              <View style={styles.voterBasicInfo}>
+                <Text style={styles.voterName}>{voter.name}</Text>
+                <Text style={styles.voterGuardian}>{voter.guardianName} • {voter.age}Y • {voter.gender}</Text>
               </View>
             </View>
-            <View style={styles.partyStatusBadge}>
-              <View style={[styles.statusIndicator, { backgroundColor: partyStatus.color }]} />
+            <View style={[styles.partyStatusBadge, { backgroundColor: partyStatus.bgColor }]}>
+              <Text style={[styles.partyStatusText, { color: partyStatus.color }]}>
+                {partyStatus.label}
+              </Text>
             </View>
           </View>
 
-          {/* Details Grid */}
-          <View style={styles.detailsGrid}>
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <Grid3X3 size={14} color={Colors.text.secondary} />
-                <Text style={styles.detailLabel}>Voter ID</Text>
-              </View>
+          {/* Voter Details */}
+          <View style={styles.voterDetails}>
+            <View style={styles.detailRow}>
+              <Grid3X3 size={16} color={Colors.text.secondary} />
               <Text style={styles.detailValue}>{voter.voterId}</Text>
             </View>
-
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <Phone size={14} color={Colors.text.secondary} />
-                <Text style={styles.detailLabel}>Mobile</Text>
-              </View>
+            
+            <View style={styles.detailRow}>
+              <Phone size={16} color={Colors.text.secondary} />
               <Text style={styles.detailValue}>{voter.mobileNumber || 'Not available'}</Text>
             </View>
-
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <MapPin size={14} color={Colors.text.secondary} />
-                <Text style={styles.detailLabel}>Address</Text>
-              </View>
-              <Text style={styles.detailValue} numberOfLines={2}>
-                {voter.houseName} {voter.ward}
+            
+            <View style={styles.detailRow}>
+              <Home size={16} color={Colors.text.secondary} />
+              <Text style={styles.detailValue} numberOfLines={1}>
+                {voter.houseName}, {voter.ward}
               </Text>
             </View>
-
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <User size={14} color={Colors.text.secondary} />
-                <Text style={styles.detailLabel}>Karyakarta</Text>
-              </View>
-              <Text style={styles.detailValue}>{voter.karyakartaName}</Text>
+            
+            <View style={styles.detailRow}>
+              <MapPin size={16} color={Colors.text.secondary} />
+              <Text style={styles.detailValue} numberOfLines={1}>
+                {voter.address}, {voter.assemblyConstituency}
+              </Text>
             </View>
-
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <Calendar size={14} color={Colors.text.secondary} />
-                <Text style={styles.detailLabel}>Last Contact</Text>
-              </View>
-              <Text style={styles.detailValue}>{voter.lastInteractionDate}</Text>
+            
+            <View style={styles.detailRow}>
+              <Briefcase size={16} color={Colors.text.secondary} />
+              <Text style={styles.detailValue}>Business</Text>
             </View>
-
-            <View style={styles.detailItem}>
-              <View style={styles.detailHeader}>
-                <Text style={styles.detailIcon}>🏛️</Text>
-                <Text style={styles.detailLabel}>Assembly</Text>
-              </View>
-              <Text style={styles.detailValue}>{voter.assemblyConstituency}</Text>
+            
+            <View style={styles.detailRow}>
+              <Calendar size={16} color={Colors.text.secondary} />
+              <Text style={styles.detailValue}>Last: {voter.lastInteractionDate} by {voter.karyakartaName}</Text>
             </View>
           </View>
 
@@ -291,10 +274,10 @@ export default function SearchVoterScreen() {
               }}
               disabled={!voter.mobileNumber}
             >
-              <Phone size={16} color={voter.mobileNumber ? Colors.secondary : Colors.text.light} />
+              <Phone size={16} color={voter.mobileNumber ? '#4CAF50' : Colors.text.light} />
               <Text style={[
                 styles.actionBtnText,
-                { color: voter.mobileNumber ? Colors.secondary : Colors.text.light }
+                { color: voter.mobileNumber ? '#4CAF50' : Colors.text.light }
               ]}>Call</Text>
             </TouchableOpacity>
             
@@ -306,8 +289,8 @@ export default function SearchVoterScreen() {
                 handleHelpDesk();
               }}
             >
-              <HelpCircle size={16} color={Colors.accent} />
-              <Text style={[styles.actionBtnText, { color: Colors.accent }]}>HelpDesk</Text>
+              <HelpCircle size={16} color='#FF9800' />
+              <Text style={[styles.actionBtnText, { color: '#FF9800' }]}>Apps</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -713,97 +696,81 @@ const styles = StyleSheet.create({
   voterCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
-    ...Shadows.medium,
+    ...Shadows.small,
     borderWidth: 1,
     borderColor: Colors.border,
-    overflow: 'hidden',
+    marginBottom: Spacing.md,
   },
   voterCardContent: {
-    padding: Spacing.lg,
+    padding: Spacing.md,
+  },
+  voterHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.md,
   },
   profileSection: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: Spacing.lg,
+    alignItems: 'center',
+    flex: 1,
   },
   profileImage: {
-    width: 56,
-    height: 56,
+    width: 48,
+    height: 48,
     borderRadius: BorderRadius.round,
-    backgroundColor: Colors.primary + '15',
+    backgroundColor: '#E8F5E8',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md,
+    marginRight: Spacing.sm,
   },
   profileInitial: {
-    ...Typography.title,
-    color: Colors.primary,
+    fontSize: 18,
     fontWeight: '700',
+    color: '#4CAF50',
   },
-  voterInfo: {
+  voterBasicInfo: {
     flex: 1,
   },
   voterName: {
-    ...Typography.subtitle,
+    fontSize: 16,
     fontWeight: '700',
     color: Colors.text.primary,
-    marginBottom: Spacing.xs,
-  },
-  voterMetaRow: {
     marginBottom: 2,
   },
-  voterMeta: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
+  voterGuardian: {
     fontSize: 13,
+    color: Colors.text.secondary,
   },
   partyStatusBadge: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+    alignSelf: 'flex-start',
   },
-  statusIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: BorderRadius.round,
+  partyStatusText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
-  detailsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: Spacing.lg,
-    gap: Spacing.md,
-  },
-  detailItem: {
-    width: '48%',
+  voterDetails: {
     marginBottom: Spacing.md,
-  },
-  detailHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.xs,
     gap: Spacing.xs,
   },
-  detailLabel: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    fontWeight: '600',
-    fontSize: 11,
-    textTransform: 'uppercase',
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+    gap: Spacing.sm,
   },
   detailValue: {
-    ...Typography.body,
-    color: Colors.text.primary,
     fontSize: 14,
-    fontWeight: '500',
-  },
-  detailIcon: {
-    fontSize: 12,
-    width: 14,
-    textAlign: 'center',
+    color: Colors.text.primary,
+    flex: 1,
   },
   actionButtonsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: Spacing.md,
+    paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     gap: Spacing.sm,
@@ -813,23 +780,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    gap: 4,
+    backgroundColor: Colors.background,
     borderWidth: 1,
+    borderColor: Colors.border,
   },
   editBtn: {
-    backgroundColor: Colors.primary + '10',
-    borderColor: Colors.primary + '30',
+    backgroundColor: '#E3F2FD',
+    borderColor: '#BBDEFB',
   },
   callBtn: {
-    backgroundColor: Colors.secondary + '10',
-    borderColor: Colors.secondary + '30',
+    backgroundColor: '#E8F5E8',
+    borderColor: '#C8E6C9',
   },
   appsBtn: {
-    backgroundColor: Colors.accent + '10',
-    borderColor: Colors.accent + '30',
+    backgroundColor: '#FFF3E0',
+    borderColor: '#FFCC02',
   },
   disabledBtn: {
     opacity: 0.5,
@@ -837,9 +806,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.text.light + '30',
   },
   actionBtnText: {
-    ...Typography.caption,
-    fontWeight: '600',
     fontSize: 12,
+    fontWeight: '600',
   },
   selectedSection: {
     marginBottom: Spacing.lg,
