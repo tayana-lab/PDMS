@@ -142,13 +142,8 @@ export default function SearchVoterScreen() {
 
 
 
-  const handleHelpDesk = () => {
-    if (selectedVoter) {
-      router.push({
-        pathname: '/help-desk',
-        params: { voterId: selectedVoter.id }
-      });
-    }
+  const handleHelpDesk = (voter?: Voter) => {
+    router.push('/help-desk');
   };
 
   const getPartyStatus = (inclination: string) => {
@@ -285,8 +280,7 @@ export default function SearchVoterScreen() {
               style={[styles.actionBtn, styles.helpDeskBtn]}
               onPress={(e) => {
                 e.stopPropagation();
-                handleVoterSelect(voter);
-                handleHelpDesk();
+                handleHelpDesk(voter);
               }}
             >
               <HelpCircle size={16} color={Colors.primary} />
@@ -411,7 +405,7 @@ export default function SearchVoterScreen() {
           />
           <Button
             title="HelpDesk"
-            onPress={handleHelpDesk}
+            onPress={() => handleHelpDesk(selectedVoter)}
             variant="secondary"
             icon={<HelpCircle size={16} color={Colors.text.white} />}
             style={styles.selectedActionButton}
