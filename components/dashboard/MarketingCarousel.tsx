@@ -23,7 +23,7 @@ export default function MarketingCarousel() {
         const nextIndex = (prevIndex + 1) % marketingAds.length;
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
-            x: nextIndex * width, // 🔹 use full screen width
+            x: nextIndex * width, // full width per page
             animated: true
           });
         }
@@ -36,7 +36,6 @@ export default function MarketingCarousel() {
 
   const handleEventPress = (eventId: number) => {
     console.log('Event pressed:', eventId);
-    // Navigate to event details
   };
 
   return (
@@ -52,19 +51,21 @@ export default function MarketingCarousel() {
         }}
       >
         {marketingAds.map((ad) => (
-          <TouchableOpacity
-            key={ad.id}
-            style={styles.card}
-            onPress={() => handleEventPress(ad.id)}
-            activeOpacity={0.9}
-          >
-            <Image source={{ uri: ad.image }} style={styles.image} />
-            <View style={styles.content}>
-              <Text style={styles.eventTitle}>{ad.title}</Text>
-              <Text style={styles.description}>{ad.description}</Text>
-              <Text style={styles.date}>{ad.date}</Text>
-            </View>
-          </TouchableOpacity>
+          <View key={ad.id} style={{ width }}> 
+            {/* full screen page */}
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => handleEventPress(ad.id)}
+              activeOpacity={0.9}
+            >
+              <Image source={{ uri: ad.image }} style={styles.image} />
+              <View style={styles.content}>
+                <Text style={styles.eventTitle}>{ad.title}</Text>
+                <Text style={styles.description}>{ad.description}</Text>
+                <Text style={styles.date}>{ad.date}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 
@@ -88,14 +89,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg
   },
   card: {
-    width: width, // 🔹 full screen width
+    flex: 1,
+    marginHorizontal: Spacing.lg, // keep spacing INSIDE the card, not on the ScrollView
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.medium,
     borderWidth: 1,
     borderColor: Colors.border
-    // ❌ removed marginRight
   },
   image: {
     width: '100%',
