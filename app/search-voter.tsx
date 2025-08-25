@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit, Phone, HelpCircle, ArrowLeft, Mic, Grid3X3, MapPin, Calendar, Home, Briefcase } from 'lucide-react-native';
+import { Search, Edit, Phone, HelpCircle, ArrowLeft, Grid3X3, MapPin, Calendar, Home, Briefcase, QrCode } from 'lucide-react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -39,6 +40,9 @@ interface Voter {
 export default function SearchVoterScreen() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedVoter, setSelectedVoter] = useState<Voter | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showCamera, setShowCamera] = useState<boolean>(false);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
@@ -145,6 +149,86 @@ export default function SearchVoterScreen() {
   const handleHelpDesk = (voter?: Voter) => {
     router.push('/help-desk');
   };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      Alert.alert('Search Required', 'Please enter a voter ID to search.');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setIsLoading(false);
+      // The existing search logic will handle displaying results
+    }, 1500);
+  };
+
+  const handleBarcodePress = async () => {
+    if (!cameraPermission) {
+      return;
+    }
+
+    if (!cameraPermission.granted) {
+      const permission = await requestCameraPermission();
+      if (!permission.granted) {
+        Alert.alert('Camera Permission', 'Camera permission is required to scan barcodes.');
+        return;
+      }
+    }
+
+    setShowCamera(true);
+  };
+
+  const handleBarcodeScanned = (data: string) => {
+    setSearchQuery(data);
+    setShowCamera(false);
+    // Automatically trigger search after scanning
+    setTimeout(() => {
+      handleSearch();
+    }, 100);
+  };
+
+  if (showCamera) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Stack.Screen
+          options={{
+            title: 'Scan Barcode',
+            headerShown: true,
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => setShowCamera(false)} style={styles.backButton}>
+                <ArrowLeft size={24} color={Colors.text.primary} />
+              </TouchableOpacity>
+            ),
+            headerStyle: {
+              backgroundColor: Colors.background,
+            },
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '600',
+              color: Colors.text.primary,
+            },
+          }}
+        />
+        <View style={styles.cameraContainer}>
+          <CameraView
+            style={styles.camera}
+            facing={'back'}
+            onBarcodeScanned={({ data }: { data: string }) => handleBarcodeScanned(data)}
+          >
+            <View style={styles.cameraOverlay}>
+              <View style={styles.scanFrame} />
+              <Text style={styles.scanInstructions}>
+                Position the barcode within the frame to scan
+              </Text>
+            </View>
+          </CameraView>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const getPartyStatus = (inclination: string) => {
     switch (inclination) {
@@ -444,17 +528,31 @@ export default function SearchVoterScreen() {
           <View style={styles.searchInputContainer}>
             <Search size={20} color={Colors.text.light} style={styles.searchIcon} />
             <TextInput
-              placeholder="Search by Name, Voter ID, or Mobile..."
+              placeholder="Enter Voter ID to search..."
               value={searchQuery}
               onChangeText={setSearchQuery}
               style={styles.searchInput}
               testID="search-input"
               placeholderTextColor={Colors.text.light}
+              onSubmitEditing={handleSearch}
+              returnKeyType="search"
             />
-            <TouchableOpacity style={styles.micButton}>
-              <Mic size={18} color={Colors.text.white} />
+            <TouchableOpacity 
+              style={styles.barcodeButton}
+              onPress={handleBarcodePress}
+            >
+              <QrCode size={18} color={Colors.text.secondary} />
             </TouchableOpacity>
           </View>
+          <TouchableOpacity 
+            style={[styles.searchButton, isLoading && styles.searchButtonDisabled]}
+            onPress={handleSearch}
+            disabled={isLoading}
+          >
+            <Text style={styles.searchButtonText}>
+              {isLoading ? 'Searching...' : 'Search'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Filter Options */}
@@ -576,11 +674,59 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     minHeight: 48,
   },
-  micButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.round,
+  barcodeButton: {
     padding: Spacing.sm,
     marginLeft: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  searchButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    marginTop: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadows.small,
+  },
+  searchButtonDisabled: {
+    backgroundColor: Colors.text.light,
+    opacity: 0.6,
+  },
+  searchButtonText: {
+    color: Colors.text.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scanFrame: {
+    width: 250,
+    height: 250,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'transparent',
+  },
+  scanInstructions: {
+    color: Colors.text.white,
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
   },
   filterSection: {
     paddingHorizontal: Spacing.md,
