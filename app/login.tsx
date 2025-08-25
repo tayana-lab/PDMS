@@ -1,0 +1,288 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+  Alert,
+  SafeAreaView
+} from 'react-native';
+import { router } from 'expo-router';
+import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { leaders } from '@/constants/leaders';
+import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Card from '@/components/ui/Card';
+
+const { width } = Dimensions.get('window');
+
+export default function LoginScreen() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+  const { login, sendOTP, verifyOTP } = useAuth();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % leaders.length;
+        scrollViewRef.current?.scrollTo({
+          x: nextIndex * width,
+          animated: true
+        });
+        return nextIndex;
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleLogin = async () => {
+    if (!phone.trim()) {
+      Alert.alert('Error', 'Please enter your phone number');
+      return;
+    }
+
+    if (!isNewUser && !pin.trim()) {
+      Alert.alert('Error', 'Please enter your PIN');
+      return;
+    }
+
+    if (isNewUser && !otp.trim()) {
+      Alert.alert('Error', 'Please enter the OTP');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      if (isNewUser) {
+        const result = await verifyOTP(phone, otp);
+        if (result.success) {
+          router.replace('/(tabs)');
+        } else {
+          Alert.alert('Error', result.error || 'OTP verification failed');
+        }
+      } else {
+        const result = await login(phone, pin);
+        if (result.success) {
+          router.replace('/(tabs)');
+        } else {
+          Alert.alert('Error', result.error || 'Login failed');
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendOTP = async () => {
+    if (!phone.trim()) {
+      Alert.alert('Error', 'Please enter your phone number');
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await sendOTP(phone);
+    setIsLoading(false);
+
+    if (result.success) {
+      setIsNewUser(true);
+      Alert.alert('Success', `OTP sent to ${phone}. Use 1234 for demo.`);
+    } else {
+      Alert.alert('Error', result.error || 'Failed to send OTP');
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.imageContainer}>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          scrollEnabled={false}
+        >
+          {leaders.map((leader) => (
+            <View key={leader.id} style={styles.imageSlide}>
+              <Image source={{ uri: leader.image }} style={styles.leaderImage} />
+              <Text style={styles.leaderName}>{leader.name}</Text>
+              <Text style={styles.leaderPosition}>{leader.position}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        
+        <View style={styles.indicators}>
+          {leaders.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.indicator,
+                index === currentImageIndex && styles.activeIndicator
+              ]}
+            />
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.formContainer}>
+        <Card style={styles.loginCard}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.appTitle}>BJP Karyakarta</Text>
+            <Text style={styles.appSubtitle}>Digital Platform</Text>
+          </View>
+
+          <Input
+            label="Phone Number"
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="Enter your phone number"
+            keyboardType="phone-pad"
+            maxLength={10}
+          />
+
+          {!isNewUser ? (
+            <Input
+              label="PIN"
+              value={pin}
+              onChangeText={setPin}
+              placeholder="Enter your PIN"
+              secureTextEntry
+              keyboardType="numeric"
+              maxLength={4}
+            />
+          ) : (
+            <Input
+              label="OTP"
+              value={otp}
+              onChangeText={setOtp}
+              placeholder="Enter OTP"
+              keyboardType="numeric"
+              maxLength={4}
+            />
+          )}
+
+          <Button
+            title={isNewUser ? "Verify OTP" : "Login"}
+            onPress={handleLogin}
+            loading={isLoading}
+            style={styles.loginButton}
+          />
+
+          {!isNewUser && (
+            <Button
+              title="New User? Get OTP"
+              onPress={handleSendOTP}
+              variant="outline"
+              loading={isLoading}
+              style={styles.otpButton}
+            />
+          )}
+
+          {isNewUser && (
+            <Button
+              title="Back to Login"
+              onPress={() => {
+                setIsNewUser(false);
+                setOtp('');
+              }}
+              variant="ghost"
+              style={styles.backButton}
+            />
+          )}
+        </Card>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background
+  },
+  imageContainer: {
+    height: 300,
+    position: 'relative'
+  },
+  imageSlide: {
+    width,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Spacing.xl
+  },
+  leaderImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: Spacing.md
+  },
+  leaderName: {
+    ...Typography.subtitle,
+    color: Colors.text.primary,
+    textAlign: 'center'
+  },
+  leaderPosition: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    textAlign: 'center'
+  },
+  indicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: Spacing.md,
+    width: '100%'
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.text.light,
+    marginHorizontal: 4
+  },
+  activeIndicator: {
+    backgroundColor: Colors.primary
+  },
+  formContainer: {
+    flex: 1,
+    padding: Spacing.lg
+  },
+  loginCard: {
+    padding: Spacing.xl
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: Spacing.xl
+  },
+  appTitle: {
+    ...Typography.title,
+    color: Colors.primary,
+    fontWeight: '700'
+  },
+  appSubtitle: {
+    ...Typography.caption,
+    color: Colors.secondary,
+    marginTop: Spacing.xs
+  },
+  loginButton: {
+    marginTop: Spacing.md
+  },
+  otpButton: {
+    marginTop: Spacing.md
+  },
+  backButton: {
+    marginTop: Spacing.sm
+  }
+});
