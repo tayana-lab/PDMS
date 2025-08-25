@@ -3,8 +3,9 @@ import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, Sta
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LogOut, Settings, HelpCircle, User, Menu, X } from 'lucide-react-native';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
+import { Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import Header from '@/components/layout/Header';
 import MarketingCarousel from '@/components/dashboard/MarketingCarousel';
 import ProgressDashboard from '@/components/dashboard/ProgressDashboard';
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const [sidebarAnimation] = useState(new Animated.Value(-SIDEBAR_WIDTH));
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
+  const { colors } = useAppSettings();
 
   const handleProfilePress = () => {
     setShowProfileMenu(true);
@@ -70,7 +72,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar 
-        backgroundColor={Colors.background} 
+        backgroundColor={colors.background} 
         barStyle="dark-content" 
         translucent={false}
       />
@@ -110,18 +112,19 @@ export default function HomeScreen() {
               styles.sidebar,
               {
                 transform: [{ translateX: sidebarAnimation }],
-                paddingTop: insets.top
+                paddingTop: insets.top,
+                backgroundColor: colors.surface
               }
             ]}
           >
-            <View style={styles.sidebarHeader}>
+            <View style={[styles.sidebarHeader, { backgroundColor: colors.primary }]}>
               <View style={styles.sidebarHeaderContent}>
                 <View style={styles.profileSection}>
                   <View style={styles.profileAvatar}>
-                    <User size={32} color={Colors.surface} />
+                    <User size={32} color={colors.surface} />
                   </View>
                   <View style={styles.profileInfo}>
-                    <Text style={styles.profileName}>Karyakarta Name</Text>
+                    <Text style={[styles.profileName, { color: colors.surface }]}>Karyakarta Name</Text>
                     <Text style={styles.profileRole}>BJP Member</Text>
                   </View>
                 </View>
@@ -135,7 +138,7 @@ export default function HomeScreen() {
                 return (
                   <TouchableOpacity
                     key={index}
-                    style={styles.sidebarMenuItem}
+                    style={[styles.sidebarMenuItem, { borderBottomColor: colors.border }]}
                     onPress={() => {
                       closeSidebar();
                       setTimeout(() => item.onPress(), 300);
@@ -144,12 +147,12 @@ export default function HomeScreen() {
                     <View style={styles.menuItemIcon}>
                       <IconComponent 
                         size={22} 
-                        color={item.danger ? Colors.error : Colors.text.primary} 
+                        color={item.danger ? colors.error : colors.text.primary} 
                       />
                     </View>
                     <Text style={[
                       styles.sidebarMenuItemText,
-                      item.danger && { color: Colors.error }
+                      { color: item.danger ? colors.error : colors.text.primary }
                     ]}>
                       {item.label}
                     </Text>
@@ -166,12 +169,10 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.background
+    flex: 1
   },
   safeContainer: {
-    flex: 1,
-    backgroundColor: Colors.background
+    flex: 1
   },
   content: {
     flex: 1
@@ -193,13 +194,11 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     width: SIDEBAR_WIDTH,
-    backgroundColor: Colors.surface,
     height: '100%',
     ...Shadows.large,
     elevation: 16
   },
   sidebarHeader: {
-    backgroundColor: Colors.primary,
     paddingBottom: Spacing.lg
   },
   sidebarHeaderContent: {
@@ -225,7 +224,6 @@ const styles = StyleSheet.create({
   },
   profileName: {
     ...Typography.subtitle,
-    color: Colors.surface,
     fontWeight: '600',
     marginBottom: 2
   },
@@ -242,8 +240,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border
+    borderBottomWidth: 1
   },
   menuItemIcon: {
     width: 40,
@@ -251,7 +248,6 @@ const styles = StyleSheet.create({
   },
   sidebarMenuItemText: {
     ...Typography.body,
-    fontWeight: '500',
-    color: Colors.text.primary
+    fontWeight: '500'
   }
 });

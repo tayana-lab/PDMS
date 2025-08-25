@@ -14,6 +14,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import applicationData from './ApplicationDetails.json';
 import schemeData from './SchemeDetails.json';
 
@@ -40,6 +41,7 @@ interface GovernmentScheme {
 
 export default function HelpDeskScreen() {
   const { voterId } = useLocalSearchParams();
+  const { colors } = useAppSettings();
 
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -169,16 +171,16 @@ export default function HelpDeskScreen() {
           headerShown: true,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={Colors.text.primary} />
+              <ArrowLeft size={24} color={colors.text.primary} />
             </TouchableOpacity>
           ),
           headerStyle: {
-            backgroundColor: Colors.background,
+            backgroundColor: colors.background,
           },
           headerTitleStyle: {
             fontSize: 18,
             fontWeight: '600',
-            color: Colors.text.primary,
+            color: colors.text.primary,
           },
         }}
       />

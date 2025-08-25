@@ -19,6 +19,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { mockVoters } from '@/constants/mockData';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 interface Voter {
   id: string;
@@ -43,6 +44,7 @@ export default function SearchVoterScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCamera, setShowCamera] = useState<boolean>(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const { colors } = useAppSettings();
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
@@ -199,16 +201,16 @@ export default function SearchVoterScreen() {
             headerShown: true,
             headerLeft: () => (
               <TouchableOpacity onPress={() => setShowCamera(false)} style={styles.backButton}>
-                <ArrowLeft size={24} color={Colors.text.primary} />
+                <ArrowLeft size={24} color={colors.text.primary} />
               </TouchableOpacity>
             ),
             headerStyle: {
-              backgroundColor: Colors.background,
+              backgroundColor: colors.background,
             },
             headerTitleStyle: {
               fontSize: 18,
               fontWeight: '600',
-              color: Colors.text.primary,
+              color: colors.text.primary,
             },
           }}
         />
@@ -219,8 +221,8 @@ export default function SearchVoterScreen() {
             onBarcodeScanned={({ data }: { data: string }) => handleBarcodeScanned(data)}
           >
             <View style={styles.cameraOverlay}>
-              <View style={styles.scanFrame} />
-              <Text style={styles.scanInstructions}>
+              <View style={[styles.scanFrame, { borderColor: colors.primary }]} />
+              <Text style={[styles.scanInstructions, { color: colors.text.white }]}>
                 Position the barcode within the frame to scan
               </Text>
             </View>
@@ -233,7 +235,7 @@ export default function SearchVoterScreen() {
   const getPartyStatus = (inclination: string) => {
     switch (inclination) {
       case 'BJP':
-        return { label: 'Party Voter', color: Colors.primary, bgColor: Colors.primary + '20' };
+        return { label: 'Party Voter', color: colors.primary, bgColor: colors.primary + '20' };
       case 'Inclined':
         return { label: 'Inclined to Party', color: '#FF9500', bgColor: '#FF950020' };
       case 'Neutral':
@@ -250,11 +252,11 @@ export default function SearchVoterScreen() {
     return (
       <View style={[
         styles.partyIcon,
-        { backgroundColor: isInclined ? Colors.primary : '#E0E0E0' }
+        { backgroundColor: isInclined ? colors.primary : '#E0E0E0' }
       ]}>
         <Text style={[
           styles.partyIconText,
-          { color: isInclined ? Colors.text.white : Colors.text.light }
+          { color: isInclined ? colors.text.white : colors.text.light }
         ]}>
           🪷
         </Text>

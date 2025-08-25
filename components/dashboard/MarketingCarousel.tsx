@@ -8,14 +8,16 @@ import {
   TouchableOpacity,
   Dimensions
 } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { marketingAds } from '@/constants/mockData';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 const { width } = Dimensions.get('window');
 
 export default function MarketingCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
+  const { colors } = useAppSettings();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,15 +59,15 @@ export default function MarketingCarousel() {
         {marketingAds.map((ad) => (
           <TouchableOpacity
             key={ad.id}
-            style={styles.card}
+            style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
             onPress={() => handleEventPress(ad.id)}
             activeOpacity={0.9}
           >
             <Image source={{ uri: ad.image }} style={styles.image} />
             <View style={styles.content}>
-              <Text style={styles.eventTitle}>{ad.title}</Text>
-              <Text style={styles.description}>{ad.description}</Text>
-              <Text style={styles.date}>{ad.date}</Text>
+              <Text style={[styles.eventTitle, { color: colors.text.primary }]}>{ad.title}</Text>
+              <Text style={[styles.description, { color: colors.text.secondary }]}>{ad.description}</Text>
+              <Text style={[styles.date, { color: colors.primary }]}>{ad.date}</Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -77,7 +79,7 @@ export default function MarketingCarousel() {
             key={index}
             style={[
               styles.indicator,
-              index === currentIndex && styles.activeIndicator
+              { backgroundColor: index === currentIndex ? colors.primary : colors.text.light }
             ]}
           />
         ))}
@@ -101,12 +103,10 @@ const styles = StyleSheet.create({
   card: {
     width: width - (Spacing.lg * 2),
     marginRight: Spacing.lg,
-    backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.medium,
-    borderWidth: 1,
-    borderColor: Colors.border
+    borderWidth: 1
   },
   image: {
     width: '100%',
@@ -122,12 +122,10 @@ const styles = StyleSheet.create({
   },
   description: {
     ...Typography.caption,
-    color: Colors.text.secondary,
     marginBottom: Spacing.sm
   },
   date: {
     ...Typography.small,
-    color: Colors.primary,
     fontWeight: '600'
   },
   indicators: {
@@ -139,10 +137,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.text.light,
     marginHorizontal: 4
-  },
-  activeIndicator: {
-    backgroundColor: Colors.primary
   }
 });

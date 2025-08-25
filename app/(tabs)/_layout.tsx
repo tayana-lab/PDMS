@@ -2,21 +2,22 @@ import { Tabs } from 'expo-router';
 import { Home, Users, FileText, BarChart3, User } from 'lucide-react-native';
 import React from 'react';
 import { Platform } from 'react-native';
-import { Colors } from '@/constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppSettings();
   
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.text.light,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.text.light,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: Colors.surface,
-          borderTopColor: Colors.border,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 4,
           paddingTop: 4,
