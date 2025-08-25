@@ -43,7 +43,7 @@ const LoginScreen = () => {
     <View style={{ flex: 1 }}>
       {/* Gradient background */}
       <LinearGradient
-        colors={["#FF6B35", "#FF8A65", "#FFAB92"]}
+        colors={["#FF6B35", "#FF8A65", "#FFAB91"]}
         style={StyleSheet.absoluteFill}
       />
 
