@@ -1,11 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions  } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { quickActions } from '@/constants/mockData';
 import Badge from '@/components/ui/Badge';
 
 export default function QuickActions() {
+
+  const screenWidth = Dimensions.get('window').width;
+
+// 🔹 Calculate card width to fit exactly 3 per screen (with paddings & gaps)
+const cardWidth = (screenWidth - (Spacing.lg * 2) - (Spacing.md * 2)) / 3;
+  
   const handleActionPress = (route: string) => {
     console.log('Navigating to:', route);
     if (route === '/search-voter') {
