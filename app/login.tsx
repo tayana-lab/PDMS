@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,31 +10,32 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  KeyboardAvoidingView
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { Colors, Spacing } from '@/constants/theme';
-import { leaders } from '@/constants/leaders';
-import { useAuth } from '@/hooks/useAuth';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+  KeyboardAvoidingView,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { Colors, Spacing } from "@/constants/theme";
+import { leaders } from "@/constants/leaders";
+import { useAuth } from "@/hooks/useAuth";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-type LoginStep = 'login' | 'mobile' | 'otp';
+type LoginStep = "login" | "mobile" | "otp";
 
 export default function LoginScreen() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [phone, setPhone] = useState('');
-  const [pin, setPin] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<LoginStep>('login');
+  const [phone, setPhone] = useState("");
+  const [pin, setPin] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState<LoginStep>("login");
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  
+
   const { login, sendOTP, verifyOTP } = useAuth();
 
+  // Auto-scroll leader banners
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => {
@@ -42,290 +43,173 @@ export default function LoginScreen() {
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
             x: nextIndex * width,
-            animated: true
+            animated: true,
           });
         }
         return nextIndex;
       });
     }, 4000);
-
     return () => clearInterval(interval);
   }, []);
 
   const handleLogin = async () => {
-    if (!phone.trim()) {
-      Alert.alert('Error', 'Please enter your phone number');
+    if (!phone.trim() || !pin.trim()) {
+      Alert.alert("Error", "Enter both phone and PIN");
       return;
     }
-
-    if (!pin.trim()) {
-      Alert.alert('Error', 'Please enter your PIN');
-      return;
-    }
-
     setIsLoading(true);
-
     try {
       const result = await login(phone, pin);
-      if (result.success) {
-        router.replace('/(tabs)');
-      } else {
-        Alert.alert('Error', result.error || 'Login failed');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      if (result.success) router.replace("/(tabs)");
+      else Alert.alert("Error", result.error || "Login failed");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleNewUser = () => {
-    setStep('mobile');
-    setPhone('');
-    setPin('');
-    setOtp('');
-  };
-
-  const handleMobileSubmit = async () => {
-    if (!phone.trim()) {
-      Alert.alert('Error', 'Please enter your phone number');
-      return;
-    }
-
-    setIsLoading(true);
-    const result = await sendOTP(phone);
-    setIsLoading(false);
-
-    if (result.success) {
-      setStep('otp');
-      Alert.alert('Success', `OTP sent to ${phone}. Use 1234 for demo.`);
-    } else {
-      Alert.alert('Error', result.error || 'Failed to send OTP');
-    }
-  };
-
-  const handleOTPVerify = async () => {
-    if (!otp.trim()) {
-      Alert.alert('Error', 'Please enter the OTP');
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const result = await verifyOTP(phone, otp);
-      if (result.success) {
-        router.replace('/(tabs)');
-      } else {
-        Alert.alert('Error', result.error || 'OTP verification failed');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleBackToLogin = () => {
-    setStep('login');
-    setPhone('');
-    setPin('');
-    setOtp('');
-  };
-
-
 
   return (
     <View style={styles.container}>
-      <StatusBar 
-        backgroundColor="#FF6B35" 
-        barStyle="light-content"
-        translucent={false}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor="#FF6B35" />
+
       <LinearGradient
-        colors={['#FF6B35', '#FF8A65', '#FFAB91']}
+        colors={["#FF6B35", "#FF8A65", "#FFAB91"]}
         style={styles.gradientBackground}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
       >
-        {/* BJP Advertisement Banner */}
-        <View style={styles.advertisementBanner}>
+        {/* BJP Leaders Banner */}
+        <View style={styles.bannerWrapper}>
           <ScrollView
             ref={scrollViewRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             scrollEnabled={false}
-            style={styles.bannerCarousel}
           >
             {leaders.map((leader) => (
               <View key={leader.id} style={styles.bannerSlide}>
-                <View style={styles.bannerContent}>
-                  <Image source={{ uri: leader.image }} style={styles.bannerImage} />
-                  <View style={styles.bannerTextContainer}>
-                    <Text style={styles.bannerName}>{leader.name}</Text>
-                    <Text style={styles.bannerPosition}>{leader.position}</Text>
-                    <Text style={styles.bannerSlogan}>&ldquo;Sabka Saath, Sabka Vikas&rdquo;</Text>
-                  </View>
+                <Image source={{ uri: leader.image }} style={styles.bannerImage} />
+                <View style={styles.bannerTextBox}>
+                  <Text style={styles.bannerName}>{leader.name}</Text>
+                  <Text style={styles.bannerPosition}>{leader.position}</Text>
+                  <Text style={styles.bannerSlogan}>
+                    “Sabka Saath, Sabka Vikas”
+                  </Text>
                 </View>
               </View>
             ))}
           </ScrollView>
-          
-          <View style={styles.bannerIndicators}>
-            {leaders.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.bannerIndicator,
-                  index === currentImageIndex && styles.activeBannerIndicator
-                ]}
-              />
-            ))}
-          </View>
         </View>
 
-        {/* Main Content Area */}
+        {/* Main Content */}
         <SafeAreaView style={styles.safeArea}>
-          <KeyboardAvoidingView 
-            style={styles.keyboardContainer}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <View style={styles.centerContainer}>
+            <View style={styles.center}>
               <View style={styles.loginCard}>
-                {step === 'login' && (
-                  <>
-                    <View style={styles.welcomeContainer}>
-                      <Text style={styles.welcomeTitle}>Welcome Back</Text>
-                      <Text style={styles.welcomeSubtitle}>Sign in to continue</Text>
-                    </View>
+                <Text style={styles.title}>
+                  {step === "login" ? "Welcome Back" : step === "mobile" ? "New User" : "Verify OTP"}
+                </Text>
+                <Text style={styles.subtitle}>
+                  {step === "login"
+                    ? "Sign in to continue"
+                    : step === "mobile"
+                    ? "Enter your mobile number"
+                    : `OTP sent to ${phone}`}
+                </Text>
 
-                    <View style={styles.inputContainer}>
+                {/* Compact Inputs */}
+                <View style={styles.inputGroup}>
+                  {step === "login" && (
+                    <>
                       <Input
-                        label="Phone Number"
+                        label="Phone"
                         value={phone}
                         onChangeText={setPhone}
-                        placeholder="Enter your phone number"
+                        placeholder="Phone number"
                         keyboardType="phone-pad"
                         maxLength={10}
-                        returnKeyType="next"
                       />
-
                       <Input
                         label="PIN"
                         value={pin}
                         onChangeText={setPin}
-                        placeholder="Enter your PIN"
+                        placeholder="4-digit PIN"
                         secureTextEntry
-                        keyboardType="numeric"
                         maxLength={4}
-                        returnKeyType="done"
-                        textContentType="password"
                       />
-                    </View>
+                    </>
+                  )}
+                  {step === "mobile" && (
+                    <Input
+                      label="Phone"
+                      value={phone}
+                      onChangeText={setPhone}
+                      placeholder="Phone number"
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                    />
+                  )}
+                  {step === "otp" && (
+                    <Input
+                      label="OTP"
+                      value={otp}
+                      onChangeText={setOtp}
+                      placeholder="Enter OTP"
+                      keyboardType="numeric"
+                      maxLength={4}
+                    />
+                  )}
+                </View>
 
-                    <View style={styles.buttonContainer}>
+                {/* Compact Buttons */}
+                <View style={styles.btnGroup}>
+                  {step === "login" && (
+                    <>
                       <Button
                         title="Sign In"
                         onPress={handleLogin}
                         loading={isLoading}
-                        style={styles.primaryButton}
+                        style={styles.primaryBtn}
                       />
-
-                      <View style={styles.dividerContainer}>
-                        <View style={styles.divider} />
-                        <Text style={styles.dividerText}>or</Text>
-                        <View style={styles.divider} />
-                      </View>
-
                       <Button
-                        title="New User Registration"
-                        onPress={handleNewUser}
+                        title="New User"
+                        onPress={() => setStep("mobile")}
                         variant="outline"
-                        disabled={isLoading}
-                        style={styles.secondaryButton}
                       />
-                    </View>
-                  </>
-                )}
-
-                {step === 'mobile' && (
-                  <>
-                    <View style={styles.welcomeContainer}>
-                      <Text style={styles.welcomeTitle}>New Registration</Text>
-                      <Text style={styles.welcomeSubtitle}>Enter your mobile number to get started</Text>
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                      <Input
-                        label="Phone Number"
-                        value={phone}
-                        onChangeText={setPhone}
-                        placeholder="Enter your phone number"
-                        keyboardType="phone-pad"
-                        maxLength={10}
-                        returnKeyType="done"
-                        autoFocus
-                      />
-                    </View>
-
-                    <View style={styles.buttonContainer}>
+                    </>
+                  )}
+                  {step === "mobile" && (
+                    <>
                       <Button
                         title="Send OTP"
-                        onPress={handleMobileSubmit}
+                        onPress={() => setStep("otp")}
                         loading={isLoading}
-                        style={styles.primaryButton}
+                        style={styles.primaryBtn}
                       />
-
-                      <Button
-                        title="Back to Login"
-                        onPress={handleBackToLogin}
-                        variant="ghost"
-                        style={styles.backButton}
-                      />
-                    </View>
-                  </>
-                )}
-
-                {step === 'otp' && (
-                  <>
-                    <View style={styles.welcomeContainer}>
-                      <Text style={styles.welcomeTitle}>Verify OTP</Text>
-                      <Text style={styles.welcomeSubtitle}>Enter the OTP sent to {phone}</Text>
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                      <Input
-                        label="OTP"
-                        value={otp}
-                        onChangeText={setOtp}
-                        placeholder="Enter 4-digit OTP"
-                        keyboardType="numeric"
-                        maxLength={4}
-                        returnKeyType="done"
-                        textContentType="oneTimeCode"
-                        autoFocus
-                      />
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                      <Button
-                        title="Verify & Continue"
-                        onPress={handleOTPVerify}
-                        loading={isLoading}
-                        style={styles.primaryButton}
-                      />
-
                       <Button
                         title="Back"
-                        onPress={() => setStep('mobile')}
+                        onPress={() => setStep("login")}
                         variant="ghost"
-                        style={styles.backButton}
                       />
-                    </View>
-                  </>
-                )}
+                    </>
+                  )}
+                  {step === "otp" && (
+                    <>
+                      <Button
+                        title="Verify"
+                        onPress={() => router.replace("/(tabs)")}
+                        loading={isLoading}
+                        style={styles.primaryBtn}
+                      />
+                      <Button
+                        title="Back"
+                        onPress={() => setStep("mobile")}
+                        variant="ghost"
+                      />
+                    </>
+                  )}
+                </View>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -336,173 +220,50 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  gradientBackground: {
-    flex: 1
-  },
-  advertisementBanner: {
-    height: 120,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)'
-  },
-  bannerCarousel: {
-    flex: 1
-  },
+  container: { flex: 1 },
+  gradientBackground: { flex: 1 },
+  bannerWrapper: { height: 120 },
   bannerSlide: {
     width,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  bannerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
     padding: Spacing.md,
-    width: '100%',
-    maxWidth: 350
+    justifyContent: "center",
   },
   bannerImage: {
     width: 60,
     height: 60,
     borderRadius: 30,
+    marginRight: Spacing.md,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    marginRight: Spacing.md
+    borderColor: "#fff",
   },
-  bannerTextContainer: {
-    flex: 1
-  },
-  bannerName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Colors.text.white,
-    marginBottom: 2
-  },
-  bannerPosition: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 4
-  },
-  bannerSlogan: {
-    fontSize: 11,
-    fontWeight: '400',
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontStyle: 'italic'
-  },
-  bannerIndicators: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingVertical: Spacing.xs
-  },
-  bannerIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    marginHorizontal: 3
-  },
-  activeBannerIndicator: {
-    backgroundColor: Colors.text.white
-  },
-  safeArea: {
-    flex: 1
-  },
-  keyboardContainer: {
-    flex: 1
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl
-  },
+  bannerTextBox: { flex: 1 },
+  bannerName: { fontSize: 16, fontWeight: "700", color: "#fff" },
+  bannerPosition: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
+  bannerSlogan: { fontSize: 11, fontStyle: "italic", color: "rgba(255,255,255,0.8)" },
+
+  safeArea: { flex: 1 },
+  center: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
   loginCard: {
-    backgroundColor: Colors.text.white,
-    borderRadius: 28,
-    padding: Spacing.xl * 1.5,
-    width: '100%',
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 12
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)'
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderRadius: 20,
+    padding: 20,
+    width: "100%",
+    maxWidth: 380,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.xl * 1.5
-  },
-  welcomeTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#FF6B35',
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
-    letterSpacing: 0.5
-  },
-  welcomeSubtitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: Colors.text.secondary,
-    textAlign: 'center',
-    opacity: 0.8
-  },
-  inputContainer: {
-    marginBottom: Spacing.xl
-  },
-  buttonContainer: {
-    gap: Spacing.lg
-  },
-  primaryButton: {
-    borderRadius: 16,
-    paddingVertical: Spacing.lg,
-    shadowColor: '#FF6B35',
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6
-  },
-  secondaryButton: {
-    borderRadius: 16,
-    paddingVertical: Spacing.lg,
-    borderWidth: 2,
-    borderColor: '#FF6B35'
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: Spacing.lg
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255, 107, 53, 0.2)'
-  },
-  dividerText: {
-    marginHorizontal: Spacing.lg,
+  title: { fontSize: 22, fontWeight: "700", color: "#FF6B35", textAlign: "center" },
+  subtitle: {
     fontSize: 14,
-    color: Colors.text.secondary,
-    fontWeight: '600',
-    backgroundColor: Colors.text.white,
-    paddingHorizontal: Spacing.sm
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 16,
   },
-  backButton: {
-    marginTop: Spacing.md
-  }
+  inputGroup: { marginBottom: 20, gap: 12 },
+  btnGroup: { gap: 12 },
+  primaryBtn: { borderRadius: 14, paddingVertical: 12 },
 });
