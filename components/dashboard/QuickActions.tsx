@@ -15,7 +15,6 @@ export default function QuickActions() {
     }
     // router.push(route);
   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
@@ -36,7 +35,13 @@ export default function QuickActions() {
               <Image source={{ uri: action.icon }} style={styles.actionIcon} />
               {action.badge > 0 && <Badge count={action.badge} />}
             </View>
-            <Text style={styles.actionLabel}>{action.title}</Text>
+            <Text 
+              style={styles.actionLabel} 
+              numberOfLines={1} 
+              ellipsizeMode="tail"
+            >
+              {action.title}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -61,7 +66,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md
   },
   actionCard: {
-    width: 100,
+    width: 120, // increased from 100 to fit longer text
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
