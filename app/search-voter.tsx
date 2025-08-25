@@ -430,8 +430,9 @@ export default function SearchVoterScreen() {
             backgroundColor: Colors.background,
           },
           headerTitleStyle: {
-            ...Typography.title,
+            fontSize: 18,
             fontWeight: '600',
+            color: Colors.text.primary,
           },
         }}
       />
@@ -538,8 +539,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   backButton: {
-    padding: Spacing.sm,
-    marginLeft: -Spacing.sm,
+    padding: Spacing.xs,
+    marginLeft: -Spacing.xs,
   },
   content: {
     flex: 1,
