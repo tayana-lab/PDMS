@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   bannerSlogan: { fontSize: 11, fontStyle: "italic", color: "rgba(255,255,255,0.8)" },
 
   safeArea: { flex: 1 },
-  center: { flex: 1, justifyContent: "center", paddingHorizontal: 26 },
+  center: { flex: 1, justifyContent: "center", paddingHorizontal: 25 },
   loginCard: {
     backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 20,
