@@ -214,9 +214,10 @@ export default function LoginScreen() {
               </View>
             </View>
           </KeyboardAvoidingView>
-        </SafeAreaView>
+       
       </LinearGradient>
     </View>
+        </SafeAreaView>
   );
 }
 
