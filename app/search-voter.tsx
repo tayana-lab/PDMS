@@ -17,7 +17,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { mockVoters } from '@/constants/mockData';
 import { useAppSettings } from '@/hooks/useAppSettings';
 
@@ -192,6 +192,8 @@ export default function SearchVoterScreen() {
     }, 100);
   };
 
+  const styles = createStyles(colors);
+
   if (showCamera) {
     return (
       <SafeAreaView style={styles.container}>
@@ -296,36 +298,36 @@ export default function SearchVoterScreen() {
           {/* Voter Details */}
           <View style={styles.voterDetails}>
             <View style={styles.detailRow}>
-              <Grid3X3 size={16} color={Colors.text.secondary} />
+              <Grid3X3 size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue}>{voter.voterId}</Text>
             </View>
             
             <View style={styles.detailRow}>
-              <Phone size={16} color={Colors.text.secondary} />
+              <Phone size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue}>{voter.mobileNumber || 'Not available'}</Text>
             </View>
             
             <View style={styles.detailRow}>
-              <Home size={16} color={Colors.text.secondary} />
+              <Home size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue} numberOfLines={1}>
                 {voter.houseName}, {voter.ward}
               </Text>
             </View>
             
             <View style={styles.detailRow}>
-              <MapPin size={16} color={Colors.text.secondary} />
+              <MapPin size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue} numberOfLines={1}>
                 {voter.address}, {voter.assemblyConstituency}
               </Text>
             </View>
             
             <View style={styles.detailRow}>
-              <Briefcase size={16} color={Colors.text.secondary} />
+              <Briefcase size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue}>Business</Text>
             </View>
             
             <View style={styles.detailRow}>
-              <Calendar size={16} color={Colors.text.secondary} />
+              <Calendar size={16} color={colors.text.secondary} />
               <Text style={styles.detailValue}>Last: {voter.lastInteractionDate} by {voter.karyakartaName}</Text>
             </View>
           </View>
@@ -339,8 +341,8 @@ export default function SearchVoterScreen() {
                 handleEdit(voter);
               }}
             >
-              <Edit size={16} color={Colors.primary} />
-              <Text style={[styles.actionBtnText, { color: Colors.primary }]}>Edit</Text>
+              <Edit size={16} color={colors.primary} />
+              <Text style={[styles.actionBtnText, { color: colors.primary }]}>Edit</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -355,10 +357,10 @@ export default function SearchVoterScreen() {
               }}
               disabled={!voter.mobileNumber}
             >
-              <Phone size={16} color={voter.mobileNumber ? '#4CAF50' : Colors.text.light} />
+              <Phone size={16} color={voter.mobileNumber ? '#4CAF50' : colors.text.light} />
               <Text style={[
                 styles.actionBtnText,
-                { color: voter.mobileNumber ? '#4CAF50' : Colors.text.light }
+                { color: voter.mobileNumber ? '#4CAF50' : colors.text.light }
               ]}>Call</Text>
             </TouchableOpacity>
             
@@ -369,8 +371,8 @@ export default function SearchVoterScreen() {
                 handleHelpDesk(voter);
               }}
             >
-              <HelpCircle size={16} color={Colors.primary} />
-              <Text style={[styles.actionBtnText, { color: Colors.primary }]}>HelpDesk</Text>
+              <HelpCircle size={16} color={colors.primary} />
+              <Text style={[styles.actionBtnText, { color: colors.primary }]}>HelpDesk</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -475,7 +477,7 @@ export default function SearchVoterScreen() {
             title="Edit"
             onPress={() => handleEdit()}
             variant="outline"
-            icon={<Edit size={16} color={Colors.primary} />}
+            icon={<Edit size={16} color={colors.primary} />}
             style={styles.selectedActionButton}
           />
           <Button
@@ -483,7 +485,7 @@ export default function SearchVoterScreen() {
             onPress={() => handleCall(selectedVoter.mobileNumber)}
             variant={selectedVoter.mobileNumber ? 'default' : 'outline'}
             disabled={!selectedVoter.mobileNumber}
-            icon={<Phone size={16} color={selectedVoter.mobileNumber ? Colors.text.white : Colors.text.light} />}
+            icon={<Phone size={16} color={selectedVoter.mobileNumber ? colors.text.white : colors.text.light} />}
             style={[
               styles.selectedActionButton,
               !selectedVoter.mobileNumber && styles.disabledButton
@@ -493,7 +495,7 @@ export default function SearchVoterScreen() {
             title="HelpDesk"
             onPress={() => handleHelpDesk(selectedVoter)}
             variant="secondary"
-            icon={<HelpCircle size={16} color={Colors.text.white} />}
+            icon={<HelpCircle size={16} color={colors.text.white} />}
             style={styles.selectedActionButton}
           />
         </View>
@@ -509,17 +511,17 @@ export default function SearchVoterScreen() {
           headerShown: true,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={Colors.text.primary} />
+              <ArrowLeft size={24} color={colors.text.primary} />
             </TouchableOpacity>
           ),
           headerStyle: {
-            backgroundColor: Colors.background,
+            backgroundColor: colors.background,
              
           },
           headerTitleStyle: {
             fontSize: 18,
             fontWeight: '600',
-            color: Colors.text.primary,
+            color: colors.text.primary,
           },
         }}
       />
@@ -528,14 +530,14 @@ export default function SearchVoterScreen() {
         {/* Search Section */}
         <View style={styles.searchSection}>
           <View style={styles.searchInputContainer}>
-            <Search size={20} color={Colors.text.light} style={styles.searchIcon} />
+            <Search size={20} color={colors.text.light} style={styles.searchIcon} />
             <TextInput
               placeholder="Enter Voter ID to search..."
               value={searchQuery}
               onChangeText={setSearchQuery}
               style={styles.searchInput}
               testID="search-input"
-              placeholderTextColor={Colors.text.light}
+              placeholderTextColor={colors.text.light}
               onSubmitEditing={handleSearch}
               returnKeyType="search"
             />
@@ -543,7 +545,7 @@ export default function SearchVoterScreen() {
               style={styles.barcodeButton}
               onPress={handleBarcodePress}
             >
-              <QrCode size={18} color={Colors.text.secondary} />
+              <QrCode size={18} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
           <TouchableOpacity 
@@ -623,7 +625,7 @@ export default function SearchVoterScreen() {
               style={styles.backToResults}
               onPress={() => setSelectedVoter(null)}
             >
-              <ArrowLeft size={16} color={Colors.primary} />
+              <ArrowLeft size={16} color={colors.primary} />
               <Text style={styles.backToResultsText}>Back to Results</Text>
             </TouchableOpacity>
             {renderSelectedVoterDetails()}
@@ -634,10 +636,10 @@ export default function SearchVoterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   backButton: {
     padding: Spacing.xs,
@@ -645,22 +647,22 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   searchSection: {
     padding: Spacing.md,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     ...Shadows.small,
   },
   searchIcon: {
@@ -669,7 +671,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: 0,
     backgroundColor: 'transparent',
@@ -680,12 +682,12 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
     marginLeft: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   searchButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -695,11 +697,11 @@ const styles = StyleSheet.create({
     ...Shadows.small,
   },
   searchButtonDisabled: {
-    backgroundColor: Colors.text.light,
+    backgroundColor: colors.text.light,
     opacity: 0.6,
   },
   searchButtonText: {
-    color: Colors.text.white,
+    color: colors.text.white,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -719,12 +721,12 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: colors.primary,
     borderRadius: BorderRadius.md,
     backgroundColor: 'transparent',
   },
   scanInstructions: {
-    color: Colors.text.white,
+    color: colors.text.white,
     fontSize: 16,
     textAlign: 'center',
     marginTop: Spacing.lg,
@@ -733,9 +735,9 @@ const styles = StyleSheet.create({
   filterSection: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   filtersContainer: {
     flexDirection: 'row',
@@ -743,31 +745,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xs,
   },
   filterChip: {
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.round,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   filterChipSelected: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   filterChipText: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   filterChipTextSelected: {
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   recentSearches: {
     padding: Spacing.md,
   },
   sectionTitle: {
     ...Typography.subtitle,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     fontWeight: '600',
   },
@@ -777,16 +779,16 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   recentChip: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.round,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   recentChipText: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   noResults: {
     padding: Spacing.xl,
@@ -794,7 +796,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     ...Typography.body,
-    color: Colors.text.light,
+    color: colors.text.light,
     textAlign: 'center',
   },
   resultsSection: {
@@ -802,11 +804,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   voterCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     ...Shadows.small,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     marginBottom: Spacing.md,
   },
   voterCardContent: {
@@ -843,12 +845,12 @@ const styles = StyleSheet.create({
   voterName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   voterGuardian: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   partyStatusBadge: {
     paddingHorizontal: Spacing.sm,
@@ -872,7 +874,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   actionButtonsRow: {
@@ -880,7 +882,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: colors.border,
     gap: Spacing.sm,
   },
   actionBtn: {
@@ -892,9 +894,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xs,
     borderRadius: BorderRadius.sm,
     gap: 4,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   editBtn: {
     backgroundColor: '#E3F2FD',
@@ -910,8 +912,8 @@ const styles = StyleSheet.create({
   },
   disabledBtn: {
     opacity: 0.5,
-    backgroundColor: Colors.text.light + '10',
-    borderColor: Colors.text.light + '30',
+    backgroundColor: colors.text.light + '10',
+    borderColor: colors.text.light + '30',
   },
   actionBtnText: {
     fontSize: 12,
@@ -928,7 +930,7 @@ const styles = StyleSheet.create({
   },
   backToResultsText: {
     ...Typography.body,
-    color: Colors.primary,
+    color: colors.primary,
   },
   selectedVoterCard: {
     padding: Spacing.md,
@@ -941,7 +943,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   selectedVoterInfo: {
     flex: 1,
@@ -952,12 +954,12 @@ const styles = StyleSheet.create({
   },
   selectedVoterId: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   selectedVoterDetails: {
     marginBottom: Spacing.lg,
     paddingHorizontal: Spacing.sm,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.sm,
   },
@@ -975,14 +977,14 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: BorderRadius.round,
-    backgroundColor: Colors.primary + '15',
+    backgroundColor: colors.primary + '15',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
   },
   selectedProfileInitial: {
     ...Typography.title,
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '700',
     fontSize: 28,
   },
@@ -996,7 +998,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '700',
     fontSize: 12,
     textTransform: 'uppercase',
@@ -1007,7 +1009,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailSeparator: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '700',
     marginHorizontal: Spacing.xs,
     width: 12,
@@ -1017,7 +1019,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
     flex: 1,
     fontSize: 14,
@@ -1031,12 +1033,12 @@ const styles = StyleSheet.create({
   },
   selectedDetailLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   selectedDetailValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   editInput: {
     marginTop: Spacing.xs,
@@ -1048,10 +1050,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xs,
     fontSize: 14,
     minHeight: 20,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   partyInclinationOptions: {
     flexDirection: 'row',
@@ -1063,19 +1065,19 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.background,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
   },
   partyOptionSelected: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   partyOptionText: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   partyOptionTextSelected: {
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   selectedActionButtons: {
     flexDirection: 'row',
@@ -1084,7 +1086,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: colors.border,
   },
   selectedActionButton: {
     flex: 1,

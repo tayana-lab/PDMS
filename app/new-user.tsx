@@ -17,7 +17,7 @@ import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { Colors, Spacing, BorderRadius } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 
 type Step = 'mobile' | 'otp' | 'pin';
 
@@ -136,7 +136,7 @@ export default function NewUserScreen() {
           headerShown: true,
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
-              <ArrowLeft size={24} color={Colors.text.white} />
+              <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
           ),
           headerStyle: {
@@ -145,9 +145,9 @@ export default function NewUserScreen() {
           headerTitleStyle: {
             fontSize: 18,
             fontWeight: '600',
-            color: Colors.text.white,
+            color: colors.text.white,
           },
-          headerTintColor: Colors.text.white,
+          headerTintColor: colors.text.white,
         }}
       />
       <StatusBar barStyle="light-content" backgroundColor="#FF6B35" />
@@ -229,7 +229,7 @@ export default function NewUserScreen() {
                       placeholder="Enter mobile number"
                       keyboardType="phone-pad"
                       maxLength={10}
-                      leftIcon={<Phone size={20} color={Colors.text.secondary} />}
+                      leftIcon={<Phone size={20} color={colors.text.secondary} />}
                     />
                   )}
 
@@ -242,7 +242,7 @@ export default function NewUserScreen() {
                         placeholder="Enter 4-digit OTP"
                         keyboardType="numeric"
                         maxLength={4}
-                        leftIcon={<MessageSquare size={20} color={Colors.text.secondary} />}
+                        leftIcon={<MessageSquare size={20} color={colors.text.secondary} />}
                         style={styles.otpInput}
                       />
                       <Text style={styles.helperText}>
@@ -261,7 +261,7 @@ export default function NewUserScreen() {
                         keyboardType="numeric"
                         maxLength={4}
                         secureTextEntry
-                        leftIcon={<Lock size={20} color={Colors.text.secondary} />}
+                        leftIcon={<Lock size={20} color={colors.text.secondary} />}
                         style={styles.pinInput}
                       />
                       <Input
@@ -272,7 +272,7 @@ export default function NewUserScreen() {
                         keyboardType="numeric"
                         maxLength={4}
                         secureTextEntry
-                        leftIcon={<Lock size={20} color={Colors.text.secondary} />}
+                        leftIcon={<Lock size={20} color={colors.text.secondary} />}
                         style={styles.pinInput}
                         containerStyle={{ marginTop: 12 }}
                       />

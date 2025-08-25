@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, Platform, View } from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 interface ButtonProps {
   title: string;
@@ -25,7 +26,9 @@ export default function Button({
   style,
   textStyle
 }: ButtonProps) {
+  const { colors } = useAppSettings();
   const actualVariant = variant === 'default' ? 'primary' : variant;
+  const styles = createStyles(colors);
   
   const buttonStyle = [
     styles.base,
@@ -51,7 +54,7 @@ export default function Button({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator color={actualVariant === 'primary' ? Colors.text.white : Colors.primary} />
+        <ActivityIndicator color={actualVariant === 'primary' ? colors.text.white : colors.primary} />
       ) : (
         <View style={styles.content}>
           {icon}
@@ -62,7 +65,7 @@ export default function Button({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   base: {
     borderRadius: BorderRadius.md,
     alignItems: 'center',
@@ -75,16 +78,16 @@ const styles = StyleSheet.create({
     gap: Spacing.xs
   },
   primary: {
-    backgroundColor: Colors.primary
+    backgroundColor: colors.primary
   },
   secondary: {
-    backgroundColor: Colors.secondary
+    backgroundColor: colors.secondary
   },
   outline: {
     backgroundColor: 'transparent',
     ...(Platform.OS === 'ios' && {
       borderWidth: 1,
-      borderColor: Colors.primary
+      borderColor: colors.primary
     })
   },
   ghost: {
@@ -113,16 +116,16 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   primaryText: {
-    color: Colors.text.white
+    color: colors.text.white
   },
   secondaryText: {
-    color: Colors.text.white
+    color: colors.text.white
   },
   outlineText: {
-    color: Colors.primary
+    color: colors.primary
   },
   ghostText: {
-    color: Colors.primary
+    color: colors.primary
   },
   smallText: {
     fontSize: 14

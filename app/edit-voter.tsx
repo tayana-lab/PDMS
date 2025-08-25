@@ -14,7 +14,8 @@ import { ArrowLeft, Save, MapPin, Phone, Home } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 import { mockVoters } from '@/constants/mockData';
 
 interface Voter {
@@ -39,6 +40,7 @@ export default function EditVoterScreen() {
   const [voter, setVoter] = useState<Voter | null>(null);
   const [editData, setEditData] = useState<Partial<Voter>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useAppSettings();
 
   useEffect(() => {
     if (voterId) {
@@ -90,7 +92,7 @@ export default function EditVoterScreen() {
   const getPartyStatus = (inclination: string) => {
     switch (inclination) {
       case 'BJP':
-        return { label: 'Party Voter', color: Colors.primary, bgColor: Colors.primary + '20' };
+        return { label: 'Party Voter', color: colors.primary, bgColor: colors.primary + '20' };
       case 'Inclined':
         return { label: 'Inclined to Party', color: '#FF9500', bgColor: '#FF950020' };
       case 'Neutral':
@@ -107,17 +109,19 @@ export default function EditVoterScreen() {
     return (
       <View style={[
         styles.partyIcon,
-        { backgroundColor: isInclined ? Colors.primary : '#E0E0E0' }
+        { backgroundColor: isInclined ? colors.primary : '#E0E0E0' }
       ]}>
         <Text style={[
           styles.partyIconText,
-          { color: isInclined ? Colors.text.white : Colors.text.light }
+          { color: isInclined ? colors.text.white : colors.text.light }
         ]}>
           🪷
         </Text>
       </View>
     );
   };
+
+  const styles = createStyles(colors);
 
   if (!voter) {
     return (
@@ -126,7 +130,7 @@ export default function EditVoterScreen() {
         <SafeAreaView edges={['top']} style={styles.header}>
           <View style={styles.headerContent}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={Colors.text.white} />
+              <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Edit Voter</Text>
             <View style={styles.bjpLogo}>
@@ -153,7 +157,7 @@ export default function EditVoterScreen() {
       <SafeAreaView edges={['top']} style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <ArrowLeft size={24} color={Colors.text.white} />
+            <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Voter</Text>
           <View style={styles.bjpLogo}>
@@ -247,7 +251,7 @@ export default function EditVoterScreen() {
                 placeholder="Enter mobile number"
                 keyboardType="phone-pad"
                 maxLength={10}
-                leftIcon={<Phone size={20} color={Colors.text.secondary} />}
+                leftIcon={<Phone size={20} color={colors.text.secondary} />}
               />
             </View>
             
@@ -258,7 +262,7 @@ export default function EditVoterScreen() {
                 value={editData.houseName || ''}
                 onChangeText={(text) => setEditData(prev => ({ ...prev, houseName: text }))}
                 placeholder="Enter house name"
-                leftIcon={<Home size={20} color={Colors.text.secondary} />}
+                leftIcon={<Home size={20} color={colors.text.secondary} />}
               />
             </View>
             
@@ -272,7 +276,7 @@ export default function EditVoterScreen() {
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
-                leftIcon={<MapPin size={20} color={Colors.text.secondary} />}
+                leftIcon={<MapPin size={20} color={colors.text.secondary} />}
                 style={styles.multilineInput}
               />
             </View>
@@ -299,7 +303,7 @@ export default function EditVoterScreen() {
                     >
                       <Text style={[
                         styles.partyOptionText,
-                        isSelected && { color: Colors.text.white }
+                        isSelected && { color: colors.text.white }
                       ]}>
                         {partyStatus.label}
                       </Text>
@@ -322,7 +326,7 @@ export default function EditVoterScreen() {
               title={isLoading ? "Saving..." : "Save Changes"}
               onPress={handleSave}
               disabled={isLoading}
-              icon={<Save size={16} color={Colors.text.white} />}
+              icon={<Save size={16} color={colors.text.white} />}
               style={styles.actionButton}
             />
           </View>
@@ -332,13 +336,13 @@ export default function EditVoterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
   },
   headerContent: {
     flexDirection: 'row',
@@ -354,7 +358,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.title,
-    color: Colors.text.white,
+    color: colors.text.white,
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
@@ -364,7 +368,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.text.white,
+    backgroundColor: colors.text.white,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 4,
@@ -375,7 +379,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   errorContainer: {
     flex: 1,
@@ -385,7 +389,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.title,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   voterCard: {
@@ -398,20 +402,20 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   profileImage: {
     width: 64,
     height: 64,
     borderRadius: BorderRadius.round,
-    backgroundColor: Colors.primary + '15',
+    backgroundColor: colors.primary + '15',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
   },
   profileInitial: {
     ...Typography.title,
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '700',
     fontSize: 28,
   },
@@ -421,12 +425,12 @@ const styles = StyleSheet.create({
   voterName: {
     ...Typography.title,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   voterMeta: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 2,
   },
   partyIcon: {
@@ -447,12 +451,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.subtitle,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '700',
     marginBottom: Spacing.md,
     paddingBottom: Spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   inlineDetailRow: {
     flexDirection: 'row',
@@ -463,7 +467,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '700',
     fontSize: 12,
     textTransform: 'uppercase',
@@ -473,7 +477,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailSeparator: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '700',
     marginHorizontal: Spacing.sm,
     width: 8,
@@ -482,7 +486,7 @@ const styles = StyleSheet.create({
   },
   inlineDetailValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
     flex: 1,
     fontSize: 14,
@@ -500,7 +504,7 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     fontWeight: '600',
     marginBottom: Spacing.sm,
-    color: Colors.text.primary
+    color: colors.text.primary
   },
   partyInclinationOptions: {
     flexDirection: 'row',
@@ -512,14 +516,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.background,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
     minWidth: 80,
     alignItems: 'center',
   },
   partyOptionText: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   actionButtons: {
@@ -527,7 +531,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: colors.border,
   },
   actionButton: {
     flex: 1,

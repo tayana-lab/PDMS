@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, StyleSheet, TextInputProps, TouchableOpacity } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { useAppSettings } from '@/hooks/useAppSettings';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -13,8 +14,10 @@ interface InputProps extends TextInputProps {
 }
 
 export default function Input({ label, error, leftIcon, rightIcon, containerStyle, inputContainerStyle, style, secureTextEntry, ...props }: InputProps) {
+  const { colors } = useAppSettings();
   const [isSecure, setIsSecure] = useState(secureTextEntry);
   const [showPassword, setShowPassword] = useState(false);
+  const styles = createStyles(colors);
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -36,16 +39,16 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
             error && styles.inputError,
             style
           ]}
-          placeholderTextColor={Colors.text.light}
+          placeholderTextColor={colors.text.light}
           secureTextEntry={isSecure}
           {...props}
         />
         {shouldShowToggle && (
           <TouchableOpacity style={styles.rightIcon} onPress={togglePasswordVisibility}>
             {showPassword ? (
-              <Eye size={20} color={Colors.text.light} />
+              <Eye size={20} color={colors.text.light} />
             ) : (
-              <EyeOff size={20} color={Colors.text.light} />
+              <EyeOff size={20} color={colors.text.light} />
             )}
           </TouchableOpacity>
         )}
@@ -56,7 +59,7 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     marginBottom: Spacing.md
   },
@@ -64,16 +67,16 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     fontWeight: '600',
     marginBottom: Spacing.xs,
-    color: Colors.text.primary
+    color: colors.text.primary
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     ...Shadows.small,
   },
   input: {
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     backgroundColor: 'transparent',
     borderWidth: 0,
     minHeight: 48
@@ -103,11 +106,11 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   inputError: {
-    borderColor: Colors.error
+    borderColor: colors.error
   },
   error: {
     ...Typography.small,
-    color: Colors.error,
+    color: colors.error,
     marginTop: Spacing.xs
   }
 });

@@ -16,14 +16,14 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
-import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { leaders } from "@/constants/leaders";
 import { useAuth } from "@/hooks/useAuth";
 
 const { width } = Dimensions.get("window");
 
 export default function LoginScreen() {
-
   const [mobileNumber, setMobileNumber] = useState("");
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
@@ -31,6 +31,7 @@ export default function LoginScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const { login } = useAuth();
+  const { colors, currentTheme } = useAppSettings();
 
   // Auto-scroll leader banners
   useEffect(() => {
@@ -74,9 +75,14 @@ export default function LoginScreen() {
     router.push('/new-user');
   };
 
+  const styles = createStyles(colors);
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+      <StatusBar 
+        barStyle={currentTheme === 'dark' ? 'light-content' : 'dark-content'} 
+        backgroundColor={colors.surface} 
+      />
       
       {/* BJP Leaders Banner */}
       <View style={styles.bannerWrapper}>
@@ -149,13 +155,13 @@ export default function LoginScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Mobile Number</Text>
               <View style={styles.inputWrapper}>
-                <Phone size={20} color={Colors.text.light} style={styles.inputIcon} />
+                <Phone size={20} color={colors.text.light} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={mobileNumber}
                   onChangeText={setMobileNumber}
                   placeholder="Enter your mobile number"
-                  placeholderTextColor={Colors.text.light}
+                  placeholderTextColor={colors.text.light}
                   keyboardType="phone-pad"
                   maxLength={10}
                 />
@@ -165,13 +171,13 @@ export default function LoginScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>6-Digit PIN</Text>
               <View style={styles.inputWrapper}>
-                <Lock size={20} color={Colors.text.light} style={styles.inputIcon} />
+                <Lock size={20} color={colors.text.light} style={styles.inputIcon} />
                 <TextInput
                   style={[styles.input, styles.pinInput]}
                   value={pin}
                   onChangeText={setPin}
                   placeholder="Enter 6-digit PIN"
-                  placeholderTextColor={Colors.text.light}
+                  placeholderTextColor={colors.text.light}
                   secureTextEntry={!showPin}
                   keyboardType="numeric"
                   maxLength={6}
@@ -181,9 +187,9 @@ export default function LoginScreen() {
                   onPress={() => setShowPin(!showPin)}
                 >
                   {showPin ? (
-                    <Eye size={20} color={Colors.text.light} />
+                    <Eye size={20} color={colors.text.light} />
                   ) : (
-                    <EyeOff size={20} color={Colors.text.light} />
+                    <EyeOff size={20} color={colors.text.light} />
                   )}
                 </TouchableOpacity>
               </View>
@@ -219,14 +225,14 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
   },
   bannerWrapper: {
     height: 120,
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
   },
   bannerSlide: {
     width,
@@ -318,7 +324,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.accent,
+    backgroundColor: colors.accent,
   },
   
   dot1: {
@@ -339,17 +345,17 @@ const styles = StyleSheet.create({
   welcomeTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4,
   },
   
   welcomeSubtitle: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   
   loginCard: {
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -362,7 +368,7 @@ const styles = StyleSheet.create({
   
   inputLabel: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
     fontWeight: '500',
   },
@@ -370,11 +376,11 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     ...Shadows.small,
   },
   
@@ -385,7 +391,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: 0,
     backgroundColor: 'transparent',
@@ -404,7 +410,7 @@ const styles = StyleSheet.create({
   },
   
   loginButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.round,
     paddingVertical: Spacing.md,
     alignItems: 'center',
@@ -416,13 +422,13 @@ const styles = StyleSheet.create({
   loginButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.white,
+    color: colors.text.white,
     letterSpacing: 0.5,
   },
   
   forgotPassword: {
     fontSize: 16,
-    color: Colors.primary,
+    color: colors.primary,
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -435,11 +441,11 @@ const styles = StyleSheet.create({
   
   registerText: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   
   registerLink: {
-    color: Colors.primary,
+    color: colors.primary,
     fontWeight: '600',
   },
 });
