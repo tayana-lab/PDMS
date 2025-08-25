@@ -206,7 +206,7 @@ export default function SearchVoterScreen() {
                 <Text style={styles.voterMeta}>S/O: {voter.guardianName}</Text>
               </View>
               <View style={styles.voterMetaRow}>
-                <Text style={styles.voterMeta}>{voter.age}Y • {voter.gender}</Text>
+                <Text style={styles.voterMeta}>{voter.age}Y {voter.gender}</Text>
               </View>
             </View>
             <View style={styles.partyStatusBadge}>
@@ -238,7 +238,7 @@ export default function SearchVoterScreen() {
                 <Text style={styles.detailLabel}>Address</Text>
               </View>
               <Text style={styles.detailValue} numberOfLines={2}>
-                {voter.houseName}, {voter.ward}
+                {voter.houseName} {voter.ward}
               </Text>
             </View>
 
@@ -351,7 +351,7 @@ export default function SearchVoterScreen() {
           <View style={styles.inlineDetailRow}>
             <Text style={styles.inlineDetailLabel}>AGE / GENDER</Text>
             <Text style={styles.inlineDetailSeparator}>:</Text>
-            <Text style={styles.inlineDetailValue}>{selectedVoter.age} / {selectedVoter.gender}</Text>
+            <Text style={styles.inlineDetailValue}>{selectedVoter.age} {selectedVoter.gender}</Text>
           </View>
           
           <View style={styles.inlineDetailRow}>
