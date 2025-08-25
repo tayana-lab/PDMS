@@ -174,7 +174,7 @@ export default function LoginScreen() {
                       />
                       <Button
                         title="New User"
-                        onPress={() => setStep("mobile")}
+                        onPress={() => router.push('/onboarding')}
                         variant="outline"
                       />
                     </>
