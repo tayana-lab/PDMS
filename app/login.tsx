@@ -68,7 +68,7 @@ export default function LoginScreen() {
   };
 
   return (
-     <SafeAreaView style={styles.safeArea}>
+    
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#FF6B35" />
 
@@ -77,6 +77,8 @@ export default function LoginScreen() {
         style={styles.gradientBackground}
       >
         {/* BJP Leaders Banner */}
+            <SafeAreaView style={styles.safeArea}>
+
         <View style={styles.bannerWrapper}>
           <ScrollView
             ref={scrollViewRef}
@@ -214,10 +216,10 @@ export default function LoginScreen() {
               </View>
             </View>
           </KeyboardAvoidingView>
-       
+        </SafeAreaView>
       </LinearGradient>
     </View>
-        </SafeAreaView>
+       
   );
 }
 
