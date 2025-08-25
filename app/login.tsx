@@ -15,8 +15,8 @@ import {
   TextInput,
 } from "react-native";
 import { router } from "expo-router";
-import { Eye, EyeOff } from "lucide-react-native";
-import { Spacing } from "@/constants/theme";
+import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
+import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { leaders } from "@/constants/leaders";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,9 +24,9 @@ const { width } = Dimensions.get("window");
 
 export default function LoginScreen() {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [pin, setPin] = useState("");
+  const [showPin, setShowPin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -48,13 +48,17 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert("Error", "Please enter both email and password");
+    if (!mobileNumber.trim() || !pin.trim()) {
+      Alert.alert("Error", "Please enter both mobile number and PIN");
+      return;
+    }
+    if (pin.length !== 6) {
+      Alert.alert("Error", "PIN must be 6 digits");
       return;
     }
     setIsLoading(true);
     try {
-      const result = await login(email, password);
+      const result = await login(mobileNumber, pin);
       if (result.success) router.replace("/(tabs)");
       else Alert.alert("Error", result.error || "Login failed");
     } finally {
@@ -101,104 +105,115 @@ export default function LoginScreen() {
       <KeyboardAvoidingView
         style={styles.mainContent}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        {/* Logo Section */}
-        <View style={styles.logoSection}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logo}>
-              <View style={styles.logoInner}>
-                {/* Create the wheel pattern */}
-                <View style={styles.wheelPattern}>
-                  {[...Array(8)].map((_, i) => (
-                    <View
-                      key={i}
-                      style={[
-                        styles.wheelSpoke,
-                        {
-                          transform: [{ rotate: `${i * 45}deg` }],
-                        },
-                      ]}
-                    />
-                  ))}
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Logo Section */}
+          <View style={styles.logoSection}>
+            <View style={styles.logoContainer}>
+              <View style={styles.logo}>
+                <View style={styles.logoInner}>
+                  {/* Create the wheel pattern */}
+                  <View style={styles.wheelPattern}>
+                    {[...Array(8)].map((_, i) => (
+                      <View
+                        key={i}
+                        style={[
+                          styles.wheelSpoke,
+                          {
+                            transform: [{ rotate: `${i * 45}deg` }],
+                          },
+                        ]}
+                      />
+                    ))}
+                  </View>
                 </View>
               </View>
+              <View style={styles.decorativeElements}>
+                <View style={[styles.dot, styles.dot1]} />
+                <View style={[styles.dot, styles.dot2]} />
+                <View style={[styles.dot, styles.dot3]} />
+              </View>
             </View>
-            <View style={styles.decorativeElements}>
-              <View style={[styles.dot, styles.dot1]} />
-              <View style={[styles.dot, styles.dot2]} />
-              <View style={[styles.dot, styles.dot3]} />
-            </View>
-          </View>
-          
-          <Text style={styles.welcomeTitle}>Welcome to LemonPie!</Text>
-          <Text style={styles.welcomeSubtitle}>Keep your data safe</Text>
-        </View>
-
-        {/* Login Card */}
-        <View style={styles.loginCard}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="janedoe@gmail.com"
-                placeholderTextColor="#999"
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
+            
+            <Text style={styles.welcomeTitle}>Welcome to LemonPie!</Text>
+            <Text style={styles.welcomeSubtitle}>Keep your data safe</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={[styles.input, styles.passwordInput]}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor="#999"
-                secureTextEntry={!showPassword}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <Eye size={20} color="#999" />
-                ) : (
-                  <EyeOff size={20} color="#999" />
-                )}
-              </TouchableOpacity>
+          {/* Login Card */}
+          <View style={styles.loginCard}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Mobile Number</Text>
+              <View style={styles.inputWrapper}>
+                <Phone size={20} color={Colors.text.light} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={mobileNumber}
+                  onChangeText={setMobileNumber}
+                  placeholder="Enter your mobile number"
+                  placeholderTextColor={Colors.text.light}
+                  keyboardType="phone-pad"
+                  maxLength={10}
+                />
+              </View>
             </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>6-Digit PIN</Text>
+              <View style={styles.inputWrapper}>
+                <Lock size={20} color={Colors.text.light} style={styles.inputIcon} />
+                <TextInput
+                  style={[styles.input, styles.pinInput]}
+                  value={pin}
+                  onChangeText={setPin}
+                  placeholder="Enter 6-digit PIN"
+                  placeholderTextColor={Colors.text.light}
+                  secureTextEntry={!showPin}
+                  keyboardType="numeric"
+                  maxLength={6}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setShowPin(!showPin)}
+                >
+                  {showPin ? (
+                    <Eye size={20} color={Colors.text.light} />
+                  ) : (
+                    <EyeOff size={20} color={Colors.text.light} />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleLogin}
+              disabled={isLoading}
+            >
+              <Text style={styles.loginButtonText}>
+                {isLoading ? "LOGGING IN..." : "LOGIN"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleForgotPassword}>
+              <Text style={styles.forgotPassword}>Forgot PIN?</Text>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
-          >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "LOGGING IN..." : "LOGIN"}
+          {/* Register Section */}
+          <View style={styles.registerSection}>
+            <Text style={styles.registerText}>
+              Don&apos;t have an account?{" "}
+              <Text style={styles.registerLink} onPress={handleRegister}>
+                Register!
+              </Text>
             </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={handleForgotPassword}>
-            <Text style={styles.forgotPassword}>Forgot password?</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Register Section */}
-        <View style={styles.registerSection}>
-          <Text style={styles.registerText}>
-            Don&apos;t have an account?{" "}
-            <Text style={styles.registerLink} onPress={handleRegister}>
-              Register!
-            </Text>
-          </Text>
-        </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -207,11 +222,11 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.surface,
   },
   bannerWrapper: {
-    height: 100,
-    backgroundColor: '#FF6B35',
+    height: 120,
+    backgroundColor: Colors.primary,
   },
   bannerSlide: {
     width,
@@ -221,32 +236,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bannerImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginRight: Spacing.md,
     borderWidth: 2,
     borderColor: "#fff",
   },
   bannerTextBox: { flex: 1 },
-  bannerName: { fontSize: 14, fontWeight: "700", color: "#fff" },
-  bannerPosition: { fontSize: 11, color: "rgba(255,255,255,0.9)" },
-  bannerSlogan: { fontSize: 10, fontStyle: "italic", color: "rgba(255,255,255,0.8)" },
+  bannerName: { fontSize: 16, fontWeight: "700", color: "#fff" },
+  bannerPosition: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
+  bannerSlogan: { fontSize: 11, fontStyle: "italic", color: "rgba(255,255,255,0.8)" },
   
   mainContent: {
     flex: 1,
-    paddingHorizontal: 24,
+  },
+  
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xl,
   },
   
   logoSection: {
     alignItems: 'center',
-    marginTop: 60,
-    marginBottom: 40,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
   
   logoContainer: {
     position: 'relative',
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   
   logo: {
@@ -298,7 +318,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FFD700',
+    backgroundColor: Colors.accent,
   },
   
   dot1: {
@@ -319,100 +339,107 @@ const styles = StyleSheet.create({
   welcomeTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#000',
+    color: Colors.text.primary,
     marginBottom: 4,
   },
   
   welcomeSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: Colors.text.secondary,
   },
   
   loginCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+    ...Shadows.medium,
   },
   
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: Spacing.md,
   },
   
   inputLabel: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
     fontWeight: '500',
   },
   
   inputWrapper: {
-    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.small,
+  },
+  
+  inputIcon: {
+    marginRight: Spacing.sm,
   },
   
   input: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    flex: 1,
     fontSize: 16,
-    color: '#000',
+    color: Colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
+    backgroundColor: 'transparent',
     borderWidth: 0,
+    minHeight: 48,
   },
   
-  passwordInput: {
+  pinInput: {
     paddingRight: 50,
   },
   
   eyeIcon: {
     position: 'absolute',
-    right: 16,
-    top: 16,
+    right: Spacing.md,
+    padding: Spacing.xs,
   },
   
   loginButton: {
-    backgroundColor: '#FFD700',
-    borderRadius: 25,
-    paddingVertical: 16,
+    backgroundColor: Colors.primary,
+    borderRadius: BorderRadius.round,
+    paddingVertical: Spacing.md,
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.md,
+    ...Shadows.small,
   },
   
   loginButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#000',
+    color: Colors.text.white,
     letterSpacing: 0.5,
   },
   
   forgotPassword: {
     fontSize: 16,
-    color: '#FFD700',
+    color: Colors.primary,
     textAlign: 'center',
     fontWeight: '500',
   },
   
   registerSection: {
     alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 20,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   
   registerText: {
     fontSize: 16,
-    color: '#666',
+    color: Colors.text.secondary,
   },
   
   registerLink: {
-    color: '#FFD700',
+    color: Colors.primary,
     fontWeight: '600',
   },
 });
