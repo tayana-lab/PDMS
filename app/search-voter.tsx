@@ -282,15 +282,15 @@ export default function SearchVoterScreen() {
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.actionBtn, styles.appsBtn]}
+              style={[styles.actionBtn, styles.helpDeskBtn]}
               onPress={(e) => {
                 e.stopPropagation();
                 handleVoterSelect(voter);
                 handleHelpDesk();
               }}
             >
-              <HelpCircle size={16} color='#FF9800' />
-              <Text style={[styles.actionBtnText, { color: '#FF9800' }]}>Apps</Text>
+              <HelpCircle size={16} color={Colors.primary} />
+              <Text style={[styles.actionBtnText, { color: Colors.primary }]}>HelpDesk</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -796,9 +796,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E8',
     borderColor: '#C8E6C9',
   },
-  appsBtn: {
-    backgroundColor: '#FFF3E0',
-    borderColor: '#FFCC02',
+  helpDeskBtn: {
+    backgroundColor: '#E3F2FD',
+    borderColor: '#BBDEFB',
   },
   disabledBtn: {
     opacity: 0.5,
