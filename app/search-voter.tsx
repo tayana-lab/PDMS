@@ -421,6 +421,7 @@ export default function SearchVoterScreen() {
         options={{
           title: 'Search Voter',
           headerShown: true,
+            headerLargeTitle: false, 
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color={Colors.text.primary} />
