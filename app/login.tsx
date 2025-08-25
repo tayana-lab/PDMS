@@ -175,7 +175,7 @@ export default function LoginScreen() {
                       />
                       <Button
                         title="New User"
-                        onPress={() => router.push('/onboarding')}
+                        onPress={() => router.push('/new-user')}
                         variant="outline"
                       />
                     </>

@@ -78,16 +78,6 @@ export function useAuth() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       if (otp === '1234') {
-        const mockUser: User = {
-          id: '1',
-          name: 'New User',
-          phone: phone,
-          address: 'Please update your address',
-          role: 'Karyakarta'
-        };
-
-        await AsyncStorage.setItem('user', JSON.stringify(mockUser));
-        setUser(mockUser);
         return { success: true };
       } else {
         return { success: false, error: 'Invalid OTP' };
@@ -97,12 +87,34 @@ export function useAuth() {
     }
   };
 
+  const createAccount = async (phone: string, pin: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const mockUser: User = {
+        id: Date.now().toString(),
+        name: 'New User',
+        phone: phone,
+        address: 'Please update your address',
+        role: 'Karyakarta'
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Account creation failed' };
+    }
+  };
+
   return {
     user,
     isLoading,
     login,
     logout,
     sendOTP,
-    verifyOTP
+    verifyOTP,
+    createAccount
   };
 }
