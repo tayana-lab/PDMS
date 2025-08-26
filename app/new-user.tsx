@@ -306,18 +306,20 @@ export default function NewUserScreen() {
 
 const createStyles = (colors: any) => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   headerBackButton: {
     padding: Spacing.xs,
     marginLeft: -Spacing.xs,
   },
   gradientBackground: {
-    flex: 1
+    flex: 1,
   },
   safeArea: {
-    flex: 1
+    flex: 1,
   },
+
+  // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',   // keep all steps centered
@@ -328,11 +330,12 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   stepWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 8,        // space between step groups
+    alignItems: 'center',       // keep connector aligned with circle center
+    marginHorizontal: 8,
   },
   stepIndicator: {
     alignItems: 'center',
+    justifyContent: 'center',
   },
   stepIconContainer: {
     width: 40,
@@ -340,7 +343,6 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
     borderWidth: 2,
   },
   stepIconActive: {
@@ -359,6 +361,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
+    marginTop: Spacing.xs,      // label always below the circle
   },
   stepLabelActive: {
     color: '#fff',
@@ -370,19 +373,24 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
   },
   stepConnector: {
-    width: 40,                   // fixed width instead of flex: 1
-    height: 2,
+    width: 40,                   // fixed width for consistent spacing
+    height: 2,                   // connector thickness
     backgroundColor: 'rgba(255,255,255,0.3)',
     marginHorizontal: 4,
+    alignSelf: 'center',         // keeps line centered with the circle
   },
   stepConnectorCompleted: {
     backgroundColor: colors.success,
   },
+
+  // Layout Center
   center: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 26
+    paddingHorizontal: 26,
   },
+
+  // Card & Forms
   loginCard: {
     backgroundColor: colors.background,
     borderRadius: BorderRadius.xl,
@@ -398,7 +406,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     color: colors.primary,
-    textAlign: "center"
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
@@ -408,14 +416,14 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   inputGroup: {
     marginBottom: 20,
-    gap: 12
+    gap: 12,
   },
   btnGroup: {
-    gap: 12
+    gap: 12,
   },
   primaryBtn: {
     borderRadius: BorderRadius.lg,
-    paddingVertical: 12
+    paddingVertical: 12,
   },
   otpInput: {
     fontSize: 18,
