@@ -320,7 +320,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'center',   // keep all steps centered
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
@@ -329,11 +329,10 @@ const createStyles = (colors: any) => StyleSheet.create({
   stepWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    marginHorizontal: 8,        // space between step groups
   },
   stepIndicator: {
     alignItems: 'center',
-    flexShrink: 0,
   },
   stepIconContainer: {
     width: 40,
@@ -371,7 +370,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
   },
   stepConnector: {
-    flex: 1,
+    width: 40,                   // fixed width instead of flex: 1
     height: 2,
     backgroundColor: 'rgba(255,255,255,0.3)',
     marginHorizontal: 4,
