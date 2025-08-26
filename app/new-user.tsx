@@ -161,31 +161,19 @@ export default function NewUserScreen() {
               const isActive = index === currentStepIndex;
               const isCompleted = index < currentStepIndex;
               const StepIcon = step.icon;
-              const showConnector = index < steps.length - 1;
 
               return (
                 <View key={step.id} style={styles.stepWrapper}>
-                  <View style={styles.stepRow}>
-                    <View style={[
-                      styles.stepIconContainer,
-                      isActive && styles.stepIconActive,
-                      isCompleted && styles.stepIconCompleted,
-                      !isActive && !isCompleted && styles.stepIconInactive
-                    ]}>
-                      <StepIcon
-                        size={24}
-                        color={isActive ? colors.primary : isCompleted ? colors.primary : 'rgba(255,255,255,0.6)'}
-                      />
-                    </View>
-                    
-                    {/* Connector Line */}
-                    {showConnector && (
-                      <View style={[
-                        styles.stepConnector,
-                        isCompleted && styles.stepConnectorCompleted,
-                        !isCompleted && styles.stepConnectorInactive
-                      ]} />
-                    )}
+                  <View style={[
+                    styles.stepIconContainer,
+                    isActive && styles.stepIconActive,
+                    isCompleted && styles.stepIconCompleted,
+                    !isActive && !isCompleted && styles.stepIconInactive
+                  ]}>
+                    <StepIcon
+                      size={24}
+                      color={isActive ? colors.primary : isCompleted ? colors.primary : 'rgba(255,255,255,0.6)'}
+                    />
                   </View>
                   
                   <Text style={[
@@ -316,8 +304,8 @@ const createStyles = (colors: any) => StyleSheet.create({
   // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
     marginTop: Spacing.sm,
@@ -330,33 +318,14 @@ const createStyles = (colors: any) => StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  stepRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: Spacing.sm,
-  },
   stepIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    zIndex: 2,
-  },
-  stepConnector: {
-    flex: 1,
-    height: 3,
-    marginLeft: -5,
-    marginRight: -5,
-    zIndex: 1,
-  },
-  stepConnectorCompleted: {
-    backgroundColor: '#fff',
-  },
-  stepConnectorInactive: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    marginBottom: Spacing.sm,
   },
   stepIconActive: {
     backgroundColor: '#fff',
