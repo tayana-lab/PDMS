@@ -69,22 +69,22 @@ export default function LoginScreen() {
   };
 
   const handleForgotPassword = () => {
-    router.push('/forgot-pin');
+    router.push("/forgot-pin");
   };
 
   const handleRegister = () => {
-    router.push('/new-user');
+    router.push("/new-user");
   };
 
   const styles = createStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-        barStyle={currentTheme === 'dark' ? 'light-content' : 'dark-content'} 
-        backgroundColor={colors.surface} 
+      <StatusBar
+        barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colors.surface}
       />
-      
+
       {/* BJP Leaders Banner */}
       <View style={styles.bannerWrapper}>
         <ScrollView
@@ -109,12 +109,13 @@ export default function LoginScreen() {
         </ScrollView>
       </View>
 
+      {/* Main Content */}
       <KeyboardAvoidingView
         style={styles.mainContent}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -122,15 +123,16 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <Image 
-                source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/883hzv1gvf1dh5pk5dd8q' }}
+              <Image
+                source={{
+                  uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/883hzv1gvf1dh5pk5dd8q",
+                }}
                 style={styles.logoImage}
                 resizeMode="contain"
               />
             </View>
-            
+
             <Text style={styles.welcomeSubtitle}>BHARATIYA JANATA PARTY</Text>
-           
           </View>
 
           {/* Login Card */}
@@ -138,7 +140,11 @@ export default function LoginScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Mobile Number</Text>
               <View style={styles.inputWrapper}>
-                <Phone size={20} color={colors.text.light} style={styles.inputIcon} />
+                <Phone
+                  size={20}
+                  color={colors.text.light}
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={styles.input}
                   value={mobileNumber}
@@ -154,7 +160,11 @@ export default function LoginScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>PIN</Text>
               <View style={styles.inputWrapper}>
-                <Lock size={20} color={colors.text.light} style={styles.inputIcon} />
+                <Lock
+                  size={20}
+                  color={colors.text.light}
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={[styles.input, styles.pinInput]}
                   value={pin}
@@ -185,14 +195,12 @@ export default function LoginScreen() {
               loading={isLoading}
               style={styles.loginButton}
             />
-                <View  style={styles.forgotPin}>
-              <TouchableOpacity onPress={handleRegister}>
-                <Text style={styles.registerLink}>
-                  Forgot Pin ?
-                </Text>
+
+            <View style={styles.forgotPin}>
+              <TouchableOpacity onPress={handleForgotPassword}>
+                <Text style={styles.registerLink}>Forgot Pin ?</Text>
               </TouchableOpacity>
-              </View>
-               
+            </View>
           </View>
 
           {/* Register Section */}
@@ -200,9 +208,7 @@ export default function LoginScreen() {
             <Text style={styles.registerText}>
               Don&apos;t have an account?{" "}
               <TouchableOpacity onPress={handleRegister}>
-                <Text style={styles.registerLink}>
-                  Register!
-                </Text>
+                <Text style={styles.registerLink}>Register!</Text>
               </TouchableOpacity>
             </Text>
           </View>
@@ -212,157 +218,139 @@ export default function LoginScreen() {
   );
 }
 
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-  },
-  bannerWrapper: {
-    height: 140,
-    backgroundColor: colors.primary,
-  },
-  bannerSlide: {
-    width,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Spacing.md,
-    justifyContent: "center",
-  },
-  forgotPin:{
-    alignItems:'flex-end',
-    textAlign :'right',
-  },
-  bannerImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: Spacing.md,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  bannerTextBox: { flex: 1 },
-  bannerName: { fontSize: 16, fontWeight: "700", color: "#fff" },
-  bannerPosition: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
-  bannerSlogan: { fontSize: 11, fontStyle: "italic", color: "rgba(255,255,255,0.8)" },
-  
-  mainContent: {
-    flex: 1,
-  },
-  
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
-  },
-  
-  logoSection: {
-    alignItems: 'center',
-    marginTop: 120,
-    marginBottom: 10,
-  },
-  
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  
-  logoImage: {
-    width: 75,
-    height: 75,
-  },
-  
-  welcomeTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text.primary,
-    marginBottom: 4,
-  },
-  
-  welcomeSubtitle: {
-    fontSize: 16,
-    color: colors.text.secondary,
-  },
-  
-  loginCard: {
-    backgroundColor: colors.background,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    marginBottom: Spacing.lg,
-    ...Shadows.medium,
-  },
-  
-  inputContainer: {
-    marginBottom: Spacing.md,
-  },
-  
-  inputLabel: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    marginBottom: Spacing.sm,
-    fontWeight: '500',
-  },
-  
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...Shadows.small,
-  },
-  
-  inputIcon: {
-    marginRight: Spacing.sm,
-  },
-  
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.text.primary,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: 0,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    minHeight: 48,
-  },
-  
-  pinInput: {
-    paddingRight: 50,
-  },
-  
-  eyeIcon: {
-    position: 'absolute',
-    right: Spacing.md,
-    padding: Spacing.xs,
-  },
-  
-  loginButton: {
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.md,
-  },
-  
-  forgotPasswordButton: {
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.surface,
+    },
 
-  
-  registerSection: {
-    alignItems: 'center',
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.md,
-  },
-  
-  registerText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-  },
-  
-  registerLink: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-});
+    // Banner 40%
+    bannerWrapper: {
+      flex: 0.4,
+      backgroundColor: colors.primary,
+    },
+    bannerSlide: {
+      width,
+      flexDirection: "row",
+      alignItems: "center",
+      padding: Spacing.md,
+      justifyContent: "center",
+    },
+    bannerImage: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      marginRight: Spacing.md,
+      borderWidth: 2,
+      borderColor: "#fff",
+    },
+    bannerTextBox: { flex: 1 },
+    bannerName: { fontSize: 16, fontWeight: "700", color: "#fff" },
+    bannerPosition: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
+    bannerSlogan: {
+      fontSize: 11,
+      fontStyle: "italic",
+      color: "rgba(255,255,255,0.8)",
+    },
+
+    // Main Content 60%
+    mainContent: {
+      flex: 0.6,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: Spacing.lg,
+      paddingBottom: Spacing.xl,
+    },
+
+    logoSection: {
+      alignItems: "center",
+      marginTop: Spacing.lg, // removed hardcoded 120
+      marginBottom: 10,
+    },
+    logoContainer: {
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    logoImage: {
+      width: 75,
+      height: 75,
+    },
+    welcomeSubtitle: {
+      fontSize: 16,
+      color: colors.text.secondary,
+    },
+
+    loginCard: {
+      backgroundColor: colors.background,
+      borderRadius: BorderRadius.xl,
+      padding: Spacing.lg,
+      marginBottom: Spacing.lg,
+      ...Shadows.medium,
+    },
+
+    inputContainer: {
+      marginBottom: Spacing.md,
+    },
+    inputLabel: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      marginBottom: Spacing.sm,
+      fontWeight: "500",
+    },
+    inputWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.surface,
+      borderRadius: BorderRadius.lg,
+      paddingHorizontal: Spacing.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...Shadows.small,
+    },
+    inputIcon: {
+      marginRight: Spacing.sm,
+    },
+    input: {
+      flex: 1,
+      fontSize: 16,
+      color: colors.text.primary,
+      paddingVertical: Spacing.md,
+      paddingHorizontal: 0,
+      backgroundColor: "transparent",
+      borderWidth: 0,
+      minHeight: 48,
+    },
+    pinInput: {
+      paddingRight: 50,
+    },
+    eyeIcon: {
+      position: "absolute",
+      right: Spacing.md,
+      padding: Spacing.xs,
+    },
+    loginButton: {
+      marginTop: Spacing.sm,
+      marginBottom: Spacing.md,
+    },
+
+    forgotPin: {
+      alignItems: "flex-end",
+      textAlign: "right",
+    },
+
+    registerSection: {
+      alignItems: "center",
+      marginTop: Spacing.lg,
+      marginBottom: Spacing.md,
+    },
+    registerText: {
+      fontSize: 16,
+      color: colors.text.secondary,
+    },
+    registerLink: {
+      color: colors.primary,
+      fontWeight: "600",
+    },
+  });
