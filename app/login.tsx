@@ -341,6 +341,7 @@ const createStyles = (colors: any) =>
 
     registerSection: {
       alignItems: "center",
+      marginTop:5.
       marginBottom: Spacing.md,
     },
     registerText: {
