@@ -115,11 +115,7 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+       
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
@@ -212,7 +208,7 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </Text>
           </View>
-        </ScrollView>
+  
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
