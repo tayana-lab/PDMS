@@ -229,7 +229,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     justifyContent: "center",
   },
   forgotPin:{
-    alignItems:'right',
+    alignItems:'flex-end',
     textAlign :'right',
   },
   bannerImage: {
