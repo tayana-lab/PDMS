@@ -371,6 +371,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     height: 2,
     backgroundColor: 'rgba(255,255,255,0.3)',
     marginHorizontal: 4,
+    flex:1,
   },
   stepConnectorCompleted: {
     backgroundColor: colors.success,
