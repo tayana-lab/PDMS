@@ -267,8 +267,8 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   
   logoImage: {
-    width: 100,
-    height: 100,
+    width: 75,
+    height: 75,
   },
   
   welcomeTitle: {
