@@ -185,13 +185,11 @@ export default function LoginScreen() {
               loading={isLoading}
               style={styles.loginButton}
             />
-
-            <Button
-              title="Forgot PIN?"
-              onPress={handleForgotPassword}
-              variant="ghost"
-              style={styles.forgotPasswordButton}
-            />
+              <TouchableOpacity onPress={handleRegister}>
+                <Text style={styles.registerLink}>
+                  Register!
+                </Text>
+              </TouchableOpacity>
           </View>
 
           {/* Register Section */}
