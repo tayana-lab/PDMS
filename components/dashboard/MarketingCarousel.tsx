@@ -1,24 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
   Dimensions
 } from 'react-native';
-import { Spacing, BorderRadius } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { marketingAds } from '@/constants/mockData';
 import { useAppSettings } from '@/hooks/useAppSettings';
 
 const { width } = Dimensions.get('window');
-
-// Sample banner images - replace with your actual image URLs
-const bannerImages = [
-  'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/ey3mskj2ddqzez0hlke95',
-  'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=800&h=400&fit=crop'
-];
 
 export default function MarketingCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,7 +22,7 @@ export default function MarketingCarousel() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        const nextIndex = (prevIndex + 1) % bannerImages.length;
+        const nextIndex = (prevIndex + 1) % marketingAds.length;
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
             x: nextIndex * (width - (Spacing.lg * 2)),
@@ -42,13 +36,15 @@ export default function MarketingCarousel() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleBannerPress = (index: number) => {
-    console.log('Banner pressed:', index);
-    // Handle banner press
+  const handleEventPress = (eventId: number) => {
+    console.log('Event pressed:', eventId);
+    // Navigate to event details
   };
 
   return (
     <View style={styles.container}>
+      
+      
       <ScrollView
         ref={scrollViewRef}
         horizontal
@@ -60,20 +56,25 @@ export default function MarketingCarousel() {
         }}
         contentContainerStyle={styles.scrollContainer}
       >
-        {bannerImages.map((imageUrl, index) => (
+        {marketingAds.map((ad) => (
           <TouchableOpacity
-            key={index}
-            style={styles.bannerSlide}
-            onPress={() => handleBannerPress(index)}
+            key={ad.id}
+            style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            onPress={() => handleEventPress(ad.id)}
             activeOpacity={0.9}
           >
-            <Image source={{ uri: imageUrl }} style={styles.bannerImage} />
+            <Image source={{ uri: ad.image }} style={styles.image} />
+            <View style={styles.content}>
+              <Text style={[styles.eventTitle, { color: colors.text.primary }]}>{ad.title}</Text>
+              <Text style={[styles.description, { color: colors.text.secondary }]}>{ad.description}</Text>
+              <Text style={[styles.date, { color: colors.primary }]}>{ad.date}</Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
       <View style={styles.indicators}>
-        {bannerImages.map((_, index) => (
+        {marketingAds.map((_, index) => (
           <View
             key={index}
             style={[
@@ -91,19 +92,41 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.lg
   },
+  title: {
+    ...Typography.subtitle,
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.lg
+  },
   scrollContainer: {
     paddingHorizontal: Spacing.lg
   },
-  bannerSlide: {
+  card: {
     width: width - (Spacing.lg * 2),
     marginRight: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    ...Shadows.medium,
+    borderWidth: 1
   },
-  bannerImage: {
+  image: {
     width: '100%',
-    height: 180,
+    height: 140,
     resizeMode: 'cover'
+  },
+  content: {
+    padding: Spacing.md
+  },
+  eventTitle: {
+    ...Typography.subtitle,
+    marginBottom: Spacing.xs
+  },
+  description: {
+    ...Typography.caption,
+    marginBottom: Spacing.sm
+  },
+  date: {
+    ...Typography.small,
+    fontWeight: '600'
   },
   indicators: {
     flexDirection: 'row',
