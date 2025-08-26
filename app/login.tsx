@@ -286,7 +286,6 @@ const createStyles = (colors: any) =>
       backgroundColor: colors.background,
       borderRadius: BorderRadius.xl,
       padding: Spacing.lg,
-      marginBottom: Spacing.lg,
       ...Shadows.medium,
     },
 
@@ -342,7 +341,6 @@ const createStyles = (colors: any) =>
 
     registerSection: {
       alignItems: "center",
-      marginTop: Spacing.lg,
       marginBottom: Spacing.md,
     },
     registerText: {
