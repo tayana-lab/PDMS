@@ -66,7 +66,6 @@ export default function NewUserScreen() {
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
   const currentStepConfig = steps[currentStepIndex];
-  const IconComponent = currentStepConfig.icon;
 
   const handleNext = async () => {
     setIsLoading(true);
@@ -165,29 +164,18 @@ export default function NewUserScreen() {
 
               return (
                 <View key={step.id} style={styles.stepWrapper}>
-                  {/* Top Row: Icon + Connector */}
-                  <View style={styles.stepRow}>
-                    <View style={[
-                      styles.stepIconContainer,
-                      isActive && styles.stepIconActive,
-                      isCompleted && styles.stepIconCompleted,
-                      !isActive && !isCompleted && styles.stepIconInactive
-                    ]}>
-                      <StepIcon
-                        size={18}
-                        color={isActive || isCompleted ? '#fff' : colors.primary}
-                      />
-                    </View>
-
-                    {index < steps.length - 1 && (
-                      <View style={[
-                        styles.stepConnector,
-                        isCompleted && styles.stepConnectorCompleted
-                      ]} />
-                    )}
+                  <View style={[
+                    styles.stepIconContainer,
+                    isActive && styles.stepIconActive,
+                    isCompleted && styles.stepIconCompleted,
+                    !isActive && !isCompleted && styles.stepIconInactive
+                  ]}>
+                    <StepIcon
+                      size={24}
+                      color={isActive ? colors.primary : isCompleted ? colors.primary : 'rgba(255,255,255,0.6)'}
+                    />
                   </View>
-
-                  {/* Bottom Row: Label */}
+                  
                   <Text style={[
                     styles.stepLabel,
                     isActive && styles.stepLabelActive,
@@ -316,46 +304,45 @@ const createStyles = (colors: any) => StyleSheet.create({
   // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.lg,
     marginTop: Spacing.sm,
+    backgroundColor: colors.primary,
+    marginHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
   },
   stepWrapper: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  stepRow: {
-    flexDirection: 'row',
-    alignItems: 'center',   // keeps line centered with circle
+    flex: 1,
   },
   stepIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 3,
+    marginBottom: Spacing.sm,
   },
   stepIconActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#fff',
     borderColor: '#fff',
   },
   stepIconCompleted: {
-    backgroundColor: colors.success,
+    backgroundColor: '#fff',
     borderColor: '#fff',
   },
   stepIconInactive: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    borderColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(255,255,255,0.4)',
   },
   stepLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: Spacing.xs,
   },
   stepLabelActive: {
     color: '#fff',
@@ -365,15 +352,6 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   stepLabelInactive: {
     color: 'rgba(255,255,255,0.7)',
-  },
-  stepConnector: {
-    width: 40,
-    height: 2,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    marginHorizontal: 4,
-  },
-  stepConnectorCompleted: {
-    backgroundColor: colors.success,
   },
 
   // Layout Center
