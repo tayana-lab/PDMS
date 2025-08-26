@@ -85,28 +85,18 @@ export default function LoginScreen() {
         backgroundColor={colors.surface}
       />
 
-      {/* BJP Leaders Banner */}
+      {/* BJP Banner */}
       <View style={styles.bannerWrapper}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={false}
-        >
-          {leaders.map((leader) => (
-            <View key={leader.id} style={styles.bannerSlide}>
-              <Image source={{ uri: leader.image }} style={styles.bannerImage} />
-              <View style={styles.bannerTextBox}>
-                <Text style={styles.bannerName}>{leader.name}</Text>
-                <Text style={styles.bannerPosition}>{leader.position}</Text>
-                <Text style={styles.bannerSlogan}>
-                  &ldquo;Sabka Saath, Sabka Vikas&rdquo;
-                </Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
+        <Image 
+          source={{ uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/akbi9amrsr36bu10mpbj4" }} 
+          style={styles.bannerImage} 
+          resizeMode="cover"
+        />
+        <View style={styles.bannerOverlay}>
+          <Text style={styles.bannerSlogan}>
+            &ldquo;Sabka Saath, Sabka Vikas&rdquo;
+          </Text>
+        </View>
       </View>
 
       {/* Main Content */}
@@ -222,36 +212,31 @@ const createStyles = (colors: any) =>
     },
 
 bannerWrapper: {
-  flex: 0.3,
-  backgroundColor: colors.primary,
-  marginHorizontal: Spacing.lg,   // 👈 same as login card
-  borderRadius: 12,               // optional, makes it card-like
-  overflow: "hidden",             // ensure children respect radius
-  justifyContent: "center",
-},
-
-    bannerSlide: {
-      width,
-      flexDirection: "row",
-      alignItems: "center",
-        paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.lg,
+      flex: 0.3,
+      marginHorizontal: Spacing.lg,
+      borderRadius: 12,
+      overflow: "hidden",
+      position: "relative",
     },
     bannerImage: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      marginRight: Spacing.md,
-      borderWidth: 2,
-      borderColor: "#fff",
+      width: "100%",
+      height: "100%",
     },
-    bannerTextBox: { flex: 1 },
-    bannerName: { fontSize: 16, fontWeight: "700", color: "#fff" },
-    bannerPosition: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
+    bannerOverlay: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.4)",
+      paddingVertical: Spacing.md,
+      paddingHorizontal: Spacing.lg,
+    },
     bannerSlogan: {
-      fontSize: 11,
+      fontSize: 16,
+      fontWeight: "600",
       fontStyle: "italic",
-      color: "rgba(255,255,255,0.8)",
+      color: "#fff",
+      textAlign: "center",
     },
 
     // Main Content 60%
