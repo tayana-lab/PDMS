@@ -188,7 +188,7 @@ export default function LoginScreen() {
                 <View  style={styles.forgotPin}>
               <TouchableOpacity onPress={handleRegister}>
                 <Text style={styles.registerLink}>
-                  Register!
+                  Forgot Pin ?
                 </Text>
               </TouchableOpacity>
               </View>
