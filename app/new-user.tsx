@@ -165,15 +165,8 @@ export default function NewUserScreen() {
 
               return (
                 <View key={step.id} style={styles.stepWrapper}>
-                  <TouchableOpacity
-                    style={styles.stepIndicator}
-                    onPress={() => {
-                      if (index < currentStepIndex) {
-                        setCurrentStep(step.id);
-                      }
-                    }}
-                    disabled={index > currentStepIndex}
-                  >
+                  {/* Top Row: Icon + Connector */}
+                  <View style={styles.stepRow}>
                     <View style={[
                       styles.stepIconContainer,
                       isActive && styles.stepIconActive,
@@ -181,27 +174,28 @@ export default function NewUserScreen() {
                       !isActive && !isCompleted && styles.stepIconInactive
                     ]}>
                       <StepIcon
-                        size={16}
+                        size={18}
                         color={isActive || isCompleted ? '#fff' : colors.primary}
                       />
                     </View>
-                    <Text style={[
-                      styles.stepLabel,
-                      isActive && styles.stepLabelActive,
-                      isCompleted && styles.stepLabelCompleted,
-                      !isActive && !isCompleted && styles.stepLabelInactive
-                    ]}>
-                      {step.label}
-                    </Text>
-                  </TouchableOpacity>
 
-                  {/* Connector between steps */}
-                  {index < steps.length - 1 && (
-                    <View style={[
-                      styles.stepConnector,
-                      isCompleted && styles.stepConnectorCompleted
-                    ]} />
-                  )}
+                    {index < steps.length - 1 && (
+                      <View style={[
+                        styles.stepConnector,
+                        isCompleted && styles.stepConnectorCompleted
+                      ]} />
+                    )}
+                  </View>
+
+                  {/* Bottom Row: Label */}
+                  <Text style={[
+                    styles.stepLabel,
+                    isActive && styles.stepLabelActive,
+                    isCompleted && styles.stepLabelCompleted,
+                    !isActive && !isCompleted && styles.stepLabelInactive
+                  ]}>
+                    {step.label}
+                  </Text>
                 </View>
               );
             })}
@@ -322,20 +316,20 @@ const createStyles = (colors: any) => StyleSheet.create({
   // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',   // keep all steps centered
-    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     marginTop: Spacing.sm,
   },
   stepWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',       // keep connector aligned with circle center
+    flexDirection: 'column',
+    alignItems: 'center',
     marginHorizontal: 8,
   },
-  stepIndicator: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  stepRow: {
+    flexDirection: 'row',
+    alignItems: 'center',   // keeps line centered with circle
   },
   stepIconContainer: {
     width: 40,
@@ -361,7 +355,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: Spacing.xs,      // label always below the circle
+    marginTop: Spacing.xs,
   },
   stepLabelActive: {
     color: '#fff',
@@ -373,11 +367,10 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
   },
   stepConnector: {
-    width: 40,                   // fixed width for consistent spacing
-    height: 2,                   // connector thickness
+    width: 40,
+    height: 2,
     backgroundColor: 'rgba(255,255,255,0.3)',
     marginHorizontal: 4,
-    alignSelf: 'center',         // keeps line centered with the circle
   },
   stepConnectorCompleted: {
     backgroundColor: colors.success,
