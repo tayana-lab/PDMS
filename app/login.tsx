@@ -170,7 +170,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>6-Digit PIN</Text>
+              <Text style={styles.inputLabel}>PIN</Text>
               <View style={styles.inputWrapper}>
                 <Lock size={20} color={colors.text.light} style={styles.inputIcon} />
                 <TextInput
