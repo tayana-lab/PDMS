@@ -18,7 +18,7 @@ import { router } from "expo-router";
 import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
-import { leaders } from "@/constants/leaders";
+
 import { useAuth } from "@/hooks/useAuth";
 import Button from "@/components/ui/Button";
 
@@ -30,15 +30,33 @@ export default function LoginScreen() {
   const [showPin, setShowPin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  // Banner images array
+  const bannerImages = [
+    {
+      uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/akbi9amrsr36bu10mpbj4",
+      slogan: "Sabka Saath, Sabka Vikas"
+    },
+    {
+      uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/onaptyoia584jcqbmalfg",
+      slogan: "Unity in Diversity"
+    },
+    {
+      uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/1y7ginuej799zpineibmz",
+      slogan: "Seva Hi Sangathan"
+    }
+  ];
 
   const { login } = useAuth();
   const { colors, currentTheme } = useAppSettings();
 
-  // Auto-scroll leader banners
+  // Auto-scroll banner images
   useEffect(() => {
     let currentIndex = 0;
     const interval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % leaders.length;
+      currentIndex = (currentIndex + 1) % bannerImages.length;
+      setCurrentBannerIndex(currentIndex);
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({
           x: currentIndex * width,
@@ -47,7 +65,7 @@ export default function LoginScreen() {
       }
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bannerImages.length]);
 
   const handleLogin = async () => {
     if (!mobileNumber.trim() || !pin.trim()) {
@@ -85,17 +103,46 @@ export default function LoginScreen() {
         backgroundColor={colors.surface}
       />
 
-      {/* BJP Banner */}
+      {/* BJP Banner Carousel */}
       <View style={styles.bannerWrapper}>
-        <Image 
-          source={{ uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/akbi9amrsr36bu10mpbj4" }} 
-          style={styles.bannerImage} 
-          resizeMode="cover"
-        />
-        <View style={styles.bannerOverlay}>
-          <Text style={styles.bannerSlogan}>
-            &ldquo;Sabka Saath, Sabka Vikas&rdquo;
-          </Text>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onMomentumScrollEnd={(event) => {
+            const index = Math.round(event.nativeEvent.contentOffset.x / width);
+            setCurrentBannerIndex(index);
+          }}
+        >
+          {bannerImages.map((banner, index) => (
+            <View key={index} style={styles.bannerSlide}>
+              <Image 
+                source={{ uri: banner.uri }} 
+                style={styles.bannerImage} 
+                resizeMode="cover"
+              />
+              <View style={styles.bannerOverlay}>
+                <Text style={styles.bannerSlogan}>
+                  &ldquo;{banner.slogan}&rdquo;
+                </Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+        
+        {/* Pagination Dots */}
+        <View style={styles.paginationContainer}>
+          {bannerImages.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.paginationDot,
+                currentBannerIndex === index && styles.paginationDotActive
+              ]}
+            />
+          ))}
         </View>
       </View>
 
@@ -218,9 +265,36 @@ bannerWrapper: {
       overflow: "hidden",
       position: "relative",
     },
+    bannerSlide: {
+      width: width - (Spacing.lg * 2),
+      height: "100%",
+      position: "relative",
+    },
     bannerImage: {
       width: "100%",
       height: "100%",
+    },
+    paginationContainer: {
+      position: "absolute",
+      bottom: 10,
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    paginationDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+      marginHorizontal: 4,
+    },
+    paginationDotActive: {
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      width: 10,
+      height: 10,
+      borderRadius: 5,
     },
     bannerOverlay: {
       position: "absolute",
