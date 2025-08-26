@@ -236,7 +236,6 @@ const createStyles = (colors: any) =>
       alignItems: "center",
         paddingVertical: Spacing.md,
       paddingHorizontal: Spacing.lg,
-      justifyContent: "center",
     },
     bannerImage: {
       width: 60,
