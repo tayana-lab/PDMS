@@ -97,6 +97,10 @@ export default function LoginScreen() {
   const styles = createStyles(colors);
 
   return (
+     <LinearGradient
+        colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
+        style={styles.gradientBackground}
+      >
     <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
@@ -248,6 +252,7 @@ export default function LoginScreen() {
   
       </KeyboardAvoidingView>
     </SafeAreaView>
+       </LinearGradient>
   );
 }
 
