@@ -229,6 +229,8 @@ const createStyles = (colors: any) =>
     bannerWrapper: {
       flex: 0.4,
       backgroundColor: colors.primary,
+              paddingVertical: Spacing.md,
+      paddingHorizontal: Spacing.lg,
     },
     bannerSlide: {
       width,
