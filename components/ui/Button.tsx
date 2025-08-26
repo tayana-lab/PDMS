@@ -47,21 +47,25 @@ export default function Button({
   ];
 
   return (
-    <TouchableOpacity
-      style={buttonStyle}
-      onPress={onPress}
-      disabled={disabled || loading}
-      activeOpacity={0.8}
-    >
-      {loading ? (
-        <ActivityIndicator color={actualVariant === 'primary' ? colors.text.white : colors.primary} />
-      ) : (
-        <View style={styles.content}>
-          {icon}
-          <Text style={textStyles}>{title}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
+  <TouchableOpacity
+    style={buttonStyle}
+    onPress={onPress}
+    disabled={disabled || loading}
+    activeOpacity={0.8}
+
+    {...(actualVariant === 'ghost' ? { android_ripple: undefined } : {})}
+  >
+    {loading ? (
+      <ActivityIndicator
+        color={actualVariant === 'primary' ? colors.text.white : colors.primary}
+      />
+    ) : (
+      <View style={styles.content}>
+        {icon}
+        <Text style={textStyles}>{title}</Text>
+      </View>
+    )}
+  </TouchableOpacity>
   );
 }
 
