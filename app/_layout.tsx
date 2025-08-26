@@ -1,15 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, router } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import * as ExpoSplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
-import Loader from "@/components/ui/Loader";
+import SplashScreen from "./splash";
 
-SplashScreen.preventAutoHideAsync();
+ExpoSplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,11 +56,7 @@ function RootLayoutNav() {
   }, [user, isLoading]);
 
   if (isLoading) {
-    return (
-      <View style={[styles.loadingContainer, { backgroundColor: colors?.background || '#FFFFFF' }]}>
-        <Loader text="Initializing..." />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   const statusBarStyle = currentTheme === 'dark' ? 'light' : 'dark';
@@ -82,6 +77,7 @@ function RootLayoutNav() {
         <Stack.Screen name="search-voter" options={{ headerShown: false }} />
         <Stack.Screen name="help-desk" options={{ headerShown: false }} />
         <Stack.Screen name="edit-voter" options={{ headerShown: false }} />
+        <Stack.Screen name="splash" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
     </>
@@ -92,7 +88,7 @@ export default function RootLayout() {
   useEffect(() => {
     const hideSplash = async () => {
       try {
-        await SplashScreen.hideAsync();
+        await ExpoSplashScreen.hideAsync();
       } catch (error) {
         console.error('Error hiding splash screen:', error);
       }
@@ -113,10 +109,3 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
