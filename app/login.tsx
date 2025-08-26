@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from "expo-router";
 import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
@@ -50,7 +49,7 @@ export default function LoginScreen() {
   ];
 
   const { login } = useAuth();
-  const { colors } = useAppSettings();
+  const { colors, currentTheme } = useAppSettings();
 
   // Auto-scroll banner images
   useEffect(() => {
@@ -98,13 +97,11 @@ export default function LoginScreen() {
   const styles = createStyles(colors);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
-      <LinearGradient
-        colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
-        style={styles.gradientBackground}
-      >
-        <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colors.surface}
+      />
 
       {/* BJP Banner Carousel */}
       <View style={styles.bannerWrapper}>
@@ -250,9 +247,7 @@ export default function LoginScreen() {
           </View>
   
       </KeyboardAvoidingView>
-        </SafeAreaView>
-      </LinearGradient>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -260,12 +255,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-    },
-    gradientBackground: {
-      flex: 1,
-    },
-    safeArea: {
-      flex: 1,
+      backgroundColor: colors.surface,
     },
 
 bannerWrapper: {
