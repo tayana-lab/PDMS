@@ -225,12 +225,13 @@ const createStyles = (colors: any) =>
       backgroundColor: colors.surface,
     },
 
-    // Banner 40%
- bannerWrapper: {
+bannerWrapper: {
   flex: 0.4,
   backgroundColor: colors.primary,
-  paddingHorizontal: Spacing.lg,   // ✅ align with login card
-  justifyContent: "center",        // optional: vertically center contents
+  marginHorizontal: Spacing.lg,   // 👈 same as login card
+  borderRadius: 12,               // optional, makes it card-like
+  overflow: "hidden",             // ensure children respect radius
+  justifyContent: "center",
 },
 
     bannerSlide: {
