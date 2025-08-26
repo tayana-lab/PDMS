@@ -218,7 +218,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.surface,
   },
   bannerWrapper: {
-    height: 120,
+    height: 140,
     backgroundColor: colors.primary,
   },
   bannerSlide: {
