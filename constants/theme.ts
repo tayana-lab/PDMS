@@ -21,7 +21,7 @@ export interface ColorScheme {
 
 export const Themes: Record<ThemeType, ColorScheme> = {
   light: {
-    primary: '#FF6B35', // Saffron/Orange
+    primary: '#E05716', // Saffron/Orange
     secondary: '#138808', // Green
     accent: '#FFD700', // Gold
     background: '#FFFFFF',
