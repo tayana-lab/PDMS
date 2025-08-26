@@ -234,7 +234,8 @@ const createStyles = (colors: any) =>
       width,
       flexDirection: "row",
       alignItems: "center",
-      padding: Spacing.md,
+        paddingVertical: Spacing.md,
+      paddingHorizontal: Spacing.lg,
       justifyContent: "center",
     },
     bannerImage: {
