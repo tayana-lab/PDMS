@@ -226,7 +226,7 @@ const createStyles = (colors: any) =>
     },
 
 bannerWrapper: {
-  flex: 0.4,
+  flex: 0.3,
   backgroundColor: colors.primary,
   marginHorizontal: Spacing.lg,   // 👈 same as login card
   borderRadius: 12,               // optional, makes it card-like
@@ -260,7 +260,7 @@ bannerWrapper: {
 
     // Main Content 60%
     mainContent: {
-      flex: 0.6,
+      flex: 0.7,
     },
     scrollContent: {
       flexGrow: 1,
