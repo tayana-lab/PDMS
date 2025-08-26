@@ -229,7 +229,7 @@ const createStyles = (colors: any) =>
     bannerWrapper: {
       flex: 0.4,
       backgroundColor: colors.primary,
-      padding :24,
+      width :24,
     },
     bannerSlide: {
       width,
