@@ -18,7 +18,7 @@ import { router } from "expo-router";
 import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { useAuth } from "@/hooks/useAuth";
 import Button from "@/components/ui/Button";
 
@@ -97,11 +97,6 @@ export default function LoginScreen() {
   const styles = createStyles(colors);
 
   return (
-    <View>
-     <LinearGradient
-        colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
-        style={styles.gradientBackground}
-      >
     <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
@@ -253,8 +248,6 @@ export default function LoginScreen() {
   
       </KeyboardAvoidingView>
     </SafeAreaView>
-       </LinearGradient>
-      </View>
   );
 }
 
