@@ -31,11 +31,13 @@ export default function Button({
   const styles = createStyles(colors);
   
   const buttonStyle = [
-    styles.base,
-    styles[actualVariant],
-    styles[size],
-    disabled && styles.disabled,
-    style
+     styles.base,
+  styles[actualVariant],
+  styles[size],
+  disabled && styles.disabled,
+  // 👇 Remove elevation for ghost
+  actualVariant === 'ghost' && { elevation: 0, shadowOpacity: 0 },
+  style,
   ];
 
   const textStyles = [
