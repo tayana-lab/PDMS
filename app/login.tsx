@@ -185,7 +185,7 @@ export default function LoginScreen() {
               loading={isLoading}
               style={styles.loginButton}
             />
-                <View   style={styles.forgotPin}>
+                <View  style={styles.forgotPin}>
               <TouchableOpacity onPress={handleRegister}>
                 <Text style={styles.registerLink}>
                   Register!
@@ -229,6 +229,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     justifyContent: "center",
   },
   forgotPin:{
+    alignItems:'right',
     textAlign :'right',
   },
   bannerImage: {
