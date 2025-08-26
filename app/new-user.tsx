@@ -60,7 +60,7 @@ export default function NewUserScreen() {
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { colors } = useAppSettings();
   const { sendOTP, verifyOTP, createAccount } = useAuth();
 
@@ -70,14 +70,13 @@ export default function NewUserScreen() {
 
   const handleNext = async () => {
     setIsLoading(true);
-    
+
     try {
       if (currentStep === 'mobile') {
         if (!mobile.trim() || mobile.length !== 10) {
           Alert.alert('Error', 'Please enter a valid 10-digit mobile number');
           return;
         }
-        // Send OTP logic here
         await sendOTP(mobile);
         setCurrentStep('otp');
       } else if (currentStep === 'otp') {
@@ -85,7 +84,6 @@ export default function NewUserScreen() {
           Alert.alert('Error', 'Please enter a valid 4-digit OTP');
           return;
         }
-        // Verify OTP logic here
         const result = await verifyOTP(mobile, otp);
         if (result.success) {
           setCurrentStep('pin');
@@ -101,7 +99,6 @@ export default function NewUserScreen() {
           Alert.alert('Error', 'PINs do not match');
           return;
         }
-        // Create account logic here
         const result = await createAccount(mobile, pin);
         if (result.success) {
           Alert.alert('Success', 'Account created successfully!', [
@@ -165,45 +162,47 @@ export default function NewUserScreen() {
               const isActive = index === currentStepIndex;
               const isCompleted = index < currentStepIndex;
               const StepIcon = step.icon;
-              
+
               return (
-                <TouchableOpacity 
-                  key={step.id} 
-                  style={styles.stepIndicator}
-                  onPress={() => {
-                    // Allow navigation to previous steps only
-                    if (index < currentStepIndex) {
-                      setCurrentStep(step.id);
-                    }
-                  }}
-                  disabled={index > currentStepIndex}
-                >
-                  <View style={[
-                    styles.stepIconContainer,
-                    isActive && styles.stepIconActive,
-                    isCompleted && styles.stepIconCompleted,
-                    !isActive && !isCompleted && styles.stepIconInactive
-                  ]}>
-                    <StepIcon 
-                      size={16} 
-                      color={isActive || isCompleted ? '#fff' : colors.primary} 
-                    />
-                  </View>
-                  <Text style={[
-                    styles.stepLabel,
-                    isActive && styles.stepLabelActive,
-                    isCompleted && styles.stepLabelCompleted,
-                    !isActive && !isCompleted && styles.stepLabelInactive
-                  ]}>
-                    {step.label}
-                  </Text>
+                <View key={step.id} style={styles.stepWrapper}>
+                  <TouchableOpacity
+                    style={styles.stepIndicator}
+                    onPress={() => {
+                      if (index < currentStepIndex) {
+                        setCurrentStep(step.id);
+                      }
+                    }}
+                    disabled={index > currentStepIndex}
+                  >
+                    <View style={[
+                      styles.stepIconContainer,
+                      isActive && styles.stepIconActive,
+                      isCompleted && styles.stepIconCompleted,
+                      !isActive && !isCompleted && styles.stepIconInactive
+                    ]}>
+                      <StepIcon
+                        size={16}
+                        color={isActive || isCompleted ? '#fff' : colors.primary}
+                      />
+                    </View>
+                    <Text style={[
+                      styles.stepLabel,
+                      isActive && styles.stepLabelActive,
+                      isCompleted && styles.stepLabelCompleted,
+                      !isActive && !isCompleted && styles.stepLabelInactive
+                    ]}>
+                      {step.label}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Connector between steps */}
                   {index < steps.length - 1 && (
                     <View style={[
                       styles.stepConnector,
                       isCompleted && styles.stepConnectorCompleted
                     ]} />
                   )}
-                </TouchableOpacity>
+                </View>
               );
             })}
           </View>
@@ -306,18 +305,18 @@ export default function NewUserScreen() {
 }
 
 const createStyles = (colors: any) => StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1
   },
   headerBackButton: {
     padding: Spacing.xs,
     marginLeft: -Spacing.xs,
   },
-  gradientBackground: { 
-    flex: 1 
+  gradientBackground: {
+    flex: 1
   },
-  safeArea: { 
-    flex: 1 
+  safeArea: {
+    flex: 1
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
@@ -327,10 +326,14 @@ const createStyles = (colors: any) => StyleSheet.create({
     paddingVertical: Spacing.md,
     marginTop: Spacing.sm,
   },
-  stepIndicator: {
+  stepWrapper: {
+    flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    position: 'relative',
+  },
+  stepIndicator: {
+    alignItems: 'center',
+    flexShrink: 0,
   },
   stepIconContainer: {
     width: 40,
@@ -368,20 +371,17 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
   },
   stepConnector: {
-    position: 'absolute',
-    top: 20,
-    left: '75%',
-    right: '-75%',
+    flex: 1,
     height: 2,
     backgroundColor: 'rgba(255,255,255,0.3)',
-    zIndex: -1,
+    marginHorizontal: 4,
   },
   stepConnectorCompleted: {
     backgroundColor: colors.success,
   },
-  center: { 
-    flex: 1, 
-    justifyContent: "center", 
+  center: {
+    flex: 1,
+    justifyContent: "center",
     paddingHorizontal: 26
   },
   loginCard: {
@@ -395,11 +395,11 @@ const createStyles = (colors: any) => StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
-  title: { 
-    fontSize: 22, 
-    fontWeight: "700", 
-    color: colors.primary, 
-    textAlign: "center" 
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: colors.primary,
+    textAlign: "center"
   },
   subtitle: {
     fontSize: 14,
@@ -407,16 +407,16 @@ const createStyles = (colors: any) => StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
   },
-  inputGroup: { 
-    marginBottom: 20, 
-    gap: 12 
+  inputGroup: {
+    marginBottom: 20,
+    gap: 12
   },
-  btnGroup: { 
-    gap: 12 
+  btnGroup: {
+    gap: 12
   },
-  primaryBtn: { 
-    borderRadius: BorderRadius.lg, 
-    paddingVertical: 12 
+  primaryBtn: {
+    borderRadius: BorderRadius.lg,
+    paddingVertical: 12
   },
   otpInput: {
     fontSize: 18,
