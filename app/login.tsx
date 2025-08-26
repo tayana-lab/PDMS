@@ -229,7 +229,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     justifyContent: "center",
   },
   forgotPin:{
-    textAlign :right,
+    textAlign :'right',
   },
   bannerImage: {
     width: 60,
