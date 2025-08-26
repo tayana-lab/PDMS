@@ -147,7 +147,7 @@ export default function LoginScreen() {
               </View>
             </View>
             
-            <Text style={styles.welcomeTitle}>Welcome to LemonPie!</Text>
+            <Text style={styles.welcomeTitle}>BHARATIYA JANATAH PARTY</Text>
             <Text style={styles.welcomeSubtitle}>Keep your data safe</Text>
           </View>
 
