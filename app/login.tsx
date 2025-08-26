@@ -147,8 +147,8 @@ export default function LoginScreen() {
               </View>
             </View>
             
-            <Text style={styles.welcomeTitle}>BHARATIYA JANATA PARTY</Text>
-            <Text style={styles.welcomeSubtitle}>Keep your data safe</Text>
+            <Text style={styles.welcomeSubtitle}>BHARATIYA JANATA PARTY</Text>
+           
           </View>
 
           {/* Login Card */}
