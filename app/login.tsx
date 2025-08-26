@@ -257,7 +257,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   
   logoSection: {
     alignItems: 'center',
-    marginTop: 100,
+    marginTop: 120,
     marginBottom: 10,
   },
   
