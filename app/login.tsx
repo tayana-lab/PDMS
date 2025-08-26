@@ -257,6 +257,8 @@ bannerWrapper: {
     // Main Content 60%
     mainContent: {
       flex: 0.7,
+      marginHorizontal: Spacing.lg,
+  justifyContent: "center", 
     },
     scrollContent: {
       flexGrow: 1,
