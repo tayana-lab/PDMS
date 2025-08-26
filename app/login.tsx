@@ -122,29 +122,11 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <View style={styles.logo}>
-                <View style={styles.logoInner}>
-                  {/* Create the wheel pattern */}
-                  <View style={styles.wheelPattern}>
-                    {[...Array(8)].map((_, i) => (
-                      <View
-                        key={i}
-                        style={[
-                          styles.wheelSpoke,
-                          {
-                            transform: [{ rotate: `${i * 45}deg` }],
-                          },
-                        ]}
-                      />
-                    ))}
-                  </View>
-                </View>
-              </View>
-              <View style={styles.decorativeElements}>
-                <View style={[styles.dot, styles.dot1]} />
-                <View style={[styles.dot, styles.dot2]} />
-                <View style={[styles.dot, styles.dot3]} />
-              </View>
+              <Image 
+                source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/883hzv1gvf1dh5pk5dd8q' }}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             
             <Text style={styles.welcomeSubtitle}>BHARATIYA JANATA PARTY</Text>
@@ -275,75 +257,13 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   
   logoContainer: {
-    position: 'relative',
+    alignItems: 'center',
     marginBottom: Spacing.lg,
   },
   
-  logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  
-  logoInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  
-  wheelPattern: {
-    width: 40,
-    height: 40,
-    position: 'relative',
-  },
-  
-  wheelSpoke: {
-    position: 'absolute',
-    width: 3,
-    height: 12,
-    backgroundColor: '#fff',
-    borderRadius: 1.5,
-    top: 2,
-    left: 18.5,
-    transformOrigin: '1.5px 18px',
-  },
-  
-  decorativeElements: {
-    position: 'absolute',
+  logoImage: {
     width: 120,
     height: 120,
-    top: -20,
-    left: -20,
-  },
-  
-  dot: {
-    position: 'absolute',
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.accent,
-  },
-  
-  dot1: {
-    top: 10,
-    right: 20,
-  },
-  
-  dot2: {
-    top: 30,
-    right: 10,
-  },
-  
-  dot3: {
-    bottom: 20,
-    left: 15,
   },
   
   welcomeTitle: {
