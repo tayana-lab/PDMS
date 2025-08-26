@@ -226,11 +226,13 @@ const createStyles = (colors: any) =>
     },
 
     // Banner 40%
-    bannerWrapper: {
-      flex: 0.4,
-      backgroundColor: colors.primary,
-      width :24,
-    },
+ bannerWrapper: {
+  flex: 0.4,
+  backgroundColor: colors.primary,
+  paddingHorizontal: Spacing.lg,   // ✅ align with login card
+  justifyContent: "center",        // optional: vertically center contents
+},
+
     bannerSlide: {
       width,
       flexDirection: "row",
