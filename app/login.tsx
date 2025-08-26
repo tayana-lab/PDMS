@@ -263,7 +263,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   
   logoContainer: {
     alignItems: 'center',
-    marginBottom: Spacing.lg,
+    marginBottom: 10,
   },
   
   logoImage: {
