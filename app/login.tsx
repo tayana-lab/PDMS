@@ -97,6 +97,7 @@ export default function LoginScreen() {
   const styles = createStyles(colors);
 
   return (
+    <View>
      <LinearGradient
         colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
         style={styles.gradientBackground}
@@ -253,6 +254,7 @@ export default function LoginScreen() {
       </KeyboardAvoidingView>
     </SafeAreaView>
        </LinearGradient>
+      </View>
   );
 }
 
