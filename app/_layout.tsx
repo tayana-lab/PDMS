@@ -30,7 +30,8 @@ function RootLayoutNav() {
     const prepareApp = async () => {
       try {
         // Add any initialization logic here
-        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure everything is ready
+        // Extended delay to show splash screen properly
+        await new Promise(resolve => setTimeout(resolve, 3000)); // 3 seconds to show splash screen
         setAppReady(true);
       } catch (error) {
         console.error('Error preparing app:', error);
