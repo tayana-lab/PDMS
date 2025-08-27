@@ -50,7 +50,7 @@ export default function ApplicationsScreen() {
   const [voterIdInput, setVoterIdInput] = useState<string>('');
   const [showVoterIdModal, setShowVoterIdModal] = useState<boolean>(false);
   const [selectedScheme, setSelectedScheme] = useState<GovernmentScheme | null>(null);
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
 
   const filteredSchemes = useMemo(() => {
     let schemes = schemeData.items;
@@ -104,7 +104,7 @@ export default function ApplicationsScreen() {
 
   const handleVoterIdSubmit = () => {
     if (!voterIdInput.trim()) {
-      Alert.alert('Error', 'Please enter a valid Voter ID');
+      Alert.alert(t('error'), 'Please enter a valid Voter ID');
       return;
     }
     
@@ -112,11 +112,11 @@ export default function ApplicationsScreen() {
     console.log('Voter ID:', voterIdInput);
     
     Alert.alert(
-      'Application Submitted',
-      `Your application for ${selectedScheme?.name} has been submitted successfully.\n\nApplication will be processed with voter details for ID: ${voterIdInput}`,
+      t('applicationSubmitted'),
+      `${t('applicationSubmittedMessage')}\n\nApplication will be processed with voter details for ID: ${voterIdInput}`,
       [
         {
-          text: 'OK',
+          text: t('ok'),
           onPress: () => {
             setShowVoterIdModal(false);
             setVoterIdInput('');
@@ -145,12 +145,12 @@ export default function ApplicationsScreen() {
         </Text>
         
         <Text style={[styles.schemeBeneficiaries, { color: colors.text.secondary }]} numberOfLines={2}>
-          <Text style={[styles.beneficiariesLabel, { color: colors.text.primary }]}>Beneficiaries: </Text>
+          <Text style={[styles.beneficiariesLabel, { color: colors.text.primary }]}>{t('beneficiaries')}: </Text>
           {item.beneficiaries}
         </Text>
         
         <Button
-          title="Apply"
+          title={t('apply')}
           onPress={() => handleApplyScheme(item)}
           variant="primary"
           size="small"
@@ -176,15 +176,15 @@ export default function ApplicationsScreen() {
       </View>
       
       <View style={styles.applicationDetails}>
-        <Text style={[styles.detailText, { color: colors.text.secondary }]}>Mobile: {item.mobile_number}</Text>
-        <Text style={[styles.detailText, { color: colors.text.secondary }]}>Help Required: {item.required_help}</Text>
+        <Text style={[styles.detailText, { color: colors.text.secondary }]}>{t('mobile')}: {item.mobile_number}</Text>
+        <Text style={[styles.detailText, { color: colors.text.secondary }]}>{t('helpRequired')}: {item.required_help}</Text>
         <Text style={[styles.detailText, { color: colors.text.secondary }]}>
-          Submitted: {new Date(item.created_at).toLocaleDateString()}
+          {t('submitted')}: {new Date(item.created_at).toLocaleDateString()}
         </Text>
       </View>
       
       <TouchableOpacity style={styles.viewDetailsButton}>
-        <Text style={[styles.viewDetailsText, { color: colors.primary }]}>View Details</Text>
+        <Text style={[styles.viewDetailsText, { color: colors.primary }]}>{t('viewDetails')}</Text>
       </TouchableOpacity>
     </Card>
   );
@@ -194,7 +194,7 @@ export default function ApplicationsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Applications</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>{t('applicationsTitle')}</Text>
       </View>
 
       {/* Tab Navigation */}
@@ -210,7 +210,7 @@ export default function ApplicationsScreen() {
             styles.tabText,
             selectedTab === 'schemes' && styles.activeTabText
           ]}>
-            Schemes
+            {t('schemes')}
           </Text>
         </TouchableOpacity>
         
@@ -225,7 +225,7 @@ export default function ApplicationsScreen() {
             styles.tabText,
             selectedTab === 'myApplications' && styles.activeTabText
           ]}>
-            My Applications
+            {t('myApplications')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -236,7 +236,7 @@ export default function ApplicationsScreen() {
           {/* Search and Filter */}
           <View style={styles.searchFilterContainer}>
             <Input
-              placeholder="Search schemes..."
+              placeholder={t('searchSchemes')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               style={styles.searchInput}
@@ -268,7 +268,7 @@ export default function ApplicationsScreen() {
           </View>
           
           <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-            Available Schemes ({filteredSchemes.length})
+            {t('availableSchemes')} ({filteredSchemes.length})
           </Text>
           
           <FlatList
@@ -280,7 +280,7 @@ export default function ApplicationsScreen() {
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={[styles.emptyText, { color: colors.text.light }]}>No schemes found</Text>
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>{t('noSchemesFound')}</Text>
               </View>
             }
           />
@@ -291,7 +291,7 @@ export default function ApplicationsScreen() {
       {selectedTab === 'myApplications' && (
         <View style={styles.tabContent}>
           <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-            My Applications ({applicationData.total_count})
+            {t('myApplications')} ({applicationData.total_count})
           </Text>
           
           <FlatList
@@ -303,7 +303,7 @@ export default function ApplicationsScreen() {
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={[styles.emptyText, { color: colors.text.light }]}>No applications found</Text>
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>{t('noApplicationsFound')}</Text>
               </View>
             }
           />
@@ -314,13 +314,13 @@ export default function ApplicationsScreen() {
       {showVoterIdModal && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalTitle, { color: colors.text.primary }]}>Enter Voter ID</Text>
+            <Text style={[styles.modalTitle, { color: colors.text.primary }]}>{t('enterVoterId')}</Text>
             <Text style={[styles.modalSubtitle, { color: colors.text.secondary }]}>
-              Applying for: {selectedScheme?.name}
+              {t('applyingFor')}: {selectedScheme?.name}
             </Text>
             
             <Input
-              placeholder="Enter your Voter ID"
+              placeholder={t('enterYourVoterId')}
               value={voterIdInput}
               onChangeText={setVoterIdInput}
               style={styles.voterIdInput}
@@ -329,7 +329,7 @@ export default function ApplicationsScreen() {
             
             <View style={styles.modalButtons}>
               <Button
-                title="Cancel"
+                title={t('cancel')}
                 onPress={() => {
                   setShowVoterIdModal(false);
                   setVoterIdInput('');
@@ -339,7 +339,7 @@ export default function ApplicationsScreen() {
                 style={styles.modalButton}
               />
               <Button
-                title="Submit"
+                title={t('submit')}
                 onPress={handleVoterIdSubmit}
                 style={styles.modalButton}
               />

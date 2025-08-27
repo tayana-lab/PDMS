@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const [sidebarAnimation] = useState(new Animated.Value(-SIDEBAR_WIDTH));
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
-  const { colors, currentTheme } = useAppSettings();
+  const { colors, currentTheme, t } = useAppSettings();
 
   const handleProfilePress = () => {
     setShowProfileMenu(true);
@@ -46,12 +46,12 @@ export default function HomeScreen() {
 
   const handleLogout = () => {
     Alert.alert(
-      'Logout',
+      t('logout'),
       'Are you sure you want to logout?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: 'Logout',
+          text: t('logout'),
           style: 'destructive',
           onPress: () => {
             logout();
@@ -63,10 +63,10 @@ export default function HomeScreen() {
   };
 
   const menuItems = [
-    { icon: User, label: 'Profile', onPress: () => router.push('/(tabs)/profile') },
-    { icon: Settings, label: 'Settings', onPress: () => console.log('Settings') },
+    { icon: User, label: t('profile'), onPress: () => router.push('/(tabs)/profile') },
+    { icon: Settings, label: t('settings'), onPress: () => console.log('Settings') },
     { icon: HelpCircle, label: 'Help', onPress: () => console.log('Help') },
-    { icon: LogOut, label: 'Logout', onPress: handleLogout, danger: true }
+    { icon: LogOut, label: t('logout'), onPress: handleLogout, danger: true }
   ];
 
   return (

@@ -7,7 +7,7 @@ import { useAppSettings } from '@/hooks/useAppSettings';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
   
   return (
     <Tabs
@@ -41,35 +41,35 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t('home'),
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="voters"
         options={{
-          title: "Voters",
+          title: t('voters'),
           tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="applications"
         options={{
-          title: "Applications",
+          title: t('applications'),
           tabBarIcon: ({ color, size }) => <FileText size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="reports"
         options={{
-          title: "Reports",
+          title: t('reports'),
           tabBarIcon: ({ color, size }) => <BarChart3 size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: t('profile'),
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />

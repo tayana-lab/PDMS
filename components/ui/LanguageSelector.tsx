@@ -33,7 +33,7 @@ export default function LanguageSelector({ visible, onClose }: LanguageSelectorP
             {t('selectLanguage')}
           </Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={[styles.closeText, { color: colors.primary }]}>Done</Text>
+            <Text style={[styles.closeText, { color: colors.primary }]}>{t('done')}</Text>
           </TouchableOpacity>
         </View>
 

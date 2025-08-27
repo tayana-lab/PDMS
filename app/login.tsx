@@ -49,7 +49,7 @@ export default function LoginScreen() {
   ];
 
   const { login } = useAuth();
-  const { colors, currentTheme } = useAppSettings();
+  const { colors, currentTheme, t } = useAppSettings();
 
   // Auto-scroll banner images
   useEffect(() => {
@@ -69,18 +69,18 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!mobileNumber.trim() || !pin.trim()) {
-      Alert.alert("Error", "Please enter both mobile number and PIN");
+      Alert.alert(t('error'), "Please enter both mobile number and PIN");
       return;
     }
     if (pin.length !== 6) {
-      Alert.alert("Error", "PIN must be 6 digits");
+      Alert.alert(t('error'), "PIN must be 6 digits");
       return;
     }
     setIsLoading(true);
     try {
       const result = await login(mobileNumber, pin);
       if (result.success) router.replace("/(tabs)");
-      else Alert.alert("Error", result.error || "Login failed");
+      else Alert.alert(t('error'), result.error || "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +160,7 @@ export default function LoginScreen() {
           {/* Login Card */}
           <View style={styles.loginCard}>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Mobile Number</Text>
+              <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
               <View style={styles.inputWrapper}>
                 <Phone
                   size={20}
@@ -171,7 +171,7 @@ export default function LoginScreen() {
                   style={styles.input}
                   value={mobileNumber}
                   onChangeText={setMobileNumber}
-                  placeholder="Enter your mobile number"
+                  placeholder={t('enterMobileNumber')}
                   placeholderTextColor={colors.text.light}
                   keyboardType="phone-pad"
                   maxLength={10}
@@ -180,7 +180,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>PIN</Text>
+              <Text style={styles.inputLabel}>{t('pin')}</Text>
               <View style={styles.inputWrapper}>
                 <Lock
                   size={20}
@@ -191,7 +191,7 @@ export default function LoginScreen() {
                   style={[styles.input, styles.pinInput]}
                   value={pin}
                   onChangeText={setPin}
-                  placeholder="Enter 6-digit PIN"
+                  placeholder={t('enterPin')}
                   placeholderTextColor={colors.text.light}
                   secureTextEntry={!showPin}
                   keyboardType="numeric"
@@ -211,7 +211,7 @@ export default function LoginScreen() {
             </View>
 
             <Button
-              title={isLoading ? "LOGGING IN..." : "LOGIN"}
+              title={isLoading ? t('loggingIn') : t('login')}
               onPress={handleLogin}
               disabled={isLoading}
               loading={isLoading}
@@ -220,7 +220,7 @@ export default function LoginScreen() {
 
             <View style={styles.forgotPin}>
               <TouchableOpacity onPress={handleForgotPassword}>
-                <Text style={styles.registerLink}>Forgot Pin ?</Text>
+                <Text style={styles.registerLink}>{t('forgotPin')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -228,9 +228,9 @@ export default function LoginScreen() {
           {/* Register Section */}
           <View style={styles.registerSection}>
             <Text style={styles.registerText}>
-              Don&apos;t have an account?{" "}
+              {t('dontHaveAccount')}{" "}
              
-                <Text style={styles.registerLink} onPress={handleRegister} >Register!</Text>
+                <Text style={styles.registerLink} onPress={handleRegister} >{t('register')}</Text>
               
             </Text>
           </View>

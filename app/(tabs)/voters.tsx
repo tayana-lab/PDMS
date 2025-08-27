@@ -48,7 +48,7 @@ export default function VotersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [voters, setVoters] = useState<Voter[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -72,7 +72,7 @@ export default function VotersScreen() {
         <Text style={[styles.voterName, { color: colors.text.primary }]}>{item.name}</Text>
         <Text style={[styles.ward, { color: colors.primary }]}>{item.ward}</Text>
       </View>
-      <Text style={[styles.voterId, { color: colors.text.primary }]}>Voter ID: {item.voterId}</Text>
+      <Text style={[styles.voterId, { color: colors.text.primary }]}>{t('voterId')}: {item.voterId}</Text>
       <Text style={[styles.address, { color: colors.text.secondary }]}>{item.address}</Text>
       <Text style={[styles.phone, { color: colors.text.secondary }]}>{item.phone}</Text>
     </Card>
@@ -83,8 +83,8 @@ export default function VotersScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Voters</Text>
-        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Search and manage voter information</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>{t('votersTitle')}</Text>
+        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>{t('votersSubtitle')}</Text>
       </View>
 
       {/* Quick Access to Advanced Search */}
@@ -98,9 +98,9 @@ export default function VotersScreen() {
               <Search size={24} color={colors.primary} />
             </View>
             <View style={styles.advancedSearchText}>
-              <Text style={[styles.advancedSearchTitle, { color: colors.text.primary }]}>Advanced Voter Search</Text>
+              <Text style={[styles.advancedSearchTitle, { color: colors.text.primary }]}>{t('advancedVoterSearch')}</Text>
               <Text style={[styles.advancedSearchDescription, { color: colors.text.secondary }]}>
-                Search with detailed filters and edit voter information
+                {t('advancedSearchDescription')}
               </Text>
             </View>
             <ArrowRight size={20} color={colors.text.light} />
@@ -109,15 +109,15 @@ export default function VotersScreen() {
       </View>
 
       <View style={styles.searchContainer}>
-        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Quick Search</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>{t('quickSearch')}</Text>
         <Input
-          placeholder="Enter name, voter ID, or phone number"
+          placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChangeText={setSearchQuery}
           style={styles.searchInput}
         />
         <Button
-          title="Search"
+          title={t('search')}
           onPress={handleSearch}
           loading={isLoading}
           style={styles.searchButton}
@@ -134,7 +134,7 @@ export default function VotersScreen() {
           <View style={styles.emptyContainer}>
             <Search size={48} color={colors.text.light} />
             <Text style={[styles.emptyText, { color: colors.text.light }]}>
-              {searchQuery ? 'No voters found' : 'Enter search criteria to find voters'}
+              {searchQuery ? t('noVotersFound') : t('enterSearchCriteria')}
             </Text>
           </View>
         }
