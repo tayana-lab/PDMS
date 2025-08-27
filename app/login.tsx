@@ -229,9 +229,9 @@ export default function LoginScreen() {
           <View style={styles.registerSection}>
             <Text style={styles.registerText}>
               Don&apos;t have an account?{" "}
-              <TouchableOpacity onPress={handleRegister}>
-                <Text style={styles.registerLink}>Register!</Text>
-              </TouchableOpacity>
+             
+                <Text style={styles.registerLink} onPress={handleRegister} >Register!</Text>
+              
             </Text>
           </View>
   
