@@ -398,6 +398,6 @@ bannerWrapper: {
     },
     registerLink: {
       color: colors.primary,
-      fontWeight: "600",
+      fontWeight: "500",
     },
   });
