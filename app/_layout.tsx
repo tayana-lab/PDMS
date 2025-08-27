@@ -31,7 +31,7 @@ function RootLayoutNav() {
       try {
         // Add any initialization logic here
         // Extended delay to show splash screen properly
-        await new Promise(resolve => setTimeout(resolve, 3000)); // 3 seconds to show splash screen
+        await new Promise(resolve => setTimeout(resolve, 5000)); // 5 seconds to show splash screen
         setAppReady(true);
       } catch (error) {
         console.error('Error preparing app:', error);
