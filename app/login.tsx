@@ -399,5 +399,6 @@ bannerWrapper: {
     registerLink: {
       color: colors.primary,
       fontWeight: "600",
+      marginTop:10,
     },
   });
