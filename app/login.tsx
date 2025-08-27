@@ -310,8 +310,7 @@ bannerWrapper: {
     },
     scrollContent: {
       flexGrow: 1,
-      paddingHorizontal: Spacing.lg,
-      //paddingBottom: Spacing.xl,
+      paddingHorizontal: Spacing.lg
     },
 
     logoSection: {
