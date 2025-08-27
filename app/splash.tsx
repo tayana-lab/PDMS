@@ -1,10 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, StyleSheet, Animated, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppSettings } from '@/hooks/useAppSettings';
-
-const { width, height } = Dimensions.get('window');
 
 export default function SplashScreen() {
   const { colors } = useAppSettings();
@@ -39,14 +36,9 @@ export default function SplashScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={[colors?.primary || '#E05716', colors?.secondary || '#138808']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
+      <View style={[styles.background, { backgroundColor: colors?.primary || '#E05716' }]}>
         <View style={styles.content}>
-          {/* Logo/Icon Container */}
+          {/* Lotus Logo */}
           <Animated.View
             style={[
               styles.logoContainer,
@@ -56,9 +48,11 @@ export default function SplashScreen() {
               },
             ]}
           >
-            <View style={[styles.logoCircle, { backgroundColor: colors?.text?.white || '#FFFFFF' }]}>
-              <Text style={[styles.logoText, { color: colors?.primary || '#E05716' }]}>🏛️</Text>
-            </View>
+            <Image
+              source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/x08umlzmbwrr0dyex4p5r' }}
+              style={styles.lotusImage}
+              resizeMode="contain"
+            />
           </Animated.View>
 
           {/* App Title */}
@@ -104,20 +98,6 @@ export default function SplashScreen() {
               Initializing...
             </Text>
           </Animated.View>
-
-          {/* Decorative Elements */}
-          <Animated.View
-            style={[
-              styles.decorativeContainer,
-              {
-                opacity: fadeAnim,
-              },
-            ]}
-          >
-            <View style={[styles.decorativeCircle, styles.circle1]} />
-            <View style={[styles.decorativeCircle, styles.circle2]} />
-            <View style={[styles.decorativeCircle, styles.circle3]} />
-          </Animated.View>
         </View>
 
         {/* Footer */}
@@ -136,7 +116,7 @@ export default function SplashScreen() {
             Version 1.0.0
           </Text>
         </Animated.View>
-      </LinearGradient>
+      </View>
     </SafeAreaView>
   );
 }
@@ -145,7 +125,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  gradient: {
+  background: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -158,22 +138,17 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 40,
-  },
-  logoCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lotusImage: {
+    width: 150,
+    height: 150,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 12,
-  },
-  logoText: {
-    fontSize: 48,
-    textAlign: 'center',
   },
   titleContainer: {
     alignItems: 'center',
@@ -215,35 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     opacity: 0.8,
   },
-  decorativeContainer: {
-    position: 'absolute',
-    width: width,
-    height: height,
-    pointerEvents: 'none',
-  },
-  decorativeCircle: {
-    position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 100,
-  },
-  circle1: {
-    width: 200,
-    height: 200,
-    top: -100,
-    right: -100,
-  },
-  circle2: {
-    width: 150,
-    height: 150,
-    bottom: -75,
-    left: -75,
-  },
-  circle3: {
-    width: 100,
-    height: 100,
-    top: height * 0.3,
-    left: -50,
-  },
+
   footer: {
     position: 'absolute',
     bottom: 40,
