@@ -132,18 +132,7 @@ export default function LoginScreen() {
           ))}
         </ScrollView>
         
-        {/* Pagination Dots */}
-        <View style={styles.paginationContainer}>
-          {bannerImages.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                currentBannerIndex === index && styles.paginationDotActive
-              ]}
-            />
-          ))}
-        </View>
+   
       </View>
 
       {/* Main Content */}
