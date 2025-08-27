@@ -316,7 +316,7 @@ bannerWrapper: {
 
     logoSection: {
       alignItems: "center",
-      marginTop: Spacing.lg, // removed hardcoded 120
+      //marginTop: Spacing.lg, // removed hardcoded 120
       marginBottom: 10,
     },
     logoContainer: {
