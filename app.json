@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Mobile App UX Guidelines",
-    "slug": "mobile-app-ux-guidelines",
+    "name": "PDMS",
+    "slug": "mobile-app-pdms",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.mobile-app-ux-guidelines",
+      "bundleIdentifier": "app.rork.pdms",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.mobile-app-ux-guidelines",
+      "package": "app.rork.pdms",
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO"
