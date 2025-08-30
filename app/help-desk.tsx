@@ -609,7 +609,7 @@ headerContent: {
   voterProfileCard: {
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
