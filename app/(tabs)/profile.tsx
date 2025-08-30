@@ -269,7 +269,24 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginBottom: Spacing.lg,
     padding: 0
   },
-
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.lg,
+    borderBottomWidth: 1
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  menuItemText: {
+    ...Typography.body,
+    marginLeft: Spacing.md
+  },
+  arrow: {
+    ...Typography.title
+  },
   logoutContainer: {
     marginTop: Spacing.lg
   },
