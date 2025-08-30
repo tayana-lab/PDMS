@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
-import { Search, ArrowRight, HelpCircle } from 'lucide-react-native';
+import { Search, ArrowRight } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
@@ -76,15 +76,7 @@ export default function VotersScreen() {
       <Text style={[styles.address, { color: colors.text.secondary }]}>{item.address}</Text>
       <Text style={[styles.phone, { color: colors.text.secondary }]}>{item.phone}</Text>
       
-      <View style={styles.voterActions}>
-        <TouchableOpacity 
-          style={styles.helpDeskButton}
-          onPress={() => router.push(`/voter-help-desk?voterId=${item.voterId}&voterName=${encodeURIComponent(item.name)}`)}
-        >
-          <HelpCircle size={16} color={colors.primary} />
-          <Text style={[styles.helpDeskText, { color: colors.primary }]}>{t('helpDesk')}</Text>
-        </TouchableOpacity>
-      </View>
+
     </Card>
   );
 
@@ -252,27 +244,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   phone: {
     ...Typography.caption
   },
-  voterActions: {
-    marginTop: Spacing.md,
-    paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    flexDirection: 'row',
-    justifyContent: 'flex-end'
-  },
-  helpDeskButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    backgroundColor: colors.primary + '10',
-    borderRadius: BorderRadius.sm,
-    gap: Spacing.xs
-  },
-  helpDeskText: {
-    ...Typography.caption,
-    fontWeight: '600'
-  },
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
