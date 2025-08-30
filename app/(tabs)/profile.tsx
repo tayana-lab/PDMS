@@ -157,7 +157,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles =  (colors: any) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1
   },
@@ -166,13 +166,7 @@ const styles =  (colors: any) => StyleSheet.create({
     borderBottomWidth: 1
   },
   title: {
-    ...Typography.title,
-    textAlign:'center',
-    color: colors.text.white,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: Spacing.md,
+    ...Typography.title
   },
   content: {
     flex: 1,
