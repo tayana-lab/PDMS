@@ -116,6 +116,17 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const handleVoterSelect = (voter: Voter) => {
     //alert("clicked");
     //setSelectedVoter(voter);
+       if (voter) {
+      router.push({
+        pathname: '/edit-voter',
+        params: { voterId: voter.id }
+      });
+    } else if (selectedVoter) {
+      router.push({
+        pathname: '/edit-voter',
+        params: { voterId: selectedVoter.id }
+      });
+    }
   };
 
   const handleCall = (phoneNumber: string) => {
