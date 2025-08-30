@@ -520,7 +520,7 @@ export default function SearchVoterScreen() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}> Voter</Text>
+            <Text style={styles.headerTitle}>Search Voter</Text>
            
           </View>
         </SafeAreaView>
