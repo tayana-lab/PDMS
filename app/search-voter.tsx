@@ -514,44 +514,22 @@ export default function SearchVoterScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-      
-      {/* Custom Header */}
-      <SafeAreaView edges={['top']} style={styles.header}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            onPress={() => {
-              console.log('Search Voter: Back button pressed');
-              alert("clicked");
-              try {
-                if (router.canGoBack()) {
-                  console.log('Going back...');
-                  router.back();
-                } else {
-                  console.log('Cannot go back, replacing with tabs...');
-                  router.replace('/(tabs)');
-                }
-              } catch (error) {
-                console.error('Navigation error:', error);
-                router.replace('/(tabs)');
-              }
-            }} 
-            style={styles.backButton}
-            activeOpacity={0.7}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <ArrowLeft size={24} color={colors.text.white} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Search Voter</Text>
-          <View style={styles.bjpLogo}>
-            <Image 
-              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
-              style={styles.bjpLogoImage}
-              resizeMode="contain"
-            />
+            <Stack.Screen options={{ headerShown: false }} />
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <ArrowLeft size={24} color={colors.text.white} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Voter</Text>
+            <View style={styles.bjpLogo}>
+              <Image 
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
+                style={styles.bjpLogoImage}
+                resizeMode="contain"
+              />
+            </View>
           </View>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Section */}
