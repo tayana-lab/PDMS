@@ -381,7 +381,7 @@ export default function EditVoterScreen() {
               style={styles.actionButton}
             />
             <Button
-              title={isLoading ? "Saving..." : "Save Changes"}
+              title={isLoading ? "Saving..." : "Save"}
               onPress={handleSave}
               disabled={isLoading}
               icon={<Save size={16} color={colors.text.white} />}
