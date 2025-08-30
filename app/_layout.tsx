@@ -65,7 +65,11 @@ function RootLayoutNav() {
   return (
     <>
       <StatusBar style={statusBarStyle} backgroundColor={colors.background} />
-      <Stack screenOptions={{ headerBackTitle: "Back" }}>
+      <Stack screenOptions={{ 
+        headerBackTitle: "Back",
+        gestureEnabled: true,
+        animation: 'slide_from_right'
+      }}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="new-user" options={{ 
@@ -75,9 +79,31 @@ function RootLayoutNav() {
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="search-voter" options={{ headerShown: false }} />
-        <Stack.Screen name="help-desk" options={{ headerShown: false }} />
-        <Stack.Screen name="edit-voter" options={{ headerShown: false }} />
+        <Stack.Screen name="search-voter" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
+        <Stack.Screen name="help-desk" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
+        <Stack.Screen name="edit-voter" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
+        <Stack.Screen name="application-details" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
+        <Stack.Screen name="notifications" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
         <Stack.Screen name="splash" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>

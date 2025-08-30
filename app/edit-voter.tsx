@@ -135,7 +135,17 @@ export default function EditVoterScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <SafeAreaView edges={['top']} style={styles.header}>
           <View style={styles.headerContent}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <TouchableOpacity 
+              onPress={() => {
+                console.log('Edit Voter: Back button pressed');
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.replace('/(tabs)');
+                }
+              }} 
+              style={styles.backButton}
+            >
               <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Edit Voter</Text>
