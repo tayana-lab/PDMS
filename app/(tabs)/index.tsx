@@ -124,7 +124,7 @@ export default function HomeScreen() {
                     <User size={32} color={colors.surface} />
                   </View>
                   <View style={styles.profileInfo}>
-                    <Text style={[styles.profileName, { color: colors.surface }]}>Karyakarta Name</Text>
+                    <Text style={[styles.profileName, { color: colors.surface }]}>Rajesh Kumar</Text>
                     <Text style={styles.profileRole}>BJP Member</Text>
                   </View>
                 </View>
