@@ -255,94 +255,30 @@ export default function HelpDeskScreen() {
       </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Voter Information Section */}
+        {/* Voter Profile Section */}
         {voter && (
-          <Card style={styles.voterCard}>
-            {/* Header with Photo and Basic Info */}
-            <View style={styles.voterHeader}>
-              <View style={styles.profileImage}>
-                <Text style={[styles.profileInitial, { color: colors.primary }]}>{voter.name.charAt(0)}</Text>
+          <Card style={styles.voterProfileCard}>
+            <View style={styles.profileHeader}>
+              <View style={styles.profileImageSection}>
+                <View style={styles.profileImageContainer}>
+                  <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
+                </View>
               </View>
-              <View style={styles.voterInfo}>
-                <Text style={[styles.voterName, { color: colors.text.primary }]}>{voter.name}</Text>
-                <Text style={[styles.voterMeta, { color: colors.text.secondary }]}>S/O: {voter.guardianName}</Text>
-                <Text style={[styles.voterMeta, { color: colors.text.secondary }]}>{voter.age}Y {voter.gender}</Text>
+              <View style={styles.profileInfoSection}>
+                <Text style={styles.profileName}>{voter.name}</Text>
+                <Text style={styles.profileVoterId}>{voter.voterId}</Text>
+                <Text style={styles.profileAgeGender}>{voter.age}Y • {voter.gender}</Text>
               </View>
               <View style={[
-                styles.partyIcon,
+                styles.profilePartyIcon,
                 { backgroundColor: voter.partyInclination === 'BJP' ? colors.primary : '#E0E0E0' }
               ]}>
                 <Text style={[
-                  styles.partyIconText,
+                  styles.profilePartyIconText,
                   { color: voter.partyInclination === 'BJP' ? colors.text.white : colors.text.light }
                 ]}>
                   🪷
                 </Text>
-              </View>
-            </View>
-
-            {/* Detailed Voter Information */}
-            <View style={styles.voterDetailsSection}>
-              <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Voter Information</Text>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>VOTER ID</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.voterId}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>NAME</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.name}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>AGE / GENDER</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.age} {voter.gender}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>CONSTITUENCY</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.assemblyConstituency}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>GUARDIAN</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.guardianName}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>WARD</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.ward}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>MOBILE</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.mobileNumber}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>ADDRESS</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.address}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>KARYAKARTA</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.karyakartaName}</Text>
-              </View>
-              
-              <View style={styles.inlineDetailRow}>
-                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>LAST CONTACT</Text>
-                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
-                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.lastInteractionDate}</Text>
               </View>
             </View>
           </Card>
@@ -579,56 +515,69 @@ const createStyles = (colors: any) => StyleSheet.create({
     ...Typography.caption,
     fontWeight: '600',
   },
-  voterCard: {
-    marginBottom: Spacing.md,
-    padding: Spacing.lg,
-  },
-  voterHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  voterProfileCard: {
+    marginHorizontal: Spacing.md,
     marginBottom: Spacing.lg,
-    paddingBottom: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    padding: Spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  profileImage: {
-    width: 64,
-    height: 64,
+  profileHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  profileImageSection: {
+    marginRight: Spacing.md,
+  },
+  profileImageContainer: {
+    width: 80,
+    height: 80,
     borderRadius: BorderRadius.round,
     backgroundColor: colors.primary + '15',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md,
   },
   profileInitial: {
     ...Typography.title,
+    color: colors.primary,
     fontWeight: '700',
-    fontSize: 28,
+    fontSize: 32,
   },
-  voterInfo: {
+  profileInfoSection: {
     flex: 1,
+    paddingLeft: Spacing.sm,
   },
-  voterName: {
+  profileName: {
     ...Typography.title,
+    color: colors.text.primary,
     fontWeight: '700',
+    fontSize: 24,
     marginBottom: Spacing.xs,
   },
-  voterMeta: {
+  profileVoterId: {
     ...Typography.body,
-    marginBottom: 2,
+    color: colors.text.secondary,
+    fontWeight: '600',
+    fontSize: 16,
+    marginBottom: 4,
   },
-  partyIcon: {
-    width: 32,
-    height: 32,
+  profileAgeGender: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    fontSize: 16,
+  },
+  profilePartyIcon: {
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.round,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  partyIconText: {
-    fontSize: 16,
-  },
-  voterDetailsSection: {
-    marginBottom: Spacing.md,
+  profilePartyIconText: {
+    fontSize: 20,
   },
   inlineDetailRow: {
     flexDirection: 'row',
