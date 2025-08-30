@@ -217,7 +217,7 @@ export default function EditVoterScreen() {
                 <Text style={styles.voterMeta}>{voter.age}Y • {voter.gender}</Text>
               </View>
             </View>
-            {renderPartyInclinationIcon(voter.partyInclination)}
+            
           </View>
 
           {/* Read-only Information */}
