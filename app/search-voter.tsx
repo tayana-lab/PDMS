@@ -520,7 +520,7 @@ export default function SearchVoterScreen() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Edit Voter</Text>
+            <Text style={styles.headerTitle}> Voter</Text>
             <View style={styles.bjpLogo}>
               <Image 
                 source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
