@@ -168,6 +168,11 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.title,
     textAlign:'center',
+    color: colors.text.white,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
   },
   content: {
     flex: 1,
