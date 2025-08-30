@@ -33,14 +33,44 @@ interface GovernmentScheme {
 
 interface MyApplication {
   id: string;
+  user_id: string;
   name: string;
   voter_id: string;
+  aadhaar_number: string;
   mobile_number: string;
-  status: string;
-  application_id: string;
-  created_at: string;
+  email: string;
+  dob: string;
+  gender: string;
+  religion: string;
+  caste: string;
+  address_line1: string;
+  address_line2: string;
+  district: string;
+  assembly_mandalam: string;
+  panchayat: string | null;
+  municipalitie: string | null;
+  corporation: string | null;
+  ward: string;
+  pincode: string;
+  occupation: string;
+  marital_status: string;
+  income_range: string;
+  benefited_scheme: string;
   scheme_id: string;
+  scheme_details: string;
   required_help: string;
+  documents: string[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+  state_id: string;
+  district_id: string;
+  mandal_id: string;
+  ward_id: string;
+  panchayath_id: string | null;
+  municipalitie_id: string | null;
+  corporation_id: string | null;
+  application_id: string;
 }
 
 export default function ApplicationsScreen() {

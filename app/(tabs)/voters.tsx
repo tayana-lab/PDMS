@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
-import { Search, ArrowRight } from 'lucide-react-native';
+import { Search, ArrowRight, HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
@@ -76,7 +76,16 @@ export default function VotersScreen() {
       <Text style={[styles.address, { color: colors.text.secondary }]}>{item.address}</Text>
       <Text style={[styles.phone, { color: colors.text.secondary }]}>{item.phone}</Text>
       
-
+      <View style={styles.actionButtons}>
+        <Button
+          title={t('helpDesk')}
+          onPress={() => router.push(`/help-desk?voterId=${item.voterId}`)}
+          variant="outline"
+          size="small"
+          style={styles.helpDeskButton}
+          icon={<HelpCircle size={16} color={colors.primary} />}
+        />
+      </View>
     </Card>
   );
 
@@ -242,7 +251,16 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginBottom: Spacing.xs
   },
   phone: {
-    ...Typography.caption
+    ...Typography.caption,
+    marginBottom: Spacing.md
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: Spacing.sm
+  },
+  helpDeskButton: {
+    minWidth: 100
   },
 
   emptyContainer: {
