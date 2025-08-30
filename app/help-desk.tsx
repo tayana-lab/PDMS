@@ -354,17 +354,7 @@ export default function HelpDeskScreen() {
                 <Text style={styles.profileVoterId}>{voter.voterId}</Text>
                 <Text style={styles.profileAgeGender}>{voter.age}Y • {voter.gender}</Text>
               </View>
-              <View style={[
-                styles.profilePartyIcon,
-                { backgroundColor: voter.partyInclination === 'BJP' ? colors.primary : '#E0E0E0' }
-              ]}>
-                <Text style={[
-                  styles.profilePartyIconText,
-                  { color: voter.partyInclination === 'BJP' ? colors.text.white : colors.text.light }
-                ]}>
-                  🪷
-                </Text>
-              </View>
+
             </View>
           </Card>
         )}
