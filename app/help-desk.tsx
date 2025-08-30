@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Image
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -82,11 +81,87 @@ export default function HelpDeskScreen() {
   // Find voter information
   const voter = mockVoters.find(v => v.voterId === voterId);
   
-  // Filter applications for this voter
-  const voterApplications = applicationData.applications.filter(
-    app => app.voter_id === voterId
-  );
+  // Filter applications for this voter, with dummy fallback when empty
+  const voterApplications = useMemo<HelpDeskApplication[]>(() => {
+    try {
+      const apps: HelpDeskApplication[] = (applicationData?.applications ?? []).filter(
+        (app: any) => app?.voter_id === voterId
+      );
 
+      if (apps.length > 0) {
+        console.log('HelpDesk: Found existing applications for voter', voterId, apps.length);
+        return apps as HelpDeskApplication[];
+      }
+
+      const voterIdStr = String(voterId ?? 'VOTER-DEMO');
+      const baseNow = Date.now();
+      const pickScheme = (index: number) => {
+        const list = schemeData?.items ?? [];
+        if (list.length === 0) return undefined;
+        return list[index % list.length];
+      };
+
+      const dummy: HelpDeskApplication[] = Array.from({ length: 3 }).map((_, i) => {
+        const scheme = pickScheme(i);
+        const created = new Date(baseNow - i * 1000 * 60 * 60 * 24).toISOString();
+        const statusPool = ['PENDING', 'APPROVED', 'REJECTED'] as const;
+        const status = statusPool[i % statusPool.length];
+        const id = `demo-${voterIdStr}-${i + 1}`;
+        const appId = `APP/${voterIdStr}/${String(i + 1).padStart(3, '0')}`;
+        return {
+          id,
+          user_id: 'demo-user',
+          name: voter?.name ?? 'Demo Voter',
+          voter_id: voterIdStr,
+          aadhaar_number: 'XXXX-XXXX-XXXX',
+          mobile_number: voter?.mobileNumber ?? '9999999999',
+          email: 'demo@example.com',
+          dob: '1990-01-01',
+          gender: (voter?.gender as string) ?? 'NA',
+          religion: 'NA',
+          caste: 'NA',
+          address_line1: voter?.address ?? '123 Demo Street',
+          address_line2: 'Near Demo Circle',
+          district: voter?.district ?? 'Demo District',
+          assembly_mandalam: voter?.panchayatMandal ?? 'Demo Mandal',
+          panchayat: null,
+          municipalitie: null,
+          corporation: null,
+          ward: voter?.ward ?? '1',
+          pincode: '500001',
+          occupation: 'Household',
+          marital_status: 'Married',
+          income_range: '0-2.5L',
+          benefited_scheme: scheme?.name ?? 'General Assistance',
+          scheme_id: scheme?.id ?? 'scheme-demo',
+          scheme_details: scheme?.description ?? 'Dummy scheme details',
+          required_help: i === 0
+            ? 'Need assistance with pension application documentation.'
+            : i === 1
+            ? 'Requesting support for healthcare scheme enrollment.'
+            : 'Follow-up on agriculture subsidy status.',
+          documents: [],
+          status,
+          created_at: created,
+          updated_at: created,
+          state_id: '36',
+          district_id: '501',
+          mandal_id: '1001',
+          ward_id: '1',
+          panchayath_id: null,
+          municipalitie_id: null,
+          corporation_id: null,
+          application_id: appId,
+        } as HelpDeskApplication;
+      });
+
+      console.log('HelpDesk: Using dummy applications for voter', voterIdStr, dummy.length);
+      return dummy;
+    } catch (e) {
+      console.error('HelpDesk: Error building voter applications', e);
+      return [] as HelpDeskApplication[];
+    }
+  }, [voterId, voter]);
 
 
   const filteredSchemes = useMemo(() => {
@@ -148,7 +223,7 @@ export default function HelpDeskScreen() {
     const scheme = schemeData.items.find(s => s.id === item.scheme_id);
     
     return (
-      <Card style={styles.requestCard}>
+      <Card style={styles.requestCard} testID={`request-card-${item.application_id}`}>
         <View style={styles.requestHeader}>
           <View style={styles.requestInfo}>
             <Text style={[styles.schemeName, { color: colors.text.primary }]}>
@@ -190,7 +265,7 @@ export default function HelpDeskScreen() {
             style={styles.viewDetailsButton}
             onPress={() => router.push(`/application-details?applicationId=${item.application_id}`)}
           >
-            <Eye size={16} color={colors.primary} />
+            <Eye size={16} color={colors.primary} testID={`view-details-icon-${item.application_id}`} />
             <Text style={[styles.viewDetailsText, { color: colors.primary }]}>View Details</Text>
           </TouchableOpacity>
         </View>
@@ -298,10 +373,12 @@ export default function HelpDeskScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Voter Requests</Text>
-            <Text style={[styles.sectionCount, { color: colors.text.secondary }]}>({voterApplications.length})</Text>
+            <Text style={[styles.sectionCount, { color: colors.text.secondary }]}>
+              ({voterApplications.length})
+            </Text>
           </View>
           
-          <View style={styles.requestsList}>
+          <View style={styles.requestsList} testID="voter-requests-list">
             {voterApplications.length > 0 ? (
               voterApplications.map((item) => (
                 <View key={item.id}>

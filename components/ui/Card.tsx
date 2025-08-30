@@ -8,22 +8,26 @@ interface CardProps {
   style?: ViewStyle;
   padding?: keyof typeof Spacing;
   shadow?: boolean;
+  testID?: string;
 }
 
-export default function Card({ children, style, padding = 'md', shadow = true }: CardProps) {
+export default function Card({ children, style, padding = 'md', shadow = true, testID }: CardProps) {
   const { colors } = useAppSettings();
   
   return (
-    <View style={[
-      styles.card,
-      {
-        padding: Spacing[padding],
-        backgroundColor: colors.surface,
-        borderColor: colors.border
-      },
-      shadow && Shadows.medium,
-      style
-    ]}>
+    <View
+      style={[
+        styles.card,
+        {
+          padding: Spacing[padding],
+          backgroundColor: colors.surface,
+          borderColor: colors.border
+        },
+        shadow && Shadows.medium,
+        style
+      ]}
+      testID={testID}
+    >
       {children}
     </View>
   );
