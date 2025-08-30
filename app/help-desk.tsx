@@ -5,11 +5,12 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
+import { ArrowLeft, FileText, Clock, CheckCircle, XCircle, Eye } from 'lucide-react-native';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -17,6 +18,7 @@ import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import applicationData from './ApplicationDetails.json';
 import schemeData from './SchemeDetails.json';
+import { mockVoters } from '@/constants/mockData';
 
 interface HelpDeskApplication {
   id: string;
@@ -77,6 +79,16 @@ export default function HelpDeskScreen() {
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  // Find voter information
+  const voter = mockVoters.find(v => v.voterId === voterId);
+  
+  // Filter applications for this voter
+  const voterApplications = applicationData.applications.filter(
+    app => app.voter_id === voterId
+  );
+
+
+
   const filteredSchemes = useMemo(() => {
     let schemes = schemeData.items;
     
@@ -132,42 +144,59 @@ export default function HelpDeskScreen() {
     );
   };
 
-  const renderApplicationItem = ({ item }: { item: HelpDeskApplication }) => (
-    <Card style={styles.requestCard}>
-      <View style={styles.requestHeader}>
-        <View style={styles.requestInfo}>
-          <Text style={styles.requestTitle}>{item.name}</Text>
-          <Text style={styles.requestId}>Request ID: {item.application_id}</Text>
+  const renderApplicationItem = ({ item }: { item: HelpDeskApplication }) => {
+    const scheme = schemeData.items.find(s => s.id === item.scheme_id);
+    
+    return (
+      <Card style={styles.requestCard}>
+        <View style={styles.requestHeader}>
+          <View style={styles.requestInfo}>
+            <Text style={[styles.schemeName, { color: colors.text.primary }]}>
+              {scheme?.name || 'Unknown Scheme'}
+            </Text>
+            <Text style={[styles.requestId, { color: colors.text.secondary }]}>
+              {item.application_id}
+            </Text>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+            {getStatusIcon(item.status)}
+            <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+              {item.status}
+            </Text>
+          </View>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-          {getStatusIcon(item.status)}
-          <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-            {item.status}
+        
+        <Text style={[styles.schemeDescription, { color: colors.text.secondary }]} numberOfLines={2}>
+          {item.required_help}
+        </Text>
+        
+        <View style={styles.requestMeta}>
+          <Text style={[styles.requestMetaText, { color: colors.text.secondary }]}>
+            Submitted By: {voter?.karyakartaName || 'Unknown'}
+          </Text>
+          <Text style={[styles.requestMetaText, { color: colors.text.secondary }]}>
+            Submission Date: {new Date(item.created_at).toLocaleDateString('en-GB')}
           </Text>
         </View>
-      </View>
-      
-      <View style={styles.requestDetails}>
-        <Text style={styles.requestDetailText}>Mobile: {item.mobile_number}</Text>
-        <Text style={styles.requestDetailText}>Email: {item.email}</Text>
-        <Text style={styles.requestDetailText}>District: {item.district}</Text>
-        <Text style={styles.requestDetailText}>Ward: {item.ward}</Text>
-        <Text style={styles.requestDetailText}>Occupation: {item.occupation}</Text>
-        <Text style={styles.requestDetailText}>Income Range: {item.income_range}</Text>
-        <Text style={styles.requestDetailText}>Help Required: {item.required_help}</Text>
-        <Text style={styles.requestDetailText}>
-          Submitted: {new Date(item.created_at).toLocaleDateString()}
-        </Text>
-        <Text style={styles.requestDetailText}>
-          Updated: {new Date(item.updated_at).toLocaleDateString()}
-        </Text>
-      </View>
-      
-      <TouchableOpacity style={styles.viewRequestButton}>
-        <Text style={styles.viewRequestText}>View Details</Text>
-      </TouchableOpacity>
-    </Card>
-  );
+        
+        <View style={styles.requestActions}>
+          <View style={styles.statusContainer}>
+            {getStatusIcon(item.status)}
+            <Text style={[styles.statusLabel, { color: getStatusColor(item.status) }]}>
+              {item.status}
+            </Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.viewDetailsButton}
+            onPress={() => router.push(`/application-details?applicationId=${item.application_id}`)}
+          >
+            <Eye size={16} color={colors.primary} />
+            <Text style={[styles.viewDetailsText, { color: colors.primary }]}>View Details</Text>
+          </TouchableOpacity>
+        </View>
+      </Card>
+    );
+  };
 
   const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => {
     const cleanDescription = item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...';
@@ -176,13 +205,13 @@ export default function HelpDeskScreen() {
       <Card style={styles.schemeCard}>
         <View style={styles.schemeHeader}>
           <View style={styles.schemeInfo}>
-            <Text style={styles.schemeName}>{item.name}</Text>
+            <Text style={styles.schemeNameCard}>{item.name}</Text>
             <Text style={styles.schemeCategory}>{item.category}</Text>
           </View>
           <Text style={styles.schemeBudget}>₹{item.budget.toLocaleString()}</Text>
         </View>
         
-        <Text style={styles.schemeDescription} numberOfLines={3}>
+        <Text style={styles.schemeDescriptionCard} numberOfLines={3}>
           {cleanDescription}
         </Text>
         
@@ -227,24 +256,46 @@ export default function HelpDeskScreen() {
       />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Section A: Recent HelpDesk Requests */}
+        {/* Voter Information Section */}
+        {voter && (
+          <Card style={styles.voterCard}>
+            <View style={styles.voterHeader}>
+              <View style={styles.voterPhotoContainer}>
+                <Image 
+                  source={{ uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face' }}
+                  style={styles.voterPhoto}
+                />
+              </View>
+              <View style={styles.voterInfo}>
+                <Text style={[styles.voterName, { color: colors.text.primary }]}>{voter.name}</Text>
+                <Text style={[styles.voterDetail, { color: colors.text.secondary }]}>Voter ID: {voter.voterId}</Text>
+                <Text style={[styles.voterDetail, { color: colors.text.secondary }]}>
+                  {voter.age} years, {voter.gender}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        )}
+
+        {/* Section A: Voter Requests */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>My Recent Requests</Text>
-            <Text style={styles.sectionCount}>({applicationData.total_count})</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Voter Requests</Text>
+            <Text style={[styles.sectionCount, { color: colors.text.secondary }]}>({voterApplications.length})</Text>
           </View>
           
           <View style={styles.requestsList}>
-            {applicationData.applications.slice(0, 3).map((item) => (
-              <View key={item.id}>
-                {renderApplicationItem({ item })}
+            {voterApplications.length > 0 ? (
+              voterApplications.map((item) => (
+                <View key={item.id}>
+                  {renderApplicationItem({ item })}
+                </View>
+              ))
+            ) : (
+              <View style={styles.emptyContainer}>
+                <FileText size={48} color={colors.text.light} />
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>No requests found for this voter</Text>
               </View>
-            ))}
-            
-            {applicationData.applications.length > 3 && (
-              <TouchableOpacity style={styles.viewAllButton}>
-                <Text style={styles.viewAllText}>View All Requests</Text>
-              </TouchableOpacity>
             )}
           </View>
         </View>
@@ -337,11 +388,9 @@ const createStyles = (colors: any) => StyleSheet.create({
   sectionTitle: {
     ...Typography.title,
     fontWeight: '700',
-    color: colors.text.primary,
   },
   sectionCount: {
     ...Typography.body,
-    color: colors.text.secondary,
     marginLeft: Spacing.sm,
   },
   requestsList: {
@@ -369,10 +418,15 @@ const createStyles = (colors: any) => StyleSheet.create({
   requestInfo: {
     flex: 1,
   },
-  requestTitle: {
+  schemeName: {
     ...Typography.subtitle,
     fontWeight: '600',
     marginBottom: Spacing.xs,
+  },
+  schemeDescription: {
+    ...Typography.body,
+    marginBottom: Spacing.sm,
+    lineHeight: 20,
   },
   requestId: {
     ...Typography.caption,
@@ -390,22 +444,69 @@ const createStyles = (colors: any) => StyleSheet.create({
     ...Typography.caption,
     fontWeight: '600',
   },
-  requestDetails: {
+  requestMeta: {
     gap: Spacing.xs,
     marginBottom: Spacing.md,
   },
-  requestDetailText: {
+  requestMetaText: {
     ...Typography.caption,
-    color: colors.text.secondary,
   },
-  viewRequestButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: Spacing.sm,
+  requestActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  viewRequestText: {
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  statusLabel: {
     ...Typography.caption,
-    color: colors.primary,
     fontWeight: '600',
+  },
+  viewDetailsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+  },
+  viewDetailsText: {
+    ...Typography.caption,
+    fontWeight: '600',
+  },
+  voterCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+  },
+  voterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  voterPhotoContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+  },
+  voterPhoto: {
+    width: '100%',
+    height: '100%',
+  },
+  voterInfo: {
+    flex: 1,
+  },
+  voterName: {
+    ...Typography.title,
+    fontWeight: '700',
+    marginBottom: Spacing.xs,
+  },
+  voterDetail: {
+    ...Typography.body,
+    marginBottom: Spacing.xs,
   },
   viewAllButton: {
     alignItems: 'center',
@@ -435,7 +536,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   schemeInfo: {
     flex: 1,
   },
-  schemeName: {
+  schemeNameCard: {
     ...Typography.subtitle,
     fontWeight: '600',
     marginBottom: Spacing.xs,
@@ -450,7 +551,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: colors.secondary,
     fontWeight: '700',
   },
-  schemeDescription: {
+  schemeDescriptionCard: {
     ...Typography.body,
     color: colors.text.secondary,
     marginBottom: Spacing.sm,
