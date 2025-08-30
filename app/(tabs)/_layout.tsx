@@ -55,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="applications"
         options={{
-          title: t('applications'),
+          title: 'HelpDeskAll',
           tabBarIcon: ({ color, size }) => <FileText size={size} color={color} />,
         }}
       />
