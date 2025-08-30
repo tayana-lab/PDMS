@@ -523,13 +523,7 @@ export default function SearchVoterScreen() {
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Search Voter</Text>
-          <View style={styles.bjpLogo}>
-            <Image 
-              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
-              style={styles.bjpLogoImage}
-              resizeMode="contain"
-            />
-          </View>
+          
         </View>
       </SafeAreaView>
       
