@@ -39,7 +39,9 @@ interface Voter {
   assemblyConstituency: string;
 }
 
-export default function SearchVoterScreen() {
+type SearchVoterScreenProps = { showBack?: boolean };
+
+export default function SearchVoterScreen({ showBack = true }: SearchVoterScreenProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedVoter, setSelectedVoter] = useState<Voter | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -519,26 +521,25 @@ export default function SearchVoterScreen() {
       {/* Custom Header */}
       <SafeAreaView edges={['top']} style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity 
-            onPress={() => {
-              console.log('Notifications: Back button pressed');
-              try {
-                if (router.canGoBack()) {
-                  console.log('Going back...');
-                  router.back();
-                } else {
-                  console.log('Cannot go back, replacing with tabs...');
-                  router.replace('/(tabs)');
+          {showBack && (
+            <TouchableOpacity 
+              onPress={() => {
+                console.log('Search Voter: Back button pressed');
+                try {
+                  if (router.canGoBack()) {
+                    console.log('Going back...');
+                    router.back();
+                  }
+                } catch (error) {
+                  console.error('Navigation error:', error);
                 }
-              } catch (error) {
-                console.error('Navigation error:', error);
-                router.replace('/(tabs)');
-              }
-            }} 
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color={colors.text.white} />
-          </TouchableOpacity>
+              }} 
+              style={styles.backButton}
+              testID="header-back-button"
+            >
+              <ArrowLeft size={24} color={colors.text.white} />
+            </TouchableOpacity>
+          )}
           <Text style={styles.headerTitle}>Search Voter</Text>
 
         </View>
