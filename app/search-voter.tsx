@@ -149,7 +149,19 @@ export default function SearchVoterScreen() {
 
 
   const handleHelpDesk = (voter?: Voter) => {
-    router.push('/help-desk');
+    if (voter) {
+      router.push({
+        pathname: '/help-desk',
+        params: { voterId: voter.voterId }
+      });
+    } else if (selectedVoter) {
+      router.push({
+        pathname: '/help-desk',
+        params: { voterId: selectedVoter.voterId }
+      });
+    } else {
+      router.push('/help-desk');
+    }
   };
 
   const handleSearch = async () => {
