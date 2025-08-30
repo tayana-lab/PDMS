@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   title: {
-    ...Typography.title
+    ...Typography.title,
+    textAlign:'center',
   },
   content: {
     flex: 1,
