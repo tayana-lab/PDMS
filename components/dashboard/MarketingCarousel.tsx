@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg
   },
   card: {
-    width: width ,
+    width: width - (Spacing.lg * 2),
     marginRight: Spacing.lg,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
