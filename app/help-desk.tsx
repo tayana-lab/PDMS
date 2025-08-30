@@ -215,10 +215,10 @@ export default function HelpDeskScreen() {
           {cleanDescription}
         </Text>
         
-        <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
+        <View style={styles.beneficiariesContainer}>
           <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
-          <Text>{item.beneficiaries}</Text>
-        </Text>
+          <Text style={styles.beneficiariesText}>{item.beneficiaries}</Text>
+        </View>
         
         <Button
           title="Apply"
@@ -660,15 +660,21 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginBottom: Spacing.sm,
     lineHeight: 20,
   },
-  schemeBeneficiaries: {
-    ...Typography.caption,
-    color: colors.text.secondary,
+  beneficiariesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: Spacing.md,
-    lineHeight: 18,
   },
   beneficiariesLabel: {
+    ...Typography.caption,
     fontWeight: '600',
     color: colors.text.primary,
+  },
+  beneficiariesText: {
+    ...Typography.caption,
+    color: colors.text.secondary,
+    flex: 1,
+    lineHeight: 18,
   },
   applyButton: {
     alignSelf: 'flex-start',
