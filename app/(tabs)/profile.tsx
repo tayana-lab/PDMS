@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { User, Phone, MapPin, Settings, LogOut, Edit, Shield, Bell, Palette, Globe } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Typography, Spacing } from '@/constants/theme';
@@ -71,10 +72,23 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.surface }]}>
-      <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>{t('profile')}</Text>
-      </View>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar 
+        backgroundColor={colors.primary} 
+        barStyle="light-content" 
+        translucent={false}
+      />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerSpacer} />
+          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('profile')}</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+      </SafeAreaView>
+      
+      <View style={styles.content}>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Card style={[styles.profileCard, { backgroundColor: colors.background }]}>
@@ -143,6 +157,7 @@ export default function ProfileScreen() {
           />
         </View>
       </ScrollView>
+      </View>
 
       <ThemeSelector
         visible={showThemeSelector}
@@ -153,7 +168,7 @@ export default function ProfileScreen() {
         visible={showLanguageSelector}
         onClose={() => setShowLanguageSelector(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -162,11 +177,25 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    padding: Spacing.lg,
-    borderBottomWidth: 1
+    // backgroundColor applied inline
   },
-  title: {
-    ...Typography.title
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
+  headerSpacer: {
+    width: 32,
+  },
+  headerTitle: {
+    ...Typography.title,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
   },
   content: {
     flex: 1,

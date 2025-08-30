@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, StatusBar, Platform, Animated, Dimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { LogOut, Settings, HelpCircle, User, Menu, X } from 'lucide-react-native';
+import { LogOut, Settings, HelpCircle, User, Menu, X, Bell } from 'lucide-react-native';
 import { Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppSettings } from '@/hooks/useAppSettings';
@@ -72,17 +72,30 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar 
-        backgroundColor={colors.background} 
-        barStyle={currentTheme === 'dark' ? 'light-content' : 'dark-content'} 
+        backgroundColor={colors.primary} 
+        barStyle="light-content" 
         translucent={false}
       />
       
-      <View style={[styles.safeContainer, { paddingTop: insets.top }]}>
-        <Header
-          onProfilePress={handleProfilePress}
-          onNotificationPress={handleNotificationPress}
-          notificationCount={5}
-        />
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={handleProfilePress} style={styles.profileButton}>
+            <User size={24} color={colors.text.white} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('home')}</Text>
+          <TouchableOpacity onPress={handleNotificationPress} style={styles.notificationButton}>
+            <Bell size={24} color={colors.text.white} />
+            {5 > 0 && (
+              <View style={[styles.notificationBadge, { backgroundColor: colors.error }]}>
+                <Text style={[styles.notificationCount, { color: colors.text.white }]}>{5}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+      
+      <View style={styles.safeContainer}>
         
         <ScrollView 
           style={styles.content} 
@@ -170,6 +183,47 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  header: {
+    // backgroundColor applied inline
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
+  profileButton: {
+    padding: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  headerTitle: {
+    ...Typography.title,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  notificationButton: {
+    padding: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCount: {
+    fontSize: 10,
+    fontWeight: '600',
   },
   safeContainer: {
     flex: 1

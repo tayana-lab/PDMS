@@ -3,12 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
+  StatusBar
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
 import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
@@ -222,10 +223,23 @@ export default function ApplicationsScreen() {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>{t('applicationsTitle')}</Text>
-      </View>
+    <View style={styles.container}>
+      <StatusBar 
+        backgroundColor={colors.primary} 
+        barStyle="light-content" 
+        translucent={false}
+      />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerSpacer} />
+          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('applicationsTitle')}</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+      </SafeAreaView>
+      
+      <View style={styles.content}>
 
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
@@ -377,7 +391,8 @@ export default function ApplicationsScreen() {
           </View>
         </View>
       )}
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
@@ -387,13 +402,28 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.background
+    // backgroundColor applied inline
   },
-  title: {
-    ...Typography.title
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
+  headerSpacer: {
+    width: 32,
+  },
+  headerTitle: {
+    ...Typography.title,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  content: {
+    flex: 1,
   },
   tabContainer: {
     flexDirection: 'row',

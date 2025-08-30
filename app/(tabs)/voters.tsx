@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, ArrowRight, HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
@@ -92,11 +93,26 @@ export default function VotersScreen() {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>{t('votersTitle')}</Text>
-        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>{t('votersSubtitle')}</Text>
-      </View>
+    <View style={styles.container}>
+      <StatusBar 
+        backgroundColor={colors.primary} 
+        barStyle="light-content" 
+        translucent={false}
+      />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerSpacer} />
+          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('votersTitle')}</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+      </SafeAreaView>
+      
+      <View style={styles.content}>
+        <View style={styles.subHeader}>
+          <Text style={[styles.subtitle, { color: colors.text.secondary }]}>{t('votersSubtitle')}</Text>
+        </View>
 
       {/* Quick Access to Advanced Search */}
       <View style={styles.quickAccessContainer}>
@@ -150,7 +166,8 @@ export default function VotersScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
@@ -160,17 +177,37 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.background
   },
   header: {
+    // backgroundColor applied inline
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
+  headerSpacer: {
+    width: 32,
+  },
+  headerTitle: {
+    ...Typography.title,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  content: {
+    flex: 1,
+  },
+  subHeader: {
     padding: Spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     backgroundColor: colors.background
   },
-  title: {
-    ...Typography.title
-  },
   subtitle: {
     ...Typography.caption,
-    marginTop: Spacing.xs
   },
   quickAccessContainer: {
     padding: Spacing.lg,
