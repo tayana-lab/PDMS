@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Bell } from 'lucide-react-native';
 import { Typography, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +29,12 @@ export default function Header({
   return (
     <View style={[styles.container, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
       <TouchableOpacity style={styles.profileSection} onPress={onProfilePress}>
+        <Image
+          source={{
+            uri: user.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
+          }}
+          style={styles.profileImage}
+        />
         <View style={styles.userInfo}>
           <Text style={[styles.userName, { color: colors.text.primary }]}>{user.name}</Text>
           <Text style={[styles.userAddress, { color: colors.text.secondary }]}>{user.address}</Text>
@@ -57,7 +63,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1
   },
-
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: Spacing.md
+  },
   userInfo: {
     flex: 1
   },
