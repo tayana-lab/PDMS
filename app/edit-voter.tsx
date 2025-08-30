@@ -137,10 +137,17 @@ export default function EditVoterScreen() {
           <View style={styles.headerContent}>
             <TouchableOpacity 
               onPress={() => {
-                console.log('Edit Voter: Back button pressed');
-                if (router.canGoBack()) {
-                  router.back();
-                } else {
+                console.log('Edit Voter: Back button pressed (not found case)');
+                try {
+                  if (router.canGoBack()) {
+                    console.log('Going back...');
+                    router.back();
+                  } else {
+                    console.log('Cannot go back, replacing with tabs...');
+                    router.replace('/(tabs)');
+                  }
+                } catch (error) {
+                  console.error('Navigation error:', error);
                   router.replace('/(tabs)');
                 }
               }} 
@@ -166,7 +173,24 @@ export default function EditVoterScreen() {
       {/* Custom Header */}
       <SafeAreaView edges={['top']} style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity 
+            onPress={() => {
+              console.log('Edit Voter: Back button pressed');
+              try {
+                if (router.canGoBack()) {
+                  console.log('Going back...');
+                  router.back();
+                } else {
+                  console.log('Cannot go back, replacing with tabs...');
+                  router.replace('/(tabs)');
+                }
+              } catch (error) {
+                console.error('Navigation error:', error);
+                router.replace('/(tabs)');
+              }
+            }} 
+            style={styles.backButton}
+          >
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Voter</Text>

@@ -522,9 +522,16 @@ export default function SearchVoterScreen() {
           <TouchableOpacity 
             onPress={() => {
               console.log('Search Voter: Back button pressed');
-              if (router.canGoBack()) {
-                router.back();
-              } else {
+              try {
+                if (router.canGoBack()) {
+                  console.log('Going back...');
+                  router.back();
+                } else {
+                  console.log('Cannot go back, replacing with tabs...');
+                  router.replace('/(tabs)');
+                }
+              } catch (error) {
+                console.error('Navigation error:', error);
                 router.replace('/(tabs)');
               }
             }} 
