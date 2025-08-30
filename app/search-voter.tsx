@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-  Alert,
+  
   Platform,
   TextInput,
   Image
@@ -21,6 +21,7 @@ import Card from '@/components/ui/Card';
 import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { mockVoters } from '@/constants/mockData';
 import { useAppSettings } from '@/hooks/useAppSettings';
+import { useConfirm } from '@/hooks/useConfirm';
 
 interface Voter {
   id: string;
@@ -48,6 +49,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const [showCamera, setShowCamera] = useState<boolean>(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const { colors } = useAppSettings();
+  const { confirm } = useConfirm();
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
@@ -129,11 +131,24 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     }
   };
 
-  const handleCall = (phoneNumber: string) => {
+  const handleCall = async (phoneNumber: string) => {
     if (!phoneNumber) {
-      Alert.alert('No Phone Number', 'This voter does not have a phone number on file.');
+      await confirm({
+        title: 'No Phone Number',
+        message: 'This voter does not have a phone number on file.',
+        confirmText: 'OK',
+        cancelText: undefined,
+      });
       return;
     }
+
+    const ok = await confirm({
+      title: 'Call voter?',
+      message: `Call ${phoneNumber}?`,
+      confirmText: 'Call',
+      cancelText: 'Cancel',
+    });
+    if (!ok) return;
     
     const phoneUrl = Platform.select({
       ios: `tel:${phoneNumber}`,
@@ -141,8 +156,8 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
       default: `tel:${phoneNumber}`
     });
     
-    Linking.openURL(phoneUrl).catch(() => {
-      Alert.alert('Error', 'Unable to make phone call');
+    Linking.openURL(phoneUrl).catch(async () => {
+      await confirm({ title: 'Error', message: 'Unable to make phone call', confirmText: 'OK', cancelText: undefined });
     });
   };
 
@@ -180,7 +195,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      Alert.alert('Search Required', 'Please enter a voter ID to search.');
+      await confirm({ title: 'Search Required', message: 'Please enter a voter ID to search.', confirmText: 'OK', cancelText: undefined });
       return;
     }
 
@@ -201,7 +216,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     if (!cameraPermission.granted) {
       const permission = await requestCameraPermission();
       if (!permission.granted) {
-        Alert.alert('Camera Permission', 'Camera permission is required to scan barcodes.');
+        await confirm({ title: 'Camera Permission', message: 'Camera permission is required to scan barcodes.', confirmText: 'OK', cancelText: undefined });
         return;
       }
     }

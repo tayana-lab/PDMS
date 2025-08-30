@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
 import SplashScreen from "./splash";
+import { ConfirmProvider, ConfirmContainer } from "@/hooks/useConfirm";
 
 ExpoSplashScreen.preventAutoHideAsync();
 
@@ -128,9 +129,12 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppSettingsProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <RootLayoutNav />
-        </GestureHandlerRootView>
+        <ConfirmProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <RootLayoutNav />
+            <ConfirmContainer />
+          </GestureHandlerRootView>
+        </ConfirmProvider>
       </AppSettingsProvider>
     </QueryClientProvider>
   );
