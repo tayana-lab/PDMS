@@ -5,8 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
-  Image
+  Alert
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -259,19 +258,91 @@ export default function HelpDeskScreen() {
         {/* Voter Information Section */}
         {voter && (
           <Card style={styles.voterCard}>
+            {/* Header with Photo and Basic Info */}
             <View style={styles.voterHeader}>
-              <View style={styles.voterPhotoContainer}>
-                <Image 
-                  source={{ uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face' }}
-                  style={styles.voterPhoto}
-                />
+              <View style={styles.profileImage}>
+                <Text style={[styles.profileInitial, { color: colors.primary }]}>{voter.name.charAt(0)}</Text>
               </View>
               <View style={styles.voterInfo}>
                 <Text style={[styles.voterName, { color: colors.text.primary }]}>{voter.name}</Text>
-                <Text style={[styles.voterDetail, { color: colors.text.secondary }]}>Voter ID: {voter.voterId}</Text>
-                <Text style={[styles.voterDetail, { color: colors.text.secondary }]}>
-                  {voter.age} years, {voter.gender}
+                <Text style={[styles.voterMeta, { color: colors.text.secondary }]}>S/O: {voter.guardianName}</Text>
+                <Text style={[styles.voterMeta, { color: colors.text.secondary }]}>{voter.age}Y {voter.gender}</Text>
+              </View>
+              <View style={[
+                styles.partyIcon,
+                { backgroundColor: voter.partyInclination === 'BJP' ? colors.primary : '#E0E0E0' }
+              ]}>
+                <Text style={[
+                  styles.partyIconText,
+                  { color: voter.partyInclination === 'BJP' ? colors.text.white : colors.text.light }
+                ]}>
+                  🪷
                 </Text>
+              </View>
+            </View>
+
+            {/* Detailed Voter Information */}
+            <View style={styles.voterDetailsSection}>
+              <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Voter Information</Text>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>VOTER ID</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.voterId}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>NAME</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.name}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>AGE / GENDER</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.age} {voter.gender}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>CONSTITUENCY</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.assemblyConstituency}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>GUARDIAN</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.guardianName}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>WARD</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.ward}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>MOBILE</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.mobileNumber}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>ADDRESS</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.address}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>KARYAKARTA</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.karyakartaName}</Text>
+              </View>
+              
+              <View style={styles.inlineDetailRow}>
+                <Text style={[styles.inlineDetailLabel, { color: colors.text.secondary }]}>LAST CONTACT</Text>
+                <Text style={[styles.inlineDetailSeparator, { color: colors.text.secondary }]}>:</Text>
+                <Text style={[styles.inlineDetailValue, { color: colors.text.primary }]}>{voter.lastInteractionDate}</Text>
               </View>
             </View>
           </Card>
@@ -478,23 +549,29 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   voterCard: {
     marginBottom: Spacing.md,
-    padding: Spacing.md,
+    padding: Spacing.lg,
   },
   voterHeader: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  profileImage: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.round,
+    backgroundColor: colors.primary + '15',
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: Spacing.md,
+    marginRight: Spacing.md,
   },
-  voterPhotoContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
-  },
-  voterPhoto: {
-    width: '100%',
-    height: '100%',
+  profileInitial: {
+    ...Typography.title,
+    fontWeight: '700',
+    fontSize: 28,
   },
   voterInfo: {
     flex: 1,
@@ -504,9 +581,54 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontWeight: '700',
     marginBottom: Spacing.xs,
   },
-  voterDetail: {
+  voterMeta: {
     ...Typography.body,
-    marginBottom: Spacing.xs,
+    marginBottom: 2,
+  },
+  partyIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.round,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  partyIconText: {
+    fontSize: 16,
+  },
+  voterDetailsSection: {
+    marginBottom: Spacing.md,
+  },
+  inlineDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.sm,
+    minHeight: 24,
+    paddingVertical: 4,
+  },
+  inlineDetailLabel: {
+    ...Typography.caption,
+    fontWeight: '700',
+    fontSize: 12,
+    textTransform: 'uppercase',
+    width: 120,
+    letterSpacing: 0.5,
+    textAlign: 'left',
+  },
+  inlineDetailSeparator: {
+    ...Typography.body,
+    fontWeight: '700',
+    marginHorizontal: Spacing.sm,
+    width: 8,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  inlineDetailValue: {
+    ...Typography.body,
+    fontWeight: '500',
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'left',
   },
   viewAllButton: {
     alignItems: 'center',
