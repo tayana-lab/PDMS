@@ -20,17 +20,39 @@ interface MenuItemProps {
 
 function MenuItem({ icon, title, onPress, showArrow = true }: MenuItemProps) {
   const { colors } = useAppSettings();
+  const menuStyles = createMenuItemStyles(colors);
   
   return (
-    <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.menuItemLeft}>
+    <TouchableOpacity style={[menuStyles.menuItem, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.8}>
+      <View style={menuStyles.menuItemLeft}>
         {icon}
-        <Text style={[styles.menuItemText, { color: colors.text.primary }]}>{title}</Text>
+        <Text style={[menuStyles.menuItemText, { color: colors.text.primary }]}>{title}</Text>
       </View>
-      {showArrow && <Text style={[styles.arrow, { color: colors.text.light }]}>›</Text>}
+      {showArrow && <Text style={[menuStyles.arrow, { color: colors.text.light }]}>›</Text>}
     </TouchableOpacity>
   );
 }
+
+const createMenuItemStyles = (colors: any) => StyleSheet.create({
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.lg,
+    borderBottomWidth: 1
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  menuItemText: {
+    ...Typography.body,
+    marginLeft: Spacing.md
+  },
+  arrow: {
+    ...Typography.title
+  }
+});
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -71,6 +93,8 @@ export default function ProfileScreen() {
     return null;
   }
 
+  const styles = createStyles(colors);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar 
@@ -80,10 +104,10 @@ export default function ProfileScreen() {
       />
       
       {/* Custom Header */}
-      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+      <SafeAreaView edges={['top']} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerSpacer} />
-          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('profile')}</Text>
+          <Text style={styles.headerTitle}>{t('profile')}</Text>
           <View style={styles.headerSpacer} />
         </View>
       </SafeAreaView>
@@ -172,12 +196,12 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1
   },
   header: {
-    // backgroundColor applied inline
+    backgroundColor: colors.primary,
   },
   headerContent: {
     flexDirection: 'row',
@@ -192,6 +216,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.title,
+    color: colors.text.white,
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
@@ -244,24 +269,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     padding: 0
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.lg,
-    borderBottomWidth: 1
-  },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  menuItemText: {
-    ...Typography.body,
-    marginLeft: Spacing.md
-  },
-  arrow: {
-    ...Typography.title
-  },
+
   logoutContainer: {
     marginTop: Spacing.lg
   },

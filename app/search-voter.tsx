@@ -8,7 +8,8 @@ import {
   Linking,
   Alert,
   Platform,
-  TextInput
+  TextInput,
+  Image
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -218,7 +219,13 @@ export default function SearchVoterScreen() {
               <ArrowLeft size={24} color={colors.text.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Scan Barcode</Text>
-            <View style={styles.placeholder} />
+            <View style={styles.bjpLogo}>
+              <Image 
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
+                style={styles.bjpLogoImage}
+                resizeMode="contain"
+              />
+            </View>
           </View>
         </SafeAreaView>
         <View style={styles.cameraContainer}>
@@ -516,7 +523,13 @@ export default function SearchVoterScreen() {
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Search Voter</Text>
-          <View style={styles.placeholder} />
+          <View style={styles.bjpLogo}>
+            <Image 
+              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
+              style={styles.bjpLogoImage}
+              resizeMode="contain"
+            />
+          </View>
         </View>
       </SafeAreaView>
       
@@ -657,9 +670,18 @@ const createStyles = (colors: any) => StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: Spacing.md,
   },
-  placeholder: {
+  bjpLogo: {
     width: 32,
     height: 32,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: colors.text.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 4,
+  },
+  bjpLogoImage: {
+    width: 24,
+    height: 24,
   },
   content: {
     flex: 1,

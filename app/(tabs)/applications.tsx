@@ -231,10 +231,10 @@ export default function ApplicationsScreen() {
       />
       
       {/* Custom Header */}
-      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.primary }]}>
+      <SafeAreaView edges={['top']} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerSpacer} />
-          <Text style={[styles.headerTitle, { color: colors.text.white }]}>{t('applicationsTitle')}</Text>
+          <Text style={styles.headerTitle}>{t('applicationsTitle')}</Text>
           <View style={styles.headerSpacer} />
         </View>
       </SafeAreaView>
@@ -402,7 +402,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    // backgroundColor applied inline
+    backgroundColor: colors.primary,
   },
   headerContent: {
     flexDirection: 'row',
@@ -417,6 +417,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   headerTitle: {
     ...Typography.title,
+    color: colors.text.white,
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
