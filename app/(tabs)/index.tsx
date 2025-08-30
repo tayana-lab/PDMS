@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text, Alert, StatusBar, Platform, Animated, Dimensions } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { LogOut, Settings, HelpCircle, User, Menu, X, Bell } from 'lucide-react-native';
+import { LogOut, Settings, HelpCircle, User, Menu, X } from 'lucide-react-native';
 import { Spacing, Typography, BorderRadius, Shadows } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppSettings } from '@/hooks/useAppSettings';
+import Header from '@/components/layout/Header';
 import MarketingCarousel from '@/components/dashboard/MarketingCarousel';
 import ProgressDashboard from '@/components/dashboard/ProgressDashboard';
 import QuickActions from '@/components/dashboard/QuickActions';
@@ -69,37 +70,30 @@ export default function HomeScreen() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar 
-        backgroundColor={colors.primary} 
-        barStyle="light-content" 
+        backgroundColor={colors.background} 
+        barStyle={currentTheme === 'dark' ? 'light-content' : 'dark-content'} 
         translucent={false}
       />
       
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleProfilePress} style={styles.profileButton}>
-          <Menu size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>{t('home')}</Text>
-        <TouchableOpacity onPress={handleNotificationPress} style={styles.notificationButton}>
-          <Bell size={24} color={colors.primary} />
-          {5 > 0 && (
-            <View style={[styles.notificationBadge, { backgroundColor: colors.error }]}>
-              <Text style={[styles.notificationCount, { color: colors.text.white }]}>{5}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+      <View style={[styles.safeContainer, { paddingTop: insets.top }]}>
+        <Header
+          onProfilePress={handleProfilePress}
+          onNotificationPress={handleNotificationPress}
+          notificationCount={5}
+        />
+        
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <MarketingCarousel />
+          <ProgressDashboard />
+          <QuickActions />
+        </ScrollView>
       </View>
-      
-      <ScrollView 
-        style={styles.content} 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <MarketingCarousel />
-        <ProgressDashboard />
-        <QuickActions />
-      </ScrollView>
 
       <Modal
         visible={showProfileMenu}
@@ -169,7 +163,7 @@ export default function HomeScreen() {
           </Animated.View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -177,48 +171,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    backgroundColor: 'transparent',
-  },
-  profileButton: {
-    padding: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  headerTitle: {
-    ...Typography.title,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: Spacing.md,
-  },
-  notificationButton: {
-    padding: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-    position: 'relative',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notificationCount: {
-    fontSize: 10,
-    fontWeight: '600',
+  safeContainer: {
+    flex: 1
   },
   content: {
     flex: 1
   },
   scrollContent: {
+    paddingTop: Spacing.md,
     paddingBottom: Spacing.xl
   },
   modalOverlay: {
