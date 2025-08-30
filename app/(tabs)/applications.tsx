@@ -243,21 +243,7 @@ export default function ApplicationsScreen() {
 
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[
-            styles.tab,
-            selectedTab === 'schemes' && styles.activeTab
-          ]}
-          onPress={() => setSelectedTab('schemes')}
-        >
-          <Text style={[
-            styles.tabText,
-            selectedTab === 'schemes' && styles.activeTabText
-          ]}>
-            {t('schemes')}
-          </Text>
-        </TouchableOpacity>
-        
+      
         <TouchableOpacity
           style={[
             styles.tab,
@@ -272,6 +258,22 @@ export default function ApplicationsScreen() {
             {t('myApplications')}
           </Text>
         </TouchableOpacity>
+
+          <TouchableOpacity
+          style={[
+            styles.tab,
+            selectedTab === 'schemes' && styles.activeTab
+          ]}
+          onPress={() => setSelectedTab('schemes')}
+        >
+          <Text style={[
+            styles.tabText,
+            selectedTab === 'schemes' && styles.activeTabText
+          ]}>
+            {t('schemes')}
+          </Text>
+        </TouchableOpacity>
+        
       </View>
 
       {/* Schemes Tab */}
