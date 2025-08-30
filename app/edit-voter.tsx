@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Save, MapPin, Phone, Home } from 'lucide-react-native';
+import { ArrowLeft, Save, MapPin, Phone, Camera, Building } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
@@ -25,6 +25,10 @@ interface Voter {
   mobileNumber: string;
   guardianName: string;
   houseName: string;
+  houseNumber: string;
+  pollingStation: string;
+  oldWardNo: string;
+  panchayatMandal: string;
   address: string;
   lastInteractionDate: string;
   karyakartaName: string;
@@ -33,6 +37,8 @@ interface Voter {
   gender: string;
   ward: string;
   assemblyConstituency: string;
+  district: string;
+  occupation: string;
 }
 
 export default function EditVoterScreen() {
@@ -51,7 +57,7 @@ export default function EditVoterScreen() {
           mobileNumber: foundVoter.mobileNumber,
           address: foundVoter.address,
           partyInclination: foundVoter.partyInclination,
-          houseName: foundVoter.houseName
+          occupation: foundVoter.occupation || 'Business'
         });
       }
     }
@@ -174,13 +180,20 @@ export default function EditVoterScreen() {
         <Card style={styles.voterCard}>
           {/* Header with Photo and Basic Info */}
           <View style={styles.voterHeader}>
-            <View style={styles.profileImage}>
-              <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
-            </View>
-            <View style={styles.voterInfo}>
-              <Text style={styles.voterName}>{voter.name}</Text>
-              <Text style={styles.voterMeta}>S/O: {voter.guardianName}</Text>
-              <Text style={styles.voterMeta}>{voter.age}Y {voter.gender}</Text>
+            <View style={styles.profileSection}>
+              <TouchableOpacity style={styles.profileImageContainer}>
+                <View style={styles.profileImage}>
+                  <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
+                </View>
+                <TouchableOpacity style={styles.cameraButton}>
+                  <Camera size={16} color={colors.text.white} />
+                </TouchableOpacity>
+              </TouchableOpacity>
+              <View style={styles.voterInfo}>
+                <Text style={styles.voterName}>{voter.name}</Text>
+                <Text style={styles.voterMeta}>{voter.voterId}</Text>
+                <Text style={styles.voterMeta}>{voter.age}Y • {voter.gender}</Text>
+              </View>
             </View>
             {renderPartyInclinationIcon(voter.partyInclination)}
           </View>
@@ -190,33 +203,27 @@ export default function EditVoterScreen() {
             <Text style={styles.sectionTitle}>Voter Information</Text>
             
             <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>VOTER ID</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.voterId}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>NAME</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.name}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>AGE / GENDER</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.age} {voter.gender}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>CONSTITUENCY</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.assemblyConstituency}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>GUARDIAN</Text>
+              <Text style={styles.inlineDetailLabel}>GUARDIAN NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
               <Text style={styles.inlineDetailValue}>{voter.guardianName}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>HOUSE NUMBER</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.houseNumber || 'H-123'}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>HOUSE NAME</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.houseName}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>POLLING STATION</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.pollingStation || 'PS-001'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
@@ -226,13 +233,37 @@ export default function EditVoterScreen() {
             </View>
             
             <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>KARYAKARTA</Text>
+              <Text style={styles.inlineDetailLabel}>OLD WARD NO.</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.oldWardNo || '12'}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>PANCHAYAT/MANDAL</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.panchayatMandal || 'Guruvayoor'}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>CONSTITUENCY</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.assemblyConstituency}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>DISTRICT</Text>
+              <Text style={styles.inlineDetailSeparator}>:</Text>
+              <Text style={styles.inlineDetailValue}>{voter.district || 'Thrissur'}</Text>
+            </View>
+            
+            <View style={styles.inlineDetailRow}>
+              <Text style={styles.inlineDetailLabel}>KARYAKARTHA NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
               <Text style={styles.inlineDetailValue}>{voter.karyakartaName}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>LAST CONTACT</Text>
+              <Text style={styles.inlineDetailLabel}>LAST UPDATE DATE</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
               <Text style={styles.inlineDetailValue}>{voter.lastInteractionDate}</Text>
             </View>
@@ -255,17 +286,6 @@ export default function EditVoterScreen() {
               />
             </View>
             
-            {/* House Name */}
-            <View style={styles.editFieldContainer}>
-              <Input
-                label="House Name"
-                value={editData.houseName || ''}
-                onChangeText={(text) => setEditData(prev => ({ ...prev, houseName: text }))}
-                placeholder="Enter house name"
-                leftIcon={<Home size={20} color={colors.text.secondary} />}
-              />
-            </View>
-            
             {/* Address */}
             <View style={styles.editFieldContainer}>
               <Input
@@ -281,17 +301,33 @@ export default function EditVoterScreen() {
               />
             </View>
             
+            {/* Occupation */}
+            <View style={styles.editFieldContainer}>
+              <Input
+                label="Occupation"
+                value={editData.occupation || ''}
+                onChangeText={(text) => setEditData(prev => ({ ...prev, occupation: text }))}
+                placeholder="Enter occupation"
+                leftIcon={<Building size={20} color={colors.text.secondary} />}
+              />
+            </View>
+            
             {/* Party Inclination */}
             <View style={styles.editFieldContainer}>
               <Text style={styles.partyInclinationLabel}>Party Inclination</Text>
               <View style={styles.partyInclinationOptions}>
-                {['BJP', 'Inclined', 'Neutral', 'Anti'].map((option) => {
-                  const isSelected = editData.partyInclination === option;
-                  const partyStatus = getPartyStatus(option);
+                {[
+                  { key: 'BJP', label: 'Party Voter' },
+                  { key: 'Inclined', label: 'Inclined to Party' },
+                  { key: 'Neutral', label: 'Neutral' },
+                  { key: 'Anti', label: 'Anti Party' }
+                ].map((option) => {
+                  const isSelected = editData.partyInclination === option.key;
+                  const partyStatus = getPartyStatus(option.key);
                   
                   return (
                     <TouchableOpacity
-                      key={option}
+                      key={option.key}
                       style={[
                         styles.partyOption,
                         isSelected && { 
@@ -299,13 +335,13 @@ export default function EditVoterScreen() {
                           borderColor: partyStatus.color 
                         }
                       ]}
-                      onPress={() => setEditData(prev => ({ ...prev, partyInclination: option }))}
+                      onPress={() => setEditData(prev => ({ ...prev, partyInclination: option.key }))}
                     >
                       <Text style={[
                         styles.partyOptionText,
                         isSelected && { color: colors.text.white }
                       ]}>
-                        {partyStatus.label}
+                        {option.label}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -404,6 +440,15 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  profileImageContainer: {
+    position: 'relative',
+    marginRight: Spacing.md,
+  },
   profileImage: {
     width: 64,
     height: 64,
@@ -411,7 +456,19 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.primary + '15',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md,
+  },
+  cameraButton: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.surface,
   },
   profileInitial: {
     ...Typography.title,

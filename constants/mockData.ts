@@ -96,6 +96,10 @@ export const mockVoters = [
     mobileNumber: '9876543210',
     guardianName: 'Suresh Kumar',
     houseName: 'Kumar Villa',
+    houseNumber: 'H-123',
+    pollingStation: 'PS-001',
+    oldWardNo: '12',
+    panchayatMandal: 'Kochi Central',
     address: 'MG Road, Kochi, Kerala',
     lastInteractionDate: '2024-01-15',
     karyakartaName: 'Priya Nair',
@@ -103,7 +107,9 @@ export const mockVoters = [
     age: 45,
     gender: 'Male',
     ward: 'Ward 12',
-    assemblyConstituency: 'Kochi Central'
+    assemblyConstituency: 'Kochi Central',
+    district: 'Ernakulam',
+    occupation: 'Business'
   },
   {
     id: '2',
@@ -112,14 +118,20 @@ export const mockVoters = [
     mobileNumber: '',
     guardianName: 'Raman Nair',
     houseName: 'Nair House',
+    houseNumber: 'H-456',
+    pollingStation: 'PS-002',
+    oldWardNo: '8',
+    panchayatMandal: 'Thrissur East',
     address: 'Temple Road, Thrissur, Kerala',
     lastInteractionDate: '2024-01-10',
     karyakartaName: 'Sunil Kumar',
-    partyInclination: 'Independent',
+    partyInclination: 'Neutral',
     age: 52,
     gender: 'Female',
     ward: 'Ward 8',
-    assemblyConstituency: 'Thrissur East'
+    assemblyConstituency: 'Thrissur East',
+    district: 'Thrissur',
+    occupation: 'Homemaker'
   },
   {
     id: '3',
@@ -128,6 +140,10 @@ export const mockVoters = [
     mobileNumber: '8765432109',
     guardianName: 'Krishnan Menon',
     houseName: 'Menon Bhavan',
+    houseNumber: 'H-789',
+    pollingStation: 'PS-003',
+    oldWardNo: '15',
+    panchayatMandal: 'Kozhikode North',
     address: 'Beach Road, Kozhikode, Kerala',
     lastInteractionDate: '2024-01-20',
     karyakartaName: 'Lakshmi Pillai',
@@ -135,7 +151,9 @@ export const mockVoters = [
     age: 38,
     gender: 'Male',
     ward: 'Ward 15',
-    assemblyConstituency: 'Kozhikode North'
+    assemblyConstituency: 'Kozhikode North',
+    district: 'Kozhikode',
+    occupation: 'Engineer'
   },
   {
     id: '4',
@@ -144,6 +162,10 @@ export const mockVoters = [
     mobileNumber: '9123456789',
     guardianName: 'Ravi Nair',
     houseName: 'Nair Residence',
+    houseNumber: 'H-101',
+    pollingStation: 'PS-004',
+    oldWardNo: '5',
+    panchayatMandal: 'Thiruvananthapuram Central',
     address: 'Civil Lines, Thiruvananthapuram, Kerala',
     lastInteractionDate: '2024-01-25',
     karyakartaName: 'Rajesh Kumar',
@@ -151,7 +173,9 @@ export const mockVoters = [
     age: 34,
     gender: 'Female',
     ward: 'Ward 5',
-    assemblyConstituency: 'Thiruvananthapuram Central'
+    assemblyConstituency: 'Thiruvananthapuram Central',
+    district: 'Thiruvananthapuram',
+    occupation: 'Teacher'
   },
   {
     id: '5',
@@ -160,6 +184,10 @@ export const mockVoters = [
     mobileNumber: '9234567890',
     guardianName: 'Gopal Pillai',
     houseName: 'Pillai House',
+    houseNumber: 'H-202',
+    pollingStation: 'PS-005',
+    oldWardNo: '9',
+    panchayatMandal: 'Kollam South',
     address: 'Market Road, Kollam, Kerala',
     lastInteractionDate: '2024-01-12',
     karyakartaName: 'Meera Devi',
@@ -167,7 +195,9 @@ export const mockVoters = [
     age: 41,
     gender: 'Male',
     ward: 'Ward 9',
-    assemblyConstituency: 'Kollam South'
+    assemblyConstituency: 'Kollam South',
+    district: 'Kollam',
+    occupation: 'Farmer'
   },
   {
     id: '6',
@@ -176,6 +206,10 @@ export const mockVoters = [
     mobileNumber: '9345678901',
     guardianName: 'Krishnan Pillai',
     houseName: 'Lakshmi Bhavan',
+    houseNumber: 'H-303',
+    pollingStation: 'PS-006',
+    oldWardNo: '11',
+    panchayatMandal: 'Palakkad East',
     address: 'Station Road, Palakkad, Kerala',
     lastInteractionDate: '2024-01-08',
     karyakartaName: 'Arjun Menon',
@@ -183,7 +217,9 @@ export const mockVoters = [
     age: 48,
     gender: 'Female',
     ward: 'Ward 11',
-    assemblyConstituency: 'Palakkad East'
+    assemblyConstituency: 'Palakkad East',
+    district: 'Palakkad',
+    occupation: 'Nurse'
   },
   {
     id: '7',
@@ -192,6 +228,10 @@ export const mockVoters = [
     mobileNumber: '9456789012',
     guardianName: 'Mohan Kumar',
     houseName: 'Kumar Nivas',
+    houseNumber: 'H-404',
+    pollingStation: 'PS-007',
+    oldWardNo: '7',
+    panchayatMandal: 'Kottayam West',
     address: 'Church Road, Kottayam, Kerala',
     lastInteractionDate: '2024-01-18',
     karyakartaName: 'Priya Nair',
@@ -199,7 +239,9 @@ export const mockVoters = [
     age: 55,
     gender: 'Male',
     ward: 'Ward 7',
-    assemblyConstituency: 'Kottayam West'
+    assemblyConstituency: 'Kottayam West',
+    district: 'Kottayam',
+    occupation: 'Retired'
   },
   {
     id: '8',
@@ -208,6 +250,10 @@ export const mockVoters = [
     mobileNumber: '9567890123',
     guardianName: 'Vijay Kumar',
     houseName: 'Ramesh Villa',
+    houseNumber: 'H-505',
+    pollingStation: 'PS-008',
+    oldWardNo: '14',
+    panchayatMandal: 'Kannur North',
     address: 'Main Street, Kannur, Kerala',
     lastInteractionDate: '2024-01-22',
     karyakartaName: 'Lakshmi Pillai',
@@ -215,7 +261,9 @@ export const mockVoters = [
     age: 42,
     gender: 'Male',
     ward: 'Ward 14',
-    assemblyConstituency: 'Kannur North'
+    assemblyConstituency: 'Kannur North',
+    district: 'Kannur',
+    occupation: 'Shopkeeper'
   },
   {
     id: '9',
@@ -224,14 +272,20 @@ export const mockVoters = [
     mobileNumber: '',
     guardianName: 'Ram Prasad',
     houseName: 'Sita Mandir',
+    houseNumber: 'H-606',
+    pollingStation: 'PS-009',
+    oldWardNo: '6',
+    panchayatMandal: 'Alappuzha Central',
     address: 'Temple Street, Alappuzha, Kerala',
     lastInteractionDate: '2024-01-05',
     karyakartaName: 'Sunil Kumar',
-    partyInclination: 'Independent',
+    partyInclination: 'Neutral',
     age: 39,
     gender: 'Female',
     ward: 'Ward 6',
-    assemblyConstituency: 'Alappuzha Central'
+    assemblyConstituency: 'Alappuzha Central',
+    district: 'Alappuzha',
+    occupation: 'Homemaker'
   },
   {
     id: '10',
@@ -240,6 +294,10 @@ export const mockVoters = [
     mobileNumber: '9678901234',
     guardianName: 'Raman Menon',
     houseName: 'Vinod House',
+    houseNumber: 'H-707',
+    pollingStation: 'PS-010',
+    oldWardNo: '3',
+    panchayatMandal: 'Munnar Hills',
     address: 'Hill View, Munnar, Kerala',
     lastInteractionDate: '2024-01-28',
     karyakartaName: 'Ramesh Kumar',
@@ -247,7 +305,9 @@ export const mockVoters = [
     age: 36,
     gender: 'Male',
     ward: 'Ward 3',
-    assemblyConstituency: 'Munnar Hills'
+    assemblyConstituency: 'Munnar Hills',
+    district: 'Idukki',
+    occupation: 'Tourism Guide'
   }
 ];
 

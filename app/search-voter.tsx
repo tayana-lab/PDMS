@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit, Phone, HelpCircle, ArrowLeft, Grid3X3, MapPin, Calendar, Home, Briefcase, QrCode } from 'lucide-react-native';
+import { Search, Edit, Phone, HelpCircle, ArrowLeft, Grid3X3, MapPin, Calendar, Home, QrCode } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import Button from '@/components/ui/Button';
@@ -321,10 +321,7 @@ export default function SearchVoterScreen() {
               </Text>
             </View>
             
-            <View style={styles.detailRow}>
-              <Briefcase size={16} color={colors.text.secondary} />
-              <Text style={styles.detailValue}>Business</Text>
-            </View>
+
             
             <View style={styles.detailRow}>
               <Calendar size={16} color={colors.text.secondary} />
@@ -542,21 +539,20 @@ export default function SearchVoterScreen() {
               returnKeyType="search"
             />
             <TouchableOpacity 
+              style={styles.searchIconButton}
+              onPress={handleSearch}
+              disabled={isLoading}
+            >
+              <Search size={18} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity 
               style={styles.barcodeButton}
               onPress={handleBarcodePress}
             >
               <QrCode size={18} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity 
-            style={[styles.searchButton, isLoading && styles.searchButtonDisabled]}
-            onPress={handleSearch}
-            disabled={isLoading}
-          >
-            <Text style={styles.searchButtonText}>
-              {isLoading ? 'Searching...' : 'Search'}
-            </Text>
-          </TouchableOpacity>
+
         </View>
 
         {/* Filter Options */}
@@ -686,24 +682,13 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  searchButton: {
-    backgroundColor: colors.primary,
-    borderRadius: BorderRadius.md,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    marginTop: Spacing.sm,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Shadows.small,
-  },
-  searchButtonDisabled: {
-    backgroundColor: colors.text.light,
-    opacity: 0.6,
-  },
-  searchButtonText: {
-    color: colors.text.white,
-    fontSize: 16,
-    fontWeight: '600',
+  searchIconButton: {
+    padding: Spacing.sm,
+    marginLeft: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cameraContainer: {
     flex: 1,
