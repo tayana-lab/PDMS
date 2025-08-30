@@ -614,6 +614,7 @@ headerContent: {
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: colors.border,
+    marginTop: Spacing.lg,
   },
   profileHeader: {
     flexDirection: 'row',
