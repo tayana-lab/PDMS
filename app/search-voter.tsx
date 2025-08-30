@@ -209,25 +209,18 @@ export default function SearchVoterScreen() {
   if (showCamera) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: 'Scan Barcode',
-            headerShown: true,
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => setShowCamera(false)} style={styles.backButton}>
-                <ArrowLeft size={24} color={colors.text.primary} />
-              </TouchableOpacity>
-            ),
-            headerStyle: {
-              backgroundColor: colors.background,
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontWeight: '600',
-              color: colors.text.primary,
-            },
-          }}
-        />
+        <Stack.Screen options={{ headerShown: false }} />
+        
+        {/* Custom Header */}
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity onPress={() => setShowCamera(false)} style={styles.backButton}>
+              <ArrowLeft size={24} color={colors.text.white} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Scan Barcode</Text>
+            <View style={styles.placeholder} />
+          </View>
+        </SafeAreaView>
         <View style={styles.cameraContainer}>
           <CameraView
             style={styles.camera}
@@ -513,26 +506,19 @@ export default function SearchVoterScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: 'Search Voter',
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={colors.text.primary} />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: colors.text.primary,
-          },
-        }}
-      />
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ArrowLeft size={24} color={colors.text.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Search Voter</Text>
+          <View style={styles.placeholder} />
+        </View>
+      </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Section */}
@@ -639,7 +625,7 @@ export default function SearchVoterScreen() {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -648,9 +634,32 @@ const createStyles = (colors: any) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  header: {
+    backgroundColor: colors.primary,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
   backButton: {
     padding: Spacing.xs,
-    marginLeft: -Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  headerTitle: {
+    ...Typography.title,
+    color: colors.text.white,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  placeholder: {
+    width: 32,
+    height: 32,
   },
   content: {
     flex: 1,

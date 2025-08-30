@@ -78,13 +78,36 @@ const createStyles = (colors: any) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  header: {
+    backgroundColor: colors.primary,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
   backButton: {
     padding: Spacing.xs,
-    marginLeft: -Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  headerTitle: {
+    ...Typography.title,
+    color: colors.text.white,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
   },
   editButton: {
     padding: Spacing.xs,
-    marginRight: -Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  placeholder: {
+    width: 32,
+    height: 32,
   },
   content: {
     flex: 1,
@@ -276,54 +299,45 @@ export default function ApplicationDetailsScreen() {
 
   if (!application) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: 'Application Details',
-            headerShown: true,
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                <ArrowLeft size={24} color={colors.text.primary} />
-              </TouchableOpacity>
-            ),
-          }}
-        />
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        
+        {/* Custom Header */}
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <ArrowLeft size={24} color={colors.text.white} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Application Details</Text>
+            <View style={styles.placeholder} />
+          </View>
+        </SafeAreaView>
         <View style={styles.errorContainer}>
           <FileText size={48} color={colors.text.light} />
           <Text style={[styles.errorText, { color: colors.text.light }]}>
             Application not found
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: `Application ${application.application_id}`,
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={colors.text.primary} />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity onPress={handleEdit} style={styles.editButton}>
-              <Edit3 size={20} color={colors.primary} />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: colors.text.primary,
-          },
-        }}
-      />
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ArrowLeft size={24} color={colors.text.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Application Details</Text>
+          <TouchableOpacity onPress={handleEdit} style={styles.editButton}>
+            <Edit3 size={20} color={colors.text.white} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Status Header */}
@@ -569,6 +583,6 @@ export default function ApplicationDetailsScreen() {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
