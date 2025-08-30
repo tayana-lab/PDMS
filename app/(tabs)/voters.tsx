@@ -1,1 +1,3 @@
-export { default } from '../search-voter';
+import SearchVoterScreen from '../search-voter';
+
+export default SearchVoterScreen;
