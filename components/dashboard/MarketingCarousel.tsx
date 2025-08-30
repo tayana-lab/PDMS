@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg
   },
   card: {
-    width: width - (Spacing.lg * 2),
-    marginRight: Spacing.lg,
+    width: width, 
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...Shadows.medium,
-    borderWidth: 1
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   image: {
     width: '100%',
