@@ -464,14 +464,17 @@ const createStyles = (colors: any) => StyleSheet.create({
     backgroundColor: colors.primary,
   },
 headerContent: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     minHeight: 56,
   },
   backButton: {
+    position: 'absolute',
+    left: Spacing.md,
     padding: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
