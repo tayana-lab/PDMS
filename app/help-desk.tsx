@@ -217,7 +217,7 @@ export default function HelpDeskScreen() {
         
         <Text style={styles.schemeBeneficiaries} numberOfLines={2}>
           <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
-          {item.beneficiaries}
+          <Text>{item.beneficiaries}</Text>
         </Text>
         
         <Button
