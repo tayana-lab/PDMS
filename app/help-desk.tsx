@@ -369,26 +369,30 @@ const createStyles = (colors: any) => StyleSheet.create({
   header: {
     backgroundColor: colors.primary,
   },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    minHeight: 56,
-  },
+headerContent: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start', // don’t space-between
+  paddingHorizontal: Spacing.md,
+  paddingVertical: Spacing.md,
+  minHeight: 56,
+  position: 'relative',
+},
+headerTitle: {
+  ...Typography.title,
+  color: colors.text.white,
+  fontWeight: '600',
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  textAlign: 'center',
+},
+
   backButton: {
     padding: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
-  headerTitle: {
-    ...Typography.title,
-    color: colors.text.white,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: Spacing.md,
-  },
+
   bjpLogo: {
     width: 32,
     height: 32,
