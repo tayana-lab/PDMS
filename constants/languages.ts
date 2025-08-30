@@ -95,7 +95,6 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     cancel: 'Cancel',
     submit: 'Submit',
     applicationSubmitted: 'Application Submitted',
-    applicationSubmittedMessage: 'Your application has been submitted successfully.',
     noApplicationsFound: 'No applications found',
     viewDetails: 'View Details',
     mobile: 'Mobile',
@@ -106,6 +105,18 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     pending: 'PENDING',
     approved: 'APPROVED',
     rejected: 'REJECTED',
+    
+    // HelpDesk
+    helpDesk: 'HelpDesk',
+    myRecentRequests: 'My Recent Requests',
+    requestId: 'Request ID',
+    noRequestsFound: 'No help desk requests found for this voter',
+    viewAllRequests: 'View All Requests',
+    applyForScheme: 'Apply for Scheme',
+    voterDetails: 'Voter Details',
+    name: 'Name',
+    applicationWillBeProcessed: 'Application will be processed with the above voter details.',
+    applicationSubmittedMessage: 'Your application has been submitted successfully and will be processed soon.',
     
     // Common
     error: 'Error',
@@ -173,7 +184,6 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     cancel: 'ರದ್ದುಮಾಡಿ',
     submit: 'ಸಲ್ಲಿಸಿ',
     applicationSubmitted: 'ಅರ್ಜಿ ಸಲ್ಲಿಸಲಾಗಿದೆ',
-    applicationSubmittedMessage: 'ನಿಮ್ಮ ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ.',
     noApplicationsFound: 'ಯಾವುದೇ ಅರ್ಜಿಗಳು ಸಿಗಲಿಲ್ಲ',
     viewDetails: 'ವಿವರಗಳನ್ನು ನೋಡಿ',
     mobile: 'ಮೊಬೈಲ್',
@@ -184,6 +194,18 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     pending: 'ಬಾಕಿ',
     approved: 'ಅನುಮೋದಿತ',
     rejected: 'ತಿರಸ್ಕರಿಸಲಾಗಿದೆ',
+    
+    // HelpDesk
+    helpDesk: 'ಸಹಾಯ ಮೇಜು',
+    myRecentRequests: 'ನನ್ನ ಇತ್ತೀಚಿನ ವಿನಂತಿಗಳು',
+    requestId: 'ವಿನಂತಿ ಐಡಿ',
+    noRequestsFound: 'ಈ ಮತದಾರರಿಗೆ ಯಾವುದೇ ಸಹಾಯ ಮೇಜು ವಿನಂತಿಗಳು ಸಿಗಲಿಲ್ಲ',
+    viewAllRequests: 'ಎಲ್ಲಾ ವಿನಂತಿಗಳನ್ನು ನೋಡಿ',
+    applyForScheme: 'ಯೋಜನೆಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+    voterDetails: 'ಮತದಾರರ ವಿವರಗಳು',
+    name: 'ಹೆಸರು',
+    applicationWillBeProcessed: 'ಮೇಲಿನ ಮತದಾರರ ವಿವರಗಳೊಂದಿಗೆ ಅರ್ಜಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುವುದು.',
+    applicationSubmittedMessage: 'ನಿಮ್ಮ ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ ಮತ್ತು ಶೀಘ್ರದಲ್ಲೇ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುವುದು.',
     
     // Common
     error: 'ದೋಷ',
@@ -251,7 +273,6 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     cancel: 'ரத்து செய்',
     submit: 'சமர்ப்பிக்கவும்',
     applicationSubmitted: 'விண்ணப்பம் சமர்ப்பிக்கப்பட்டது',
-    applicationSubmittedMessage: 'உங்கள் விண்ணப்பம் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது.',
     noApplicationsFound: 'விண்ணப்பங்கள் எதுவும் கிடைக்கவில்லை',
     viewDetails: 'விவரங்களைப் பார்க்கவும்',
     mobile: 'மொபைல்',
@@ -262,6 +283,18 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     pending: 'நிலுவையில்',
     approved: 'அங்கீகரிக்கப்பட்டது',
     rejected: 'நிராகரிக்கப்பட்டது',
+    
+    // HelpDesk
+    helpDesk: 'உதவி மையம்',
+    myRecentRequests: 'எனது சமீபத்திய கோரிக்கைகள்',
+    requestId: 'கோரிக்கை ஐடி',
+    noRequestsFound: 'இந்த வாக்காளருக்கு உதவி மையக் கோரிக்கைகள் எதுவும் கிடைக்கவில்லை',
+    viewAllRequests: 'அனைத்து கோரிக்கைகளையும் பார்க்கவும்',
+    applyForScheme: 'திட்டத்திற்கு விண்ணப்பிக்கவும்',
+    voterDetails: 'வாக்காளர் விவரங்கள்',
+    name: 'பெயர்',
+    applicationWillBeProcessed: 'மேலே உள்ள வாக்காளர் விவரங்களுடன் விண்ணப்பம் செயலாக்கப்படும்.',
+    applicationSubmittedMessage: 'உங்கள் விண்ணப்பம் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டு விரைவில் செயலாக்கப்படும்.',
     
     // Common
     error: 'பிழை',
@@ -329,7 +362,6 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     cancel: 'റദ്ദാക്കുക',
     submit: 'സമർപ്പിക്കുക',
     applicationSubmitted: 'അപേക്ഷ സമർപ്പിച്ചു',
-    applicationSubmittedMessage: 'നിങ്ങളുടെ അപേക്ഷ വിജയകരമായി സമർപ്പിച്ചു.',
     noApplicationsFound: 'അപേക്ഷകൾ കണ്ടെത്തിയില്ല',
     viewDetails: 'വിശദാംശങ്ങൾ കാണുക',
     mobile: 'മൊബൈൽ',
@@ -340,6 +372,18 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     pending: 'തീർപ്പുകൽപ്പിക്കാത്ത',
     approved: 'അംഗീകരിച്ചു',
     rejected: 'നിരസിച്ചു',
+    
+    // HelpDesk
+    helpDesk: 'സഹായ മേശ',
+    myRecentRequests: 'എന്റെ സമീപകാല അഭ്യർത്ഥനകൾ',
+    requestId: 'അഭ്യർത്ഥന ഐഡി',
+    noRequestsFound: 'ഈ വോട്ടർക്ക് സഹായ മേശ അഭ്യർത്ഥനകൾ കണ്ടെത്തിയില്ല',
+    viewAllRequests: 'എല്ലാ അഭ്യർത്ഥനകളും കാണുക',
+    applyForScheme: 'പദ്ധതിക്ക് അപേക്ഷിക്കുക',
+    voterDetails: 'വോട്ടർ വിശദാംശങ്ങൾ',
+    name: 'പേര്',
+    applicationWillBeProcessed: 'മേൽപ്പറഞ്ഞ വോട്ടർ വിശദാംശങ്ങൾ ഉപയോഗിച്ച് അപേക്ഷ പ്രോസസ്സ് ചെയ്യപ്പെടും.',
+    applicationSubmittedMessage: 'നിങ്ങളുടെ അപേക്ഷ വിജയകരമായി സമർപ്പിച്ചു, ഉടൻ പ്രോസസ്സ് ചെയ്യപ്പെടും.',
     
     // Common
     error: 'പിശക്',
@@ -407,7 +451,6 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     cancel: 'रद्द करें',
     submit: 'जमा करें',
     applicationSubmitted: 'आवेदन जमा किया गया',
-    applicationSubmittedMessage: 'आपका आवेदन सफलतापूर्वक जमा किया गया है।',
     noApplicationsFound: 'कोई आवेदन नहीं मिला',
     viewDetails: 'विवरण देखें',
     mobile: 'मोबाइल',
@@ -418,6 +461,18 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     pending: 'लंबित',
     approved: 'स्वीकृत',
     rejected: 'अस्वीकृत',
+    
+    // HelpDesk
+    helpDesk: 'सहायता डेस्क',
+    myRecentRequests: 'मेरे हाल के अनुरोध',
+    requestId: 'अनुरोध आईडी',
+    noRequestsFound: 'इस मतदाता के लिए कोई सहायता डेस्क अनुरोध नहीं मिला',
+    viewAllRequests: 'सभी अनुरोध देखें',
+    applyForScheme: 'योजना के लिए आवेदन करें',
+    voterDetails: 'मतदाता विवरण',
+    name: 'नाम',
+    applicationWillBeProcessed: 'उपरोक्त मतदाता विवरण के साथ आवेदन संसाधित किया जाएगा।',
+    applicationSubmittedMessage: 'आपका आवेदन सफलतापूर्वक जमा किया गया है और जल्द ही संसाधित किया जाएगा।',
     
     // Common
     error: 'त्रुटि',
