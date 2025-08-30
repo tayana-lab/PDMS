@@ -75,7 +75,7 @@ interface MyApplication {
 }
 
 export default function ApplicationsScreen() {
-  const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('schemes');
+  const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('myApplications');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [voterIdInput, setVoterIdInput] = useState<string>('');
