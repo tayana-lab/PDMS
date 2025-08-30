@@ -90,10 +90,10 @@ const createStyles = (colors: any) => StyleSheet.create({
     minHeight: 48
   },
   inputWithLeftIcon: {
-    paddingLeft: 40
+    paddingLeft: 50
   },
   inputWithRightIcon: {
-    paddingRight: 40
+    paddingRight: 50
   },
   leftIcon: {
     position: 'absolute',
