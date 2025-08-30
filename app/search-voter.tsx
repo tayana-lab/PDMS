@@ -522,6 +522,7 @@ export default function SearchVoterScreen() {
           <TouchableOpacity 
             onPress={() => {
               console.log('Search Voter: Back button pressed');
+              alert("clicked");
               try {
                 if (router.canGoBack()) {
                   console.log('Going back...');
