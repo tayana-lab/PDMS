@@ -41,7 +41,7 @@ export default function HomeScreen() {
   };
 
   const handleNotificationPress = () => {
-    console.log('Notifications pressed');
+    router.push('/notifications');
   };
 
   const handleLogout = () => {

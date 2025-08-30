@@ -5,7 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -233,26 +234,25 @@ export default function HelpDeskScreen() {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: 'HelpDesk',
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={colors.text.primary} />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: colors.text.primary,
-          },
-        }}
-      />
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      {/* Custom Header */}
+      <SafeAreaView edges={['top']} style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <ArrowLeft size={24} color={colors.text.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>HelpDesk</Text>
+          <View style={styles.bjpLogo}>
+            <Image 
+              source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/200px-Bharatiya_Janata_Party_logo.svg.png' }}
+              style={styles.bjpLogoImage}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+      </SafeAreaView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Voter Information Section */}
@@ -428,7 +428,7 @@ export default function HelpDeskScreen() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -437,9 +437,41 @@ const createStyles = (colors: any) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  header: {
+    backgroundColor: colors.primary,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
   backButton: {
     padding: Spacing.xs,
-    marginLeft: -Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  headerTitle: {
+    ...Typography.title,
+    color: colors.text.white,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  bjpLogo: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: colors.text.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 4,
+  },
+  bjpLogoImage: {
+    width: 24,
+    height: 24,
   },
   content: {
     flex: 1,
