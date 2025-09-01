@@ -225,7 +225,7 @@ export default function VoterRequestDetailsScreen() {
 
   if (!application) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={styles.container}>
         <Stack.Screen
           options={{
             title: t('requestDetails') || 'Request Details',
