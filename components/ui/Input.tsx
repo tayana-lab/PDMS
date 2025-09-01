@@ -24,17 +24,16 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
     setIsSecure(!isSecure);
   };
   
-  const shouldShowToggle = secureTextEntry && props.keyboardType === 'numeric';
+  const shouldShowToggle = secureTextEntry;
   
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputContainer, inputContainerStyle]}>
-        {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
+      <View style={[styles.inputWrapper, inputContainerStyle]}>
+        {leftIcon && <View style={styles.inputIcon}>{leftIcon}</View>}
         <TextInput
           style={[
             styles.input,
-            leftIcon && styles.inputWithLeftIcon,
             (rightIcon || shouldShowToggle) && styles.inputWithRightIcon,
             error && styles.inputError,
             style
@@ -44,7 +43,7 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
           {...props}
         />
         {shouldShowToggle && (
-          <TouchableOpacity style={styles.rightIcon} onPress={togglePasswordVisibility}>
+          <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}>
             {showPassword ? (
               <Eye size={20} color={colors.text.light} />
             ) : (
@@ -52,7 +51,7 @@ export default function Input({ label, error, leftIcon, rightIcon, containerStyl
             )}
           </TouchableOpacity>
         )}
-        {rightIcon && !shouldShowToggle && <View style={styles.rightIcon}>{rightIcon}</View>}
+        {rightIcon && !shouldShowToggle && <View style={styles.eyeIcon}>{rightIcon}</View>}
       </View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -69,7 +68,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginBottom: Spacing.sm,
     fontWeight: '500',
   },
-  inputContainer: {
+  inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
@@ -78,6 +77,9 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     ...Shadows.small,
+  },
+  inputIcon: {
+    marginRight: Spacing.sm,
   },
   input: {
     flex: 1,
@@ -91,17 +93,10 @@ const createStyles = (colors: any) => StyleSheet.create({
     height: 50,
     textAlignVertical: 'center',
   },
-  inputWithLeftIcon: {
-    paddingLeft: 0,
-    marginLeft: Spacing.sm
-  },
   inputWithRightIcon: {
     paddingRight: 50
   },
-  leftIcon: {
-    marginRight: Spacing.sm,
-  },
-  rightIcon: {
+  eyeIcon: {
     position: 'absolute',
     right: Spacing.md,
     padding: Spacing.xs,
