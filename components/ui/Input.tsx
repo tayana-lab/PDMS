@@ -64,53 +64,47 @@ const createStyles = (colors: any) => StyleSheet.create({
     marginBottom: Spacing.md
   },
   label: {
-    ...Typography.caption,
-    fontWeight: '600',
-    marginBottom: Spacing.xs,
-    color: colors.text.primary
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontWeight: '500',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    minHeight: 50,
-    height: 50,
     ...Shadows.small,
   },
   input: {
     flex: 1,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 0,
     fontSize: 16,
     color: colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
     backgroundColor: 'transparent',
     borderWidth: 0,
     minHeight: 50,
     height: 50,
     textAlignVertical: 'center',
-    lineHeight: 20,
-    includeFontPadding: false
   },
   inputWithLeftIcon: {
-    paddingLeft: 50
+    paddingLeft: 0,
+    marginLeft: Spacing.sm
   },
   inputWithRightIcon: {
     paddingRight: 50
   },
   leftIcon: {
-    position: 'absolute',
-    left: Spacing.md,
-    zIndex: 1
+    marginRight: Spacing.sm,
   },
   rightIcon: {
     position: 'absolute',
     right: Spacing.md,
-    zIndex: 1
+    padding: Spacing.xs,
   },
   inputError: {
     borderColor: colors.error
