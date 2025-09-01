@@ -8,16 +8,16 @@ import {
   Alert,
   StatusBar,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  TextInput
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, FileText, Calendar, User, Phone, Mail, MapPin, Briefcase, Heart } from 'lucide-react-native';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
 import schemeData from './SchemeDetails.json';
 
 interface GovernmentScheme {
@@ -235,79 +235,109 @@ export default function ApplySchemeScreen() {
     <View style={styles.stepContent}>
       <Text style={[styles.stepTitle, { color: colors.text.primary }]}>Personal Information</Text>
       
-      <Input
-        label="Full Name *"
-        placeholder="Enter your full name"
-        value={formData.fullName}
-        onChangeText={(value) => updateFormData('fullName', value)}
-        leftIcon={<User size={20} color={colors.text.secondary} />}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Full Name *</Text>
+        <View style={styles.inputWrapper}>
+          <User size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.fullName}
+            onChangeText={(value) => updateFormData('fullName', value)}
+            placeholder="Enter your full name"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Voter ID *"
-        placeholder="Enter your voter ID"
-        value={formData.voterId}
-        onChangeText={(value) => updateFormData('voterId', value.toUpperCase())}
-        leftIcon={<FileText size={20} color={colors.text.secondary} />}
-        style={styles.input}
-        autoCapitalize="characters"
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Voter ID *</Text>
+        <View style={styles.inputWrapper}>
+          <FileText size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.voterId}
+            onChangeText={(value) => updateFormData('voterId', value.toUpperCase())}
+            placeholder="Enter your voter ID"
+            placeholderTextColor={colors.text.light}
+            autoCapitalize="characters"
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Aadhaar Number *"
-        placeholder="Enter your 12-digit Aadhaar number"
-        value={formData.aadhaarNumber}
-        onChangeText={(value) => updateFormData('aadhaarNumber', value.replace(/\D/g, '').slice(0, 12))}
-        leftIcon={<FileText size={20} color={colors.text.secondary} />}
-        style={styles.input}
-        keyboardType="numeric"
-        maxLength={12}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Aadhaar Number *</Text>
+        <View style={styles.inputWrapper}>
+          <FileText size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.aadhaarNumber}
+            onChangeText={(value) => updateFormData('aadhaarNumber', value.replace(/\D/g, '').slice(0, 12))}
+            placeholder="Enter your 12-digit Aadhaar number"
+            placeholderTextColor={colors.text.light}
+            keyboardType="numeric"
+            maxLength={12}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Mobile Number *"
-        placeholder="Enter your mobile number"
-        value={formData.mobileNumber}
-        onChangeText={(value) => updateFormData('mobileNumber', value.replace(/\D/g, '').slice(0, 10))}
-        leftIcon={<Phone size={20} color={colors.text.secondary} />}
-        style={styles.input}
-        keyboardType="phone-pad"
-        maxLength={10}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Mobile Number *</Text>
+        <View style={styles.inputWrapper}>
+          <Phone size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.mobileNumber}
+            onChangeText={(value) => updateFormData('mobileNumber', value.replace(/\D/g, '').slice(0, 10))}
+            placeholder="Enter your mobile number"
+            placeholderTextColor={colors.text.light}
+            keyboardType="phone-pad"
+            maxLength={10}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Email"
-        placeholder="Enter your email address"
-        value={formData.email}
-        onChangeText={(value) => updateFormData('email', value.toLowerCase())}
-        leftIcon={<Mail size={20} color={colors.text.secondary} />}
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Email</Text>
+        <View style={styles.inputWrapper}>
+          <Mail size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.email}
+            onChangeText={(value) => updateFormData('email', value.toLowerCase())}
+            placeholder="Enter your email address"
+            placeholderTextColor={colors.text.light}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Date of Birth *"
-        placeholder="DD/MM/YYYY"
-        value={formData.dateOfBirth}
-        onChangeText={(value) => {
-          // Format as DD/MM/YYYY
-          const cleaned = value.replace(/\D/g, '');
-          let formatted = cleaned;
-          if (cleaned.length >= 2) {
-            formatted = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-          }
-          if (cleaned.length >= 4) {
-            formatted = cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4) + '/' + cleaned.slice(4, 8);
-          }
-          updateFormData('dateOfBirth', formatted);
-        }}
-        leftIcon={<Calendar size={20} color={colors.text.secondary} />}
-        style={styles.input}
-        keyboardType="numeric"
-        maxLength={10}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Date of Birth *</Text>
+        <View style={styles.inputWrapper}>
+          <Calendar size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.dateOfBirth}
+            onChangeText={(value) => {
+              // Format as DD/MM/YYYY
+              const cleaned = value.replace(/\D/g, '');
+              let formatted = cleaned;
+              if (cleaned.length >= 2) {
+                formatted = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
+              }
+              if (cleaned.length >= 4) {
+                formatted = cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4) + '/' + cleaned.slice(4, 8);
+              }
+              updateFormData('dateOfBirth', formatted);
+            }}
+            placeholder="DD/MM/YYYY"
+            placeholderTextColor={colors.text.light}
+            keyboardType="numeric"
+            maxLength={10}
+          />
+        </View>
+      </View>
       
       <Text style={[styles.fieldLabel, { color: colors.text.primary }]}>Gender *</Text>
       <View style={styles.optionContainer}>
@@ -333,22 +363,32 @@ export default function ApplySchemeScreen() {
         ))}
       </View>
       
-      <Input
-        label="Religion"
-        placeholder="Enter your religion"
-        value={formData.religion}
-        onChangeText={(value) => updateFormData('religion', value)}
-        leftIcon={<Heart size={20} color={colors.text.secondary} />}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Religion</Text>
+        <View style={styles.inputWrapper}>
+          <Heart size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.religion}
+            onChangeText={(value) => updateFormData('religion', value)}
+            placeholder="Enter your religion"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Caste"
-        placeholder="Enter your caste"
-        value={formData.caste}
-        onChangeText={(value) => updateFormData('caste', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Caste</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.caste}
+            onChangeText={(value) => updateFormData('caste', value)}
+            placeholder="Enter your caste"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
     </View>
   );
 
@@ -356,81 +396,126 @@ export default function ApplySchemeScreen() {
     <View style={styles.stepContent}>
       <Text style={[styles.stepTitle, { color: colors.text.primary }]}>Address Information</Text>
       
-      <Input
-        label="Address Line 1 *"
-        placeholder="House number, street name"
-        value={formData.addressLine1}
-        onChangeText={(value) => updateFormData('addressLine1', value)}
-        leftIcon={<MapPin size={20} color={colors.text.secondary} />}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Address Line 1 *</Text>
+        <View style={styles.inputWrapper}>
+          <MapPin size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.addressLine1}
+            onChangeText={(value) => updateFormData('addressLine1', value)}
+            placeholder="House number, street name"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Address Line 2"
-        placeholder="Area, locality"
-        value={formData.addressLine2}
-        onChangeText={(value) => updateFormData('addressLine2', value)}
-        leftIcon={<MapPin size={20} color={colors.text.secondary} />}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Address Line 2</Text>
+        <View style={styles.inputWrapper}>
+          <MapPin size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.addressLine2}
+            onChangeText={(value) => updateFormData('addressLine2', value)}
+            placeholder="Area, locality"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="District *"
-        placeholder="Enter your district"
-        value={formData.district}
-        onChangeText={(value) => updateFormData('district', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>District *</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.district}
+            onChangeText={(value) => updateFormData('district', value)}
+            placeholder="Enter your district"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Assembly Mandalam"
-        placeholder="Enter assembly mandalam"
-        value={formData.assemblyMandalam}
-        onChangeText={(value) => updateFormData('assemblyMandalam', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Assembly Mandalam</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.assemblyMandalam}
+            onChangeText={(value) => updateFormData('assemblyMandalam', value)}
+            placeholder="Enter assembly mandalam"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Panchayat"
-        placeholder="Enter panchayat"
-        value={formData.panchayat}
-        onChangeText={(value) => updateFormData('panchayat', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Panchayat</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.panchayat}
+            onChangeText={(value) => updateFormData('panchayat', value)}
+            placeholder="Enter panchayat"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Municipality"
-        placeholder="Enter municipality"
-        value={formData.municipality}
-        onChangeText={(value) => updateFormData('municipality', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Municipality</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.municipality}
+            onChangeText={(value) => updateFormData('municipality', value)}
+            placeholder="Enter municipality"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Corporation"
-        placeholder="Enter corporation"
-        value={formData.corporation}
-        onChangeText={(value) => updateFormData('corporation', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Corporation</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.corporation}
+            onChangeText={(value) => updateFormData('corporation', value)}
+            placeholder="Enter corporation"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Ward"
-        placeholder="Enter ward"
-        value={formData.ward}
-        onChangeText={(value) => updateFormData('ward', value)}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Ward</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.ward}
+            onChangeText={(value) => updateFormData('ward', value)}
+            placeholder="Enter ward"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
-      <Input
-        label="Pincode *"
-        placeholder="Enter 6-digit pincode"
-        value={formData.pincode}
-        onChangeText={(value) => updateFormData('pincode', value.replace(/\D/g, '').slice(0, 6))}
-        style={styles.input}
-        keyboardType="numeric"
-        maxLength={6}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Pincode *</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            value={formData.pincode}
+            onChangeText={(value) => updateFormData('pincode', value.replace(/\D/g, '').slice(0, 6))}
+            placeholder="Enter 6-digit pincode"
+            placeholderTextColor={colors.text.light}
+            keyboardType="numeric"
+            maxLength={6}
+          />
+        </View>
+      </View>
     </View>
   );
 
@@ -438,14 +523,19 @@ export default function ApplySchemeScreen() {
     <View style={styles.stepContent}>
       <Text style={[styles.stepTitle, { color: colors.text.primary }]}>Additional Information</Text>
       
-      <Input
-        label="Occupation *"
-        placeholder="Enter your occupation"
-        value={formData.occupation}
-        onChangeText={(value) => updateFormData('occupation', value)}
-        leftIcon={<Briefcase size={20} color={colors.text.secondary} />}
-        style={styles.input}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Occupation *</Text>
+        <View style={styles.inputWrapper}>
+          <Briefcase size={20} color={colors.text.light} style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            value={formData.occupation}
+            onChangeText={(value) => updateFormData('occupation', value)}
+            placeholder="Enter your occupation"
+            placeholderTextColor={colors.text.light}
+          />
+        </View>
+      </View>
       
       <Text style={[styles.fieldLabel, { color: colors.text.primary }]}>Marital Status *</Text>
       <View style={styles.optionContainer}>
@@ -519,16 +609,21 @@ export default function ApplySchemeScreen() {
         ))}
       </View>
       
-      <Input
-        label="Required Help/Additional Information"
-        placeholder="Describe any specific help you need or additional information"
-        value={formData.requiredHelp}
-        onChangeText={(value) => updateFormData('requiredHelp', value)}
-        style={styles.input}
-        multiline
-        numberOfLines={4}
-        textAlignVertical="top"
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Required Help/Additional Information</Text>
+        <View style={[styles.inputWrapper, styles.multilineWrapper]}>
+          <TextInput
+            style={[styles.input, styles.multilineInput]}
+            value={formData.requiredHelp}
+            onChangeText={(value) => updateFormData('requiredHelp', value)}
+            placeholder="Describe any specific help you need or additional information"
+            placeholderTextColor={colors.text.light}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
+        </View>
+      </View>
     </View>
   );
 
@@ -771,8 +866,49 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontWeight: '600',
     marginBottom: Spacing.lg,
   },
-  input: {
+  inputContainer: {
     marginBottom: Spacing.md,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontWeight: '500',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...Shadows.small,
+  },
+  inputIcon: {
+    marginRight: Spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center',
+  },
+  multilineWrapper: {
+    alignItems: 'flex-start',
+    minHeight: 100,
+  },
+  multilineInput: {
+    minHeight: 80,
+    height: 80,
+    textAlignVertical: 'top',
+    paddingTop: Spacing.md,
   },
   fieldLabel: {
     ...Typography.body,
