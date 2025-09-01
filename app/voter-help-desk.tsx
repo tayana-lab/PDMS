@@ -147,16 +147,7 @@ export default function VoterHelpDeskScreen() {
         </Text>
       </View>
       
-      <TouchableOpacity 
-        style={styles.viewRequestButton}
-        onPress={() => {
-          console.log('Navigating to request details:', item.id);
-          router.push({
-            pathname: '/voter-request-details',
-            params: { requestId: item.id }
-          });
-        }}
-      >
+      <TouchableOpacity style={styles.viewRequestButton}>
         <Text style={[styles.viewRequestText, { color: colors.primary }]}>{t('viewDetails') || 'View Details'}</Text>
       </TouchableOpacity>
     </Card>
