@@ -87,7 +87,8 @@ const createStyles = (colors: any) => StyleSheet.create({
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: colors.primary
+    borderColor: colors.primary,
+    elevation:0,
   },
   ghost: {
     backgroundColor: 'transparent',
