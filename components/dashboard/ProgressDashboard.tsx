@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { progressData } from '@/constants/mockData';
 import { useAppSettings } from '@/hooks/useAppSettings';
+import { useDashboardAnalytics } from '@/hooks/useApi';
 import Card from '@/components/ui/Card';
 
 interface ProgressBarProps {
@@ -30,7 +30,35 @@ function ProgressBar({ achieved, total, label }: ProgressBarProps) {
 }
 
 export default function ProgressDashboard() {
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
+  const { data: analytics, isLoading, error } = useDashboardAnalytics();
+  
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
+        <Card style={[styles.progressCard, styles.loadingCard]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.text.secondary }]}>Loading analytics...</Text>
+        </Card>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
+        <Card style={styles.progressCard}>
+          <Text style={[styles.errorText, { color: colors.error }]}>Failed to load analytics</Text>
+        </Card>
+      </View>
+    );
+  }
+
+  if (!analytics) {
+    return null;
+  }
   
   return (
     <View style={styles.container}>
@@ -38,15 +66,21 @@ export default function ProgressDashboard() {
       
       <Card style={styles.progressCard}>
         <ProgressBar
-          achieved={progressData.todayTarget.achieved}
-          total={progressData.todayTarget.total}
-          label={progressData.todayTarget.label}
+          achieved={analytics.approved_applications}
+          total={analytics.total_applications}
+          label="Applications Approved"
         />
         
         <ProgressBar
-          achieved={progressData.overallTarget.achieved}
-          total={progressData.overallTarget.total}
-          label={progressData.overallTarget.label}
+          achieved={analytics.active_karyakartas}
+          total={analytics.active_karyakartas + 50} // Assuming target is current + 50
+          label="Active Karyakartas"
+        />
+        
+        <ProgressBar
+          achieved={analytics.total_voters}
+          total={analytics.total_voters + 1000} // Assuming target is current + 1000
+          label="Registered Voters"
         />
       </Card>
     </View>
@@ -95,5 +129,19 @@ const styles = StyleSheet.create({
     ...Typography.small,
     fontWeight: '600',
     textAlign: 'right'
+  },
+  loadingCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.xl
+  },
+  loadingText: {
+    ...Typography.body,
+    marginTop: Spacing.md
+  },
+  errorText: {
+    ...Typography.body,
+    textAlign: 'center',
+    paddingVertical: Spacing.lg
   }
 });

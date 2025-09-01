@@ -20,15 +20,18 @@ import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useRequestOtp, useLogin } from "@/hooks/useApi";
 import Button from "@/components/ui/Button";
 
 const { width } = Dimensions.get("window");
 
 export default function LoginScreen() {
   const [mobileNumber, setMobileNumber] = useState("");
-  const [pin, setPin] = useState("");
-  const [showPin, setShowPin] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpTimer, setOtpTimer] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
@@ -50,6 +53,8 @@ export default function LoginScreen() {
 
   const { login } = useAuth();
   const { colors, currentTheme, t } = useAppSettings();
+  const requestOtpMutation = useRequestOtp();
+  const loginMutation = useLogin();
 
   // Auto-scroll banner images
   useEffect(() => {
@@ -67,20 +72,64 @@ export default function LoginScreen() {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  const handleLogin = async () => {
-    if (!mobileNumber.trim() || !pin.trim()) {
-      Alert.alert(t('error'), "Please enter both mobile number and PIN");
+  // OTP Timer
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpTimer]);
+
+  const handleRequestOtp = async () => {
+    if (!mobileNumber.trim()) {
+      Alert.alert(t('error'), "Please enter mobile number");
       return;
     }
-    if (pin.length !== 6) {
-      Alert.alert(t('error'), "PIN must be 6 digits");
+    if (mobileNumber.length !== 10) {
+      Alert.alert(t('error'), "Mobile number must be 10 digits");
       return;
     }
+
     setIsLoading(true);
     try {
-      const result = await login(mobileNumber, pin);
-      if (result.success) router.replace("/(tabs)");
-      else Alert.alert(t('error'), result.error || "Login failed");
+      await requestOtpMutation.mutateAsync({ mobile_number: mobileNumber });
+      setOtpSent(true);
+      setOtpTimer(60); // 60 seconds timer
+      Alert.alert(t('success'), "OTP sent successfully");
+    } catch (error: any) {
+      Alert.alert(t('error'), error.message || "Failed to send OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!mobileNumber.trim() || !otp.trim()) {
+      Alert.alert(t('error'), "Please enter both mobile number and OTP");
+      return;
+    }
+    if (otp.length !== 6) {
+      Alert.alert(t('error'), "OTP must be 6 digits");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await loginMutation.mutateAsync({
+        mobile_number: mobileNumber,
+        otp: otp,
+      });
+      
+      // Update local auth state
+      await login(mobileNumber, otp);
+      
+      Alert.alert(t('success'), `Welcome ${response.karyakarta.name}!`);
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      Alert.alert(t('error'), error.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -179,44 +228,70 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>{t('pin')}</Text>
-              <View style={styles.inputWrapper}>
-                <Lock
-                  size={20}
-                  color={colors.text.light}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={[styles.input, styles.pinInput]}
-                  value={pin}
-                  onChangeText={setPin}
-                  placeholder={t('enterPin')}
-                  placeholderTextColor={colors.text.light}
-                  secureTextEntry={!showPin}
-                  keyboardType="numeric"
-                  maxLength={6}
-                />
-                <TouchableOpacity
-                  style={styles.eyeIcon}
-                  onPress={() => setShowPin(!showPin)}
-                >
-                  {showPin ? (
-                    <Eye size={20} color={colors.text.light} />
-                  ) : (
-                    <EyeOff size={20} color={colors.text.light} />
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
+            {!otpSent ? (
+              <Button
+                title={isLoading ? "Sending OTP..." : "Send OTP"}
+                onPress={handleRequestOtp}
+                disabled={isLoading || mobileNumber.length !== 10}
+                loading={isLoading}
+                style={styles.loginButton}
+              />
+            ) : (
+              <>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>OTP</Text>
+                  <View style={styles.inputWrapper}>
+                    <Lock
+                      size={20}
+                      color={colors.text.light}
+                      style={styles.inputIcon}
+                    />
+                    <TextInput
+                      style={[styles.input, styles.pinInput]}
+                      value={otp}
+                      onChangeText={setOtp}
+                      placeholder="Enter 6-digit OTP"
+                      placeholderTextColor={colors.text.light}
+                      secureTextEntry={!showOtp}
+                      keyboardType="numeric"
+                      maxLength={6}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={() => setShowOtp(!showOtp)}
+                    >
+                      {showOtp ? (
+                        <Eye size={20} color={colors.text.light} />
+                      ) : (
+                        <EyeOff size={20} color={colors.text.light} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
 
-            <Button
-              title={isLoading ? t('loggingIn') : t('login')}
-              onPress={handleLogin}
-              disabled={isLoading}
-              loading={isLoading}
-              style={styles.loginButton}
-            />
+                <Button
+                  title={isLoading ? t('loggingIn') : t('login')}
+                  onPress={handleLogin}
+                  disabled={isLoading || otp.length !== 6}
+                  loading={isLoading}
+                  style={styles.loginButton}
+                />
+
+                <View style={styles.resendContainer}>
+                  {otpTimer > 0 ? (
+                    <Text style={styles.timerText}>
+                      Resend OTP in {otpTimer}s
+                    </Text>
+                  ) : (
+                    <TouchableOpacity onPress={handleRequestOtp}>
+                      <Text style={styles.resendText}>Resend OTP</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </>
+            )}
+
+
 
             <View style={styles.forgotPin}>
               <TouchableOpacity onPress={handleForgotPassword}>
@@ -397,6 +472,19 @@ bannerWrapper: {
       color: colors.text.secondary,
     },
     registerLink: {
+      color: colors.primary,
+      fontWeight: "500",
+    },
+    resendContainer: {
+      alignItems: "center",
+      marginTop: Spacing.sm,
+    },
+    timerText: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    resendText: {
+      fontSize: 14,
       color: colors.primary,
       fontWeight: "500",
     },
