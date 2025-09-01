@@ -1,0 +1,2503 @@
+openapi: 3.0.3
+info:
+  title: PDMS (Party Decision Making System) API
+  description: |
+    Comprehensive CRUD API for PDMS database with enterprise-grade security and authentication.
+    
+    ## Security Features
+    - JWT Bearer token authentication
+    - API Key authentication for service-to-service communication
+    - Role-based access control (RBAC)
+    - Request rate limiting
+    - Data encryption at rest and in transit
+    - Audit logging for all operations
+    
+    ## Rate Limits
+    - Standard users: 1000 requests per hour
+    - Premium users: 5000 requests per hour
+    - Admin users: Unlimited
+    
+    ## Data Privacy
+    - PII data is encrypted and access-controlled
+    - Aadhaar numbers are masked in responses
+    - Mobile numbers require special permissions to view
+  version: 1.0.0
+  contact:
+    name: PDMS API Support
+    email: support@pdms.tayana.in
+    url: https://pdms.tayana.in/support
+  license:
+    name: Tayana Mobility Technologies License @2025
+    url: https://pdms.tayana.in/license
+
+servers:
+  - url: https://pdms.tayana.in/v1
+    description: Production server
+  - url: https://staging.pdms.tayana.in/v1
+    description: Staging server
+
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  headers:
+    X-RateLimit-Limit:
+      description: Request limit per hour
+      schema:
+        type: integer
+    X-RateLimit-Remaining:
+      description: Remaining requests in current window
+      schema:
+        type: integer
+    X-RateLimit-Reset:
+      description: Time when rate limit resets (Unix timestamp)
+      schema:
+        type: integer
+    X-Request-ID:
+      description: Unique request identifier for tracking
+      schema:
+        type: string
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: integer
+      required:
+        - error
+        - message
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        helpdesk_id:
+          type: string
+          maxLength: 50
+        user_id:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 100
+        voter_id:
+          type: string
+          maxLength: 20
+        aadhaar_number:
+          type: string
+          maxLength: 20
+          pattern: '^[0-9]{12}$'
+        mobile_number:
+          type: string
+          maxLength: 20
+          pattern: '^[0-9]{10}$'
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        dob:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        religion:
+          type: string
+          maxLength: 50
+        caste:
+          type: string
+          maxLength: 50
+        address_line1:
+          type: string
+          maxLength: 200
+        address_line2:
+          type: string
+          maxLength: 200
+        district:
+          type: string
+          maxLength: 50
+        assembly_mandalam:
+          type: string
+          maxLength: 100
+        panchayat:
+          type: string
+          maxLength: 100
+        municipalitie:
+          type: string
+          maxLength: 100
+        corporation:
+          type: string
+          maxLength: 100
+        ward:
+          type: string
+          maxLength: 100
+        pincode:
+          type: string
+          maxLength: 10
+          pattern: '^[0-9]{6}$'
+        occupation:
+          type: string
+          maxLength: 50
+        marital_status:
+          type: string
+          enum: [Single, Married, Divorced, Widowed]
+        income_range:
+          type: string
+          maxLength: 20
+        benefited_scheme:
+          type: string
+          maxLength: 10
+        scheme_id:
+          type: string
+          maxLength: 50
+        scheme_details:
+          type: string
+        required_help:
+          type: string
+        status:
+          type: string
+          enum: [Pending, In_Progress, Approved, Rejected]
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        state_id:
+          type: string
+          maxLength: 20
+        district_id:
+          type: string
+          maxLength: 100
+        mandal_id:
+          type: string
+          maxLength: 100
+        ward_id:
+          type: string
+          maxLength: 150
+        panchayath_id:
+          type: string
+          maxLength: 100
+        municipalitie_id:
+          type: string
+          maxLength: 100
+        corporation_id:
+          type: string
+          maxLength: 100
+        sync_status:
+          type: string
+          enum: [Pending, Synced, Failed]
+        created_by:
+          type: integer
+        updated_by:
+          type: integer
+      required:
+        - helpdesk_id
+
+    ApplicationCreate:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Application'
+      properties:
+        id:
+          readOnly: false
+        created_at:
+          readOnly: false
+        updated_at:
+          readOnly: false
+
+    Scheme:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 200
+        category:
+          type: string
+          maxLength: 50
+        min_age:
+          type: integer
+        max_age:
+          type: integer
+        gender:
+          type: string
+          maxLength: 20
+        marital_status:
+          type: string
+          maxLength: 20
+        community:
+          type: string
+          maxLength: 20
+        differently_abled:
+          type: boolean
+        occupation:
+          type: string
+          maxLength: 100
+        student_status:
+          type: boolean
+        bpl_status:
+          type: boolean
+        official_site:
+          type: string
+          format: uri
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [Active, Inactive, Expired]
+        beneficiaries:
+          type: string
+        budget:
+          type: integer
+          format: int64
+        description:
+          type: string
+        note:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - id
+        - name
+
+    Voter:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        serial_no:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+        guardian_name:
+          type: string
+          maxLength: 200
+        house_name:
+          type: string
+          maxLength: 100
+        id_card_no:
+          type: string
+          maxLength: 50
+        district_id:
+          type: integer
+        assembly_id:
+          type: integer
+        local_body_id:
+          type: integer
+        ward_id:
+          type: integer
+        polling_station_id:
+          type: integer
+        old_ward_no:
+          type: string
+          maxLength: 20
+        house_no:
+          type: string
+          maxLength: 50
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        age:
+          type: integer
+        dob:
+          type: string
+          format: date
+        address_line1:
+          type: string
+          maxLength: 500
+        address_line2:
+          type: string
+          maxLength: 500
+        pincode:
+          type: string
+          maxLength: 10
+        lat_long:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        occupation:
+          type: string
+          maxLength: 50
+        marital_status:
+          type: string
+          enum: [Single, Married, Divorced, Widowed]
+        religion:
+          type: string
+          maxLength: 50
+        caste:
+          type: string
+          maxLength: 50
+        income_range:
+          type: string
+          maxLength: 20
+        aadhaar_number:
+          type: string
+          maxLength: 20
+        mobile_number:
+          type: string
+          maxLength: 20
+        political_inclination:
+          type: string
+          maxLength: 100
+        note:
+          type: string
+        status:
+          type: string
+          enum: [Active, Inactive, Deceased]
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: integer
+        last_sync_at:
+          type: string
+          format: date-time
+
+    Karyakarta:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        mobile_number:
+          type: string
+          maxLength: 15
+          pattern: '^[0-9]{10}$'
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        address:
+          type: string
+          maxLength: 300
+        state_id:
+          type: integer
+        district_id:
+          type: integer
+        assembly_id:
+          type: integer
+        local_body_id:
+          type: integer
+        ward_id:
+          type: integer
+        polling_station_id:
+          type: integer
+        saral_id:
+          type: string
+          maxLength: 50
+        role:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          enum: [Active, Inactive, Suspended]
+        apns_token:
+          type: string
+          maxLength: 100
+        last_login_at:
+          type: string
+          format: date-time
+        last_activity_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        last_sync_at:
+          type: string
+          format: date-time
+      required:
+        - name
+        - mobile_number
+
+    OrganisationalState:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+      required:
+        - name
+
+    OrganisationalDistrict:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        state_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+      required:
+        - state_id
+        - name
+
+    AssemblyConstituency:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        district_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+      required:
+        - district_id
+        - name
+
+    LocalBody:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        assembly_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+      required:
+        - assembly_id
+        - name
+
+    Ward:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        local_body_id:
+          type: integer
+        ward_number:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+      required:
+        - local_body_id
+        - ward_number
+
+    PollingStation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        ward_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+        address:
+          type: string
+          maxLength: 500
+        lat_long:
+          type: string
+          maxLength: 100
+      required:
+        - ward_id
+        - name
+
+    Communication:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          type: integer
+          enum: [1, 2, 3, 4, 5, 6]
+          description: "1: Individual, 2: Booth, 3: Ward, 4: Local Body, 5: District, 6: State"
+        category:
+          type: integer
+          enum: [1, 2, 3, 4]
+          description: "1: Application, 2: Scheme, 3: Voter, 4: General"
+        broadcast_id:
+          type: integer
+        message:
+          type: string
+        content_url:
+          type: string
+          maxLength: 500
+        status:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - type
+        - category
+        - message
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: asc
+
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitError:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login with OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobile_number:
+                  type: string
+                  pattern: '^[0-9]{10}$'
+                otp:
+                  type: string
+                  pattern: '^[0-9]{6}$'
+              required:
+                - mobile_number
+                - otp
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expires_at:
+                    type: string
+                    format: date-time
+                  karyakarta:
+                    $ref: '#/components/schemas/Karyakarta'
+                  permissions:
+                    type: array
+                    items:
+                      type: string
+                    description: List of permissions for this user
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /auth/request-otp:
+    post:
+      tags:
+        - Authentication
+      summary: Request OTP for login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobile_number:
+                  type: string
+                  pattern: '^[0-9]{10}$'
+              required:
+                - mobile_number
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  expires_at:
+                    type: string
+                    format: date-time
+
+  # Applications CRUD
+  /applications:
+    get:
+      tags:
+        - Applications
+      summary: Get all applications
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Pending, In_Progress, Approved, Rejected]
+        - name: district_id
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Applications
+      summary: Create new application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+      responses:
+        '201':
+          description: Application created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /applications/{id}:
+    get:
+      tags:
+        - Applications
+      summary: Get application by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags:
+        - Applications
+      summary: Update application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+      responses:
+        '200':
+          description: Application updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    delete:
+      tags:
+        - Applications
+      summary: Delete application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Application deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # Schemes CRUD
+  /schemes:
+    get:
+      tags:
+        - Schemes
+      summary: Get all schemes
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Active, Inactive, Expired]
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of schemes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Scheme'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Schemes
+      summary: Create new scheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scheme'
+      responses:
+        '201':
+          description: Scheme created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scheme'
+
+  /schemes/{id}:
+    get:
+      tags:
+        - Schemes
+      summary: Get scheme by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Scheme details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scheme'
+
+    put:
+      tags:
+        - Schemes
+      summary: Update scheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scheme'
+      responses:
+        '200':
+          description: Scheme updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scheme'
+
+    delete:
+      tags:
+        - Schemes
+      summary: Delete scheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Scheme deleted successfully
+
+  # Voters CRUD
+  /voters:
+    get:
+      tags:
+        - Voters
+      summary: Get all voters
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: district_id
+          in: query
+          schema:
+            type: integer
+        - name: assembly_id
+          in: query
+          schema:
+            type: integer
+        - name: ward_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Active, Inactive, Deceased]
+      responses:
+        '200':
+          description: List of voters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voter'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Voters
+      summary: Create new voter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voter'
+      responses:
+        '201':
+          description: Voter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voter'
+
+  /voters/{id}:
+    get:
+      tags:
+        - Voters
+      summary: Get voter by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Voter details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voter'
+
+    put:
+      tags:
+        - Voters
+      summary: Update voter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voter'
+      responses:
+        '200':
+          description: Voter updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voter'
+
+    delete:
+      tags:
+        - Voters
+      summary: Delete voter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Voter deleted successfully
+
+  # Voter Search Endpoint
+  /voters/search:
+    get:
+      tags:
+        - Voters
+      summary: Search voters by name or EPIC ID
+      description: |
+        Search voters using various criteria:
+        - Name: Supports partial matching and fuzzy search
+        - EPIC ID (id_card_no): Exact match search
+        - Combined search with multiple filters
+        
+        **Security Note**: 
+        - PII data (Aadhaar, mobile numbers) will be masked unless user has VIEW_PII permission
+        - Results are filtered based on user's territorial access
+        - All searches are logged for audit purposes
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: name
+          in: query
+          description: Voter name (supports partial matching)
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 200
+          example: "John Doe"
+        - name: epic_id
+          in: query
+          description: EPIC ID / Voter ID Card Number (exact match)
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 50
+            pattern: '^[A-Z0-9]+$'
+          example: "ABC1234567"
+        - name: district_id
+          in: query
+          description: Filter by district ID
+          schema:
+            type: integer
+        - name: assembly_id
+          in: query
+          description: Filter by assembly constituency ID
+          schema:
+            type: integer
+        - name: ward_id
+          in: query
+          description: Filter by ward ID
+          schema:
+            type: integer
+        - name: polling_station_id
+          in: query
+          description: Filter by polling station ID
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Filter by voter status
+          schema:
+            type: string
+            enum: [Active, Inactive, Deceased]
+        - name: gender
+          in: query
+          description: Filter by gender
+          schema:
+            type: string
+            enum: [Male, Female, Other]
+        - name: age_min
+          in: query
+          description: Minimum age filter
+          schema:
+            type: integer
+            minimum: 18
+            maximum: 120
+        - name: age_max
+          in: query
+          description: Maximum age filter
+          schema:
+            type: integer
+            minimum: 18
+            maximum: 120
+        - name: exact_match
+          in: query
+          description: "Whether to use exact matching for name search (default: false for partial matching)"
+          schema:
+            type: boolean
+            default: false
+        - name: sort_by
+          in: query
+          description: Sort results by field
+          schema:
+            type: string
+            enum: [name, age, serial_no, created_at]
+            default: name
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Search results with voter details
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voter'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/PaginationMeta'
+                      - type: object
+                        properties:
+                          search_criteria:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              epic_id:
+                                type: string
+                              filters_applied:
+                                type: array
+                                items:
+                                  type: string
+                          execution_time_ms:
+                            type: integer
+                            description: Search execution time in milliseconds
+                          total_matches:
+                            type: integer
+                            description: Total number of matches found
+              examples:
+                name_search:
+                  summary: Search by name
+                  value:
+                    data:
+                      - id: 1
+                        serial_no: 123
+                        name: "John Doe"
+                        guardian_name: "Robert Doe"
+                        id_card_no: "ABC1234567"
+                        district_id: 1
+                        assembly_id: 5
+                        ward_id: 10
+                        gender: "Male"
+                        age: 35
+                        status: "Active"
+                        aadhaar_number: "XXXX-XXXX-1234"
+                        mobile_number: "XXXXXX7890"
+                    meta:
+                      page: 1
+                      per_page: 20
+                      total: 5
+                      total_pages: 1
+                      search_criteria:
+                        name: "John"
+                        filters_applied: ["name", "status"]
+                      execution_time_ms: 45
+                      total_matches: 5
+                epic_id_search:
+                  summary: Search by EPIC ID
+                  value:
+                    data:
+                      - id: 2
+                        serial_no: 456
+                        name: "Jane Smith"
+                        guardian_name: "Michael Smith"
+                        id_card_no: "XYZ9876543"
+                        district_id: 1
+                        assembly_id: 5
+                        ward_id: 12
+                        gender: "Female"
+                        age: 28
+                        status: "Active"
+                        aadhaar_number: "XXXX-XXXX-5678"
+                        mobile_number: "XXXXXX1234"
+                    meta:
+                      page: 1
+                      per_page: 20
+                      total: 1
+                      total_pages: 1
+                      search_criteria:
+                        epic_id: "XYZ9876543"
+                        filters_applied: ["epic_id"]
+                      execution_time_ms: 12
+                      total_matches: 1
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      validation_errors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                            message:
+                              type: string
+              examples:
+                invalid_parameters:
+                  summary: Invalid search parameters
+                  value:
+                    error: "Validation Error"
+                    message: "Invalid search parameters provided"
+                    code: 400
+                    validation_errors:
+                      - field: "name"
+                        message: "Name must be at least 2 characters long"
+                      - field: "epic_id"
+                        message: "EPIC ID must contain only alphanumeric characters"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Insufficient permissions for voter search
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      required_permission:
+                        type: string
+                        example: "SEARCH_VOTERS"
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+
+    post:
+      tags:
+        - Voters
+      summary: Advanced voter search with complex criteria
+      description: |
+        Perform advanced voter search using complex criteria and multiple search parameters.
+        This endpoint supports more sophisticated search operations than the GET method.
+        
+        **Features**:
+        - Boolean search operators (AND, OR, NOT)
+        - Date range searches
+        - Geographic boundary searches
+        - Bulk EPIC ID searches
+        - Custom sorting and aggregation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_criteria:
+                  type: object
+                  properties:
+                    name:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          minLength: 2
+                          maxLength: 200
+                        match_type:
+                          type: string
+                          enum: [exact, partial, fuzzy, starts_with, ends_with]
+                          default: partial
+                        case_sensitive:
+                          type: boolean
+                          default: false
+                    epic_ids:
+                      type: array
+                      items:
+                        type: string
+                        pattern: '^[A-Z0-9]+$'
+                      maxItems: 100
+                      description: "Bulk search for multiple EPIC IDs"
+                    age_range:
+                      type: object
+                      properties:
+                        min:
+                          type: integer
+                          minimum: 18
+                        max:
+                          type: integer
+                          maximum: 120
+                    date_range:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          enum: [created_at, updated_at, dob]
+                        from:
+                          type: string
+                          format: date
+                        to:
+                          type: string
+                          format: date
+                    geographic_filter:
+                      type: object
+                      properties:
+                        district_ids:
+                          type: array
+                          items:
+                            type: integer
+                        assembly_ids:
+                          type: array
+                          items:
+                            type: integer
+                        ward_ids:
+                          type: array
+                          items:
+                            type: integer
+                        polling_station_ids:
+                          type: array
+                          items:
+                            type: integer
+                    boolean_operator:
+                      type: string
+                      enum: [AND, OR]
+                      default: AND
+                      description: "Operator to combine multiple search criteria"
+                pagination:
+                  type: object
+                  properties:
+                    page:
+                      type: integer
+                      minimum: 1
+                      default: 1
+                    limit:
+                      type: integer
+                      minimum: 1
+                      maximum: 100
+                      default: 20
+                sorting:
+                  type: object
+                  properties:
+                    sort_by:
+                      type: string
+                      enum: [name, age, serial_no, created_at, relevance_score]
+                      default: relevance_score
+                    sort_order:
+                      type: string
+                      enum: [asc, desc]
+                      default: desc
+                options:
+                  type: object
+                  properties:
+                    include_inactive:
+                      type: boolean
+                      default: false
+                      description: "Include inactive voters in results"
+                    include_aggregations:
+                      type: boolean
+                      default: false
+                      description: "Include search result aggregations"
+                    highlight_matches:
+                      type: boolean
+                      default: false
+                      description: "Highlight matching text in results"
+            examples:
+              name_and_location:
+                summary: Search by name and location
+                value:
+                  search_criteria:
+                    name:
+                      value: "John"
+                      match_type: "partial"
+                    geographic_filter:
+                      district_ids: [1, 2]
+                      assembly_ids: [5, 6]
+                    boolean_operator: "AND"
+                  pagination:
+                    page: 1
+                    limit: 50
+                  sorting:
+                    sort_by: "name"
+                    sort_order: "asc"
+              bulk_epic_search:
+                summary: Bulk EPIC ID search
+                value:
+                  search_criteria:
+                    epic_ids: ["ABC1234567", "XYZ9876543", "DEF5555555"]
+                  options:
+                    include_inactive: true
+                    highlight_matches: true
+      responses:
+        '200':
+          description: Advanced search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Voter'
+                        - type: object
+                          properties:
+                            relevance_score:
+                              type: number
+                              format: float
+                              description: "Search relevance score (0-1)"
+                            highlighted_fields:
+                              type: object
+                              description: "Fields with highlighted matching text"
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/PaginationMeta'
+                      - type: object
+                        properties:
+                          search_summary:
+                            type: object
+                            properties:
+                              total_searched:
+                                type: integer
+                              criteria_used:
+                                type: array
+                                items:
+                                  type: string
+                              execution_time_ms:
+                                type: integer
+                          aggregations:
+                            type: object
+                            properties:
+                              by_district:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    district_id:
+                                      type: integer
+                                    district_name:
+                                      type: string
+                                    count:
+                                      type: integer
+                              by_age_group:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    age_range:
+                                      type: string
+                                    count:
+                                      type: integer
+                              by_gender:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    gender:
+                                      type: string
+                                    count:
+                                      type: integer
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+
+  # Karyakartas CRUD
+  /karyakartas:
+    get:
+      tags:
+        - Karyakartas
+      summary: Get all karyakartas
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: district_id
+          in: query
+          schema:
+            type: integer
+        - name: assembly_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Active, Inactive, Suspended]
+        - name: role
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of karyakartas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Karyakarta'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Karyakartas
+      summary: Create new karyakarta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Karyakarta'
+      responses:
+        '201':
+          description: Karyakarta created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Karyakarta'
+
+  /karyakartas/{id}:
+    get:
+      tags:
+        - Karyakartas
+      summary: Get karyakarta by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Karyakarta details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Karyakarta'
+
+    put:
+      tags:
+        - Karyakartas
+      summary: Update karyakarta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Karyakarta'
+      responses:
+        '200':
+          description: Karyakarta updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Karyakarta'
+
+    delete:
+      tags:
+        - Karyakartas
+      summary: Delete karyakarta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Karyakarta deleted successfully
+
+  # Organizational States CRUD
+  /states:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all states
+      responses:
+        '200':
+          description: List of states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganisationalState'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationalState'
+      responses:
+        '201':
+          description: State created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalState'
+
+  /states/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get state by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: State details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalState'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update state
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationalState'
+      responses:
+        '200':
+          description: State updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalState'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete state
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: State deleted successfully
+
+  # Districts CRUD
+  /districts:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all districts
+      parameters:
+        - name: state_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of districts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganisationalDistrict'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new district
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationalDistrict'
+      responses:
+        '201':
+          description: District created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalDistrict'
+
+  /districts/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get district by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: District details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalDistrict'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update district
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationalDistrict'
+      responses:
+        '200':
+          description: District updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationalDistrict'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete district
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: District deleted successfully
+
+  # Assembly Constituencies CRUD
+  /assemblies:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all assembly constituencies
+      parameters:
+        - name: district_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of assembly constituencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssemblyConstituency'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new assembly constituency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssemblyConstituency'
+      responses:
+        '201':
+          description: Assembly constituency created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssemblyConstituency'
+
+  /assemblies/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get assembly constituency by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Assembly constituency details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssemblyConstituency'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update assembly constituency
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssemblyConstituency'
+      responses:
+        '200':
+          description: Assembly constituency updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssemblyConstituency'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete assembly constituency
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Assembly constituency deleted successfully
+
+  # Local Bodies CRUD
+  /local-bodies:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all local bodies
+      parameters:
+        - name: assembly_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of local bodies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocalBody'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new local body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalBody'
+      responses:
+        '201':
+          description: Local body created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalBody'
+
+  /local-bodies/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get local body by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Local body details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalBody'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update local body
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalBody'
+      responses:
+        '200':
+          description: Local body updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalBody'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete local body
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Local body deleted successfully
+
+  # Wards CRUD
+  /wards:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all wards
+      parameters:
+        - name: local_body_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of wards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ward'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new ward
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ward'
+      responses:
+        '201':
+          description: Ward created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ward'
+
+  /wards/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get ward by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ward details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ward'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update ward
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ward'
+      responses:
+        '200':
+          description: Ward updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ward'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete ward
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Ward deleted successfully
+
+  # Polling Stations CRUD
+  /polling-stations:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get all polling stations
+      parameters:
+        - name: ward_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of polling stations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollingStation'
+
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create new polling station
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PollingStation'
+      responses:
+        '201':
+          description: Polling station created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollingStation'
+
+  /polling-stations/{id}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get polling station by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Polling station details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollingStation'
+
+    put:
+      tags:
+        - Organizational Structure
+      summary: Update polling station
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PollingStation'
+      responses:
+        '200':
+          description: Polling station updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollingStation'
+
+    delete:
+      tags:
+        - Organizational Structure
+      summary: Delete polling station
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Polling station deleted successfully
+
+  # Communications CRUD
+  /communications:
+    get:
+      tags:
+        - Communications
+      summary: Get all communications
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: type
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4, 5, 6]
+        - name: category
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4]
+      responses:
+        '200':
+          description: List of communications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Communication'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Communications
+      summary: Create new communication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Communication'
+      responses:
+        '201':
+          description: Communication created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Communication'
+
+  /communications/{id}:
+    get:
+      tags:
+        - Communications
+      summary: Get communication by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Communication details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Communication'
+
+    put:
+      tags:
+        - Communications
+      summary: Update communication
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Communication'
+      responses:
+        '200':
+          description: Communication updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Communication'
+
+    delete:
+      tags:
+        - Communications
+      summary: Delete communication
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Communication deleted successfully
+
+  # Analytics and Reports
+  /analytics/dashboard:
+    get:
+      tags:
+        - Analytics
+      summary: Get dashboard analytics
+      parameters:
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: district_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dashboard analytics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_applications:
+                    type: integer
+                  pending_applications:
+                    type: integer
+                  approved_applications:
+                    type: integer
+                  total_voters:
+                    type: integer
+                  active_karyakartas:
+                    type: integer
+                  total_schemes:
+                    type: integer
+                  applications_by_status:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        count:
+                          type: integer
+                  applications_by_district:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        district_name:
+                          type: string
+                        count:
+                          type: integer
+
+  /reports/applications:
+    get:
+      tags:
+        - Reports
+      summary: Generate applications report
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, csv, excel]
+            default: json
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: district_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Applications report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+                  summary:
+                    type: object
+                    properties:
+                      total_count:
+                        type: integer
+                      by_status:
+                        type: object
+            text/csv:
+              schema:
+                type: string
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
