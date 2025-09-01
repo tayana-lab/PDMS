@@ -232,9 +232,56 @@ export default function ApplicationDetailsScreen() {
   console.log('ApplicationDetails: Received applicationId:', applicationId);
   console.log('ApplicationDetails: Available applications:', applicationData.applications.map(app => ({ id: app.application_id, name: app.name })));
 
-  const application = applicationData.applications.find(
+  let application = applicationData.applications.find(
     app => app.application_id === applicationId
   ) as HelpDeskApplication | undefined;
+
+  // If not found in real data and it looks like a dummy application ID, create a dummy application
+  if (!application && typeof applicationId === 'string' && applicationId.startsWith('VK')) {
+    console.log('ApplicationDetails: Creating dummy application for ID:', applicationId);
+    const scheme = schemeData.items[0]; // Use first scheme as default
+    application = {
+      id: `demo-${applicationId}`,
+      user_id: 'demo-user',
+      name: 'Demo Voter',
+      voter_id: 'EPIC100000',
+      aadhaar_number: 'XXXX-XXXX-XXXX',
+      mobile_number: '9999999999',
+      email: 'demo@example.com',
+      dob: '1990-01-01T00:00:00',
+      gender: 'MALE',
+      religion: 'Hindu',
+      caste: 'General',
+      address_line1: '123 Demo Street',
+      address_line2: 'Near Demo Circle',
+      district: 'Demo District',
+      assembly_mandalam: 'Demo Mandal',
+      panchayat: null,
+      municipalitie: null,
+      corporation: null,
+      ward: 'Ward 1',
+      pincode: '500001',
+      occupation: 'Household',
+      marital_status: 'Married',
+      income_range: '0-2.5L',
+      benefited_scheme: 'NO',
+      scheme_id: scheme?.id ?? 'scheme-demo',
+      scheme_details: '',
+      required_help: 'Need assistance with pension application documentation.',
+      documents: [],
+      status: 'PENDING',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      state_id: '36',
+      district_id: '501',
+      mandal_id: '1001',
+      ward_id: '1',
+      panchayath_id: null,
+      municipalitie_id: null,
+      corporation_id: null,
+      application_id: applicationId,
+    } as HelpDeskApplication;
+  }
 
   console.log('ApplicationDetails: Found application:', application ? application.name : 'NOT FOUND');
 

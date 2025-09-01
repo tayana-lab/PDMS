@@ -129,7 +129,7 @@ export default function HelpDeskScreen() {
         const statusPool = ['PENDING', 'APPROVED', 'REJECTED'] as const;
         const status = statusPool[i % statusPool.length];
         const id = `demo-${voterIdStr}-${i + 1}`;
-        const appId = `APP/${voterIdStr}/${String(i + 1).padStart(3, '0')}`;
+        const appId = `VK${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}${String(i + 1).padStart(4, '0')}`;
         return {
           id,
           user_id: 'demo-user',
