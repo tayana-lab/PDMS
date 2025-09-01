@@ -72,14 +72,36 @@ interface GovernmentScheme {
 }
 
 export default function HelpDeskScreen() {
-  const { voterId } = useLocalSearchParams();
+  const { voterId, voterName, age, gender } = useLocalSearchParams();
   const { colors } = useAppSettings();
 
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Find voter information
-  const voter = mockVoters.find(v => v.voterId === voterId);
+  // Find voter information with graceful fallback from params
+  const voter = useMemo(() => {
+    const found = mockVoters.find(v => v.voterId === voterId);
+    if (found) return found;
+    const nameFromParam = typeof voterName === 'string' ? decodeURIComponent(voterName) : '';
+    const ageNum = typeof age === 'string' ? Number(age) : undefined;
+    const genderStr = typeof gender === 'string' ? gender : undefined;
+    if (typeof voterId === 'string' && (nameFromParam || ageNum || genderStr)) {
+      return {
+        voterId: voterId,
+        name: nameFromParam || 'Voter',
+        age: ageNum ?? 0,
+        gender: genderStr ?? 'NA',
+        mobileNumber: '',
+        guardianName: '',
+        houseName: '',
+        address: '',
+        ward: '',
+        assemblyConstituency: '',
+        karyakartaName: '—',
+      } as any;
+    }
+    return undefined;
+  }, [voterId, voterName, age, gender]);
   
   // Filter applications for this voter, with dummy fallback when empty
   const voterApplications = useMemo<HelpDeskApplication[]>(() => {

@@ -175,15 +175,16 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
 
 
   const handleHelpDesk = (voter?: Voter) => {
-    if (voter) {
+    const target = voter ?? selectedVoter;
+    if (target) {
       router.push({
         pathname: '/help-desk',
-        params: { voterId: voter.voterId }
-      });
-    } else if (selectedVoter) {
-      router.push({
-        pathname: '/help-desk',
-        params: { voterId: selectedVoter.voterId }
+        params: { 
+          voterId: target.voterId,
+          voterName: encodeURIComponent(target.name),
+          age: String(target.age ?? ''),
+          gender: target.gender ?? ''
+        }
       });
     } else {
       router.push('/help-desk');
