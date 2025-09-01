@@ -229,9 +229,14 @@ export default function ApplicationDetailsScreen() {
   const { applicationId } = useLocalSearchParams();
   const { colors } = useAppSettings();
 
+  console.log('ApplicationDetails: Received applicationId:', applicationId);
+  console.log('ApplicationDetails: Available applications:', applicationData.applications.map(app => ({ id: app.application_id, name: app.name })));
+
   const application = applicationData.applications.find(
     app => app.application_id === applicationId
   ) as HelpDeskApplication | undefined;
+
+  console.log('ApplicationDetails: Found application:', application ? application.name : 'NOT FOUND');
 
   const scheme = schemeData.items.find(
     s => s.id === application?.scheme_id

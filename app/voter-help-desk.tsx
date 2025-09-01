@@ -50,7 +50,11 @@ export default function VoterHelpDeskScreen() {
 
   // Filter applications for this specific voter
   const voterApplications = useMemo(() => {
-    return applicationData.applications.filter(app => app.voter_id === voterId);
+    console.log('VoterHelpDesk: Filtering applications for voter ID:', voterId);
+    console.log('VoterHelpDesk: All available applications:', applicationData.applications.map(app => ({ id: app.application_id, voter_id: app.voter_id, name: app.name })));
+    const filtered = applicationData.applications.filter(app => app.voter_id === voterId);
+    console.log('VoterHelpDesk: Found applications for this voter:', filtered.map(app => ({ id: app.application_id, name: app.name })));
+    return filtered;
   }, [voterId]);
 
   const filteredSchemes = useMemo(() => {
@@ -150,6 +154,8 @@ export default function VoterHelpDeskScreen() {
       <TouchableOpacity 
         style={styles.viewRequestButton}
         onPress={() => {
+          console.log('VoterHelpDesk: Navigating to application details with ID:', item.application_id);
+          console.log('VoterHelpDesk: Full item data:', JSON.stringify(item, null, 2));
           router.push({
             pathname: '/application-details',
             params: { applicationId: item.application_id }
