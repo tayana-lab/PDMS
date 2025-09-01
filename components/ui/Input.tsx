@@ -72,6 +72,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     position: 'relative',
     backgroundColor: colors.background,
     borderRadius: BorderRadius.lg,
@@ -84,14 +85,16 @@ const createStyles = (colors: any) => StyleSheet.create({
   input: {
     flex: 1,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
+    paddingVertical: 0,
     fontSize: 16,
     color: colors.text.primary,
     backgroundColor: 'transparent',
     borderWidth: 0,
     minHeight: 50,
     height: 50,
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+    lineHeight: 20,
+    includeFontPadding: false
   },
   inputWithLeftIcon: {
     paddingLeft: 50
