@@ -150,7 +150,6 @@ export default function VoterHelpDeskScreen() {
       <TouchableOpacity 
         style={styles.viewRequestButton}
         onPress={() => {
-          console.log('Navigating to application details:', item.application_id);
           router.push({
             pathname: '/application-details',
             params: { applicationId: item.application_id }
