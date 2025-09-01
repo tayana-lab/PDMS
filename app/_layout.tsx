@@ -111,6 +111,11 @@ function RootLayoutNav() {
           headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
+        <Stack.Screen name="apply-scheme" options={{ 
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'slide_from_right'
+        }} />
         <Stack.Screen name="splash" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>

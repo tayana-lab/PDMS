@@ -10,8 +10,9 @@ import {
   StatusBar
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
-import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -78,9 +79,7 @@ export default function ApplicationsScreen() {
   const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('myApplications');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [voterIdInput, setVoterIdInput] = useState<string>('');
-  const [showVoterIdModal, setShowVoterIdModal] = useState<boolean>(false);
-  const [selectedScheme, setSelectedScheme] = useState<GovernmentScheme | null>(null);
+
   const { colors, t } = useAppSettings();
 
   const filteredSchemes = useMemo(() => {
@@ -129,34 +128,11 @@ export default function ApplicationsScreen() {
   };
 
   const handleApplyScheme = (scheme: GovernmentScheme) => {
-    setSelectedScheme(scheme);
-    setShowVoterIdModal(true);
+    console.log('Navigating to apply scheme for:', scheme.name);
+    router.push(`/apply-scheme?schemeId=${scheme.id}`);
   };
 
-  const handleVoterIdSubmit = () => {
-    if (!voterIdInput.trim()) {
-      Alert.alert(t('error'), 'Please enter a valid Voter ID');
-      return;
-    }
-    
-    console.log('Applying for scheme:', selectedScheme?.name);
-    console.log('Voter ID:', voterIdInput);
-    
-    Alert.alert(
-      t('applicationSubmitted'),
-      `${t('applicationSubmittedMessage')}\n\nApplication will be processed with voter details for ID: ${voterIdInput}`,
-      [
-        {
-          text: t('ok'),
-          onPress: () => {
-            setShowVoterIdModal(false);
-            setVoterIdInput('');
-            setSelectedScheme(null);
-          }
-        }
-      ]
-    );
-  };
+
 
   const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => {
     const cleanDescription = item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...';
@@ -356,43 +332,7 @@ export default function ApplicationsScreen() {
         </View>
       )}
 
-      {/* Voter ID Input Modal */}
-      {showVoterIdModal && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={[styles.modalTitle, { color: colors.text.primary }]}>{t('enterVoterId')}</Text>
-            <Text style={[styles.modalSubtitle, { color: colors.text.secondary }]}>
-              {t('applyingFor')}: {selectedScheme?.name}
-            </Text>
-            
-            <Input
-              placeholder={t('enterYourVoterId')}
-              value={voterIdInput}
-              onChangeText={setVoterIdInput}
-              style={styles.voterIdInput}
-              autoCapitalize="characters"
-            />
-            
-            <View style={styles.modalButtons}>
-              <Button
-                title={t('cancel')}
-                onPress={() => {
-                  setShowVoterIdModal(false);
-                  setVoterIdInput('');
-                  setSelectedScheme(null);
-                }}
-                variant="outline"
-                style={styles.modalButton}
-              />
-              <Button
-                title={t('submit')}
-                onPress={handleVoterIdSubmit}
-                style={styles.modalButton}
-              />
-            </View>
-          </View>
-        </View>
-      )}
+
       </View>
     </View>
   );
@@ -595,44 +535,5 @@ const createStyles = (colors: any) => StyleSheet.create({
     ...Typography.body,
     textAlign: 'center',
     marginTop: Spacing.md
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: colors.background,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
-    marginHorizontal: Spacing.lg,
-    width: '90%',
-    ...Shadows.large,
-  },
-  modalTitle: {
-    ...Typography.title,
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
-  },
-  modalSubtitle: {
-    ...Typography.body,
-    textAlign: 'center',
-    marginBottom: Spacing.lg,
-  },
-  voterIdInput: {
-    marginBottom: Spacing.lg,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  modalButton: {
-    flex: 1,
   },
 });
