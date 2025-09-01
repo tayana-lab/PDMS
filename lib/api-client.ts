@@ -379,28 +379,49 @@ const mockSchemes: Scheme[] = [
   },
 ];
 
-const mockVoters: Voter[] = Array.from({ length: 50 }).map((_, i) => ({
-  id: i + 1,
-  serial_no: i + 100,
-  name: `Voter ${i + 1}`,
-  guardian_name: `Parent ${i + 1}`,
-  house_name: `House ${i + 1}`,
-  id_card_no: `EPIC${100000 + i}`,
-  district_id: 101,
-  assembly_id: i % 2 === 0 ? 1001 : 1002,
-  local_body_id: 5001,
-  ward_id: i % 3 === 0 ? 7001 : 7002,
-  polling_station_id: i % 2 === 0 ? 9001 : 9002,
-  gender: i % 2 === 0 ? 'Male' : 'Female',
-  age: 18 + (i % 60),
-  dob: '1990-01-01',
-  address_line1: '123 Street',
-  pincode: '695001',
-  mobile_number: `99999${(10000 + i).toString().slice(-5)}`,
-  status: 'Active',
-  created_at: todayIso,
-  updated_at: todayIso,
-}));
+const realVoterNames = [
+  { name: 'Rajesh Kumar', guardian: 'Suresh Kumar', house: 'Kumar Villa', mobile: '9876543210', age: 45, gender: 'Male', voterId: 'BJP001234', inclination: 'BJP' },
+  { name: 'Meera Devi', guardian: 'Raman Nair', house: 'Nair House', mobile: '', age: 52, gender: 'Female', voterId: 'IND005678', inclination: 'Neutral' },
+  { name: 'Arjun Menon', guardian: 'Krishnan Menon', house: 'Menon Bhavan', mobile: '8765432109', age: 38, gender: 'Male', voterId: 'BJP009876', inclination: 'BJP' },
+  { name: 'Priya Nair', guardian: 'Ravi Nair', house: 'Nair Residence', mobile: '9123456789', age: 34, gender: 'Female', voterId: 'BJP002345', inclination: 'BJP' },
+  { name: 'Arun Pillai', guardian: 'Gopal Pillai', house: 'Pillai House', mobile: '9234567890', age: 41, gender: 'Male', voterId: 'INC003456', inclination: 'Inclined' },
+  { name: 'Lakshmi Pillai', guardian: 'Krishnan Pillai', house: 'Lakshmi Bhavan', mobile: '9345678901', age: 48, gender: 'Female', voterId: 'NEU004567', inclination: 'Neutral' },
+  { name: 'Sunil Kumar', guardian: 'Mohan Kumar', house: 'Kumar Nivas', mobile: '9456789012', age: 55, gender: 'Male', voterId: 'ANT005678', inclination: 'Anti' },
+  { name: 'Ramesh Kumar', guardian: 'Vijay Kumar', house: 'Ramesh Villa', mobile: '9567890123', age: 42, gender: 'Male', voterId: 'BJP006789', inclination: 'BJP' },
+  { name: 'Sita Devi', guardian: 'Ram Prasad', house: 'Sita Mandir', mobile: '', age: 39, gender: 'Female', voterId: 'IND007890', inclination: 'Neutral' },
+  { name: 'Vinod Menon', guardian: 'Raman Menon', house: 'Vinod House', mobile: '9678901234', age: 36, gender: 'Male', voterId: 'BJP008901', inclination: 'BJP' },
+  { name: 'Test Name X01', guardian: 'Test Guardian', house: 'Test House', mobile: '7012311734', age: 41, gender: 'Male', voterId: '123456789101', inclination: 'BJP' },
+  { name: 'Midhun P', guardian: 'Midhun Guardian', house: 'Midhun House', mobile: '9074842009', age: 30, gender: 'Male', voterId: 'V123456789', inclination: 'BJP' }
+];
+
+const mockVoters: Voter[] = Array.from({ length: 50 }).map((_, i) => {
+  const realVoter = realVoterNames[i % realVoterNames.length];
+  const suffix = i >= realVoterNames.length ? ` ${Math.floor(i / realVoterNames.length) + 1}` : '';
+  
+  return {
+    id: i + 1,
+    serial_no: i + 100,
+    name: realVoter.name + suffix,
+    guardian_name: realVoter.guardian + suffix,
+    house_name: realVoter.house + suffix,
+    id_card_no: i < realVoterNames.length ? realVoter.voterId : `EPIC${100000 + i}`,
+    district_id: 101,
+    assembly_id: i % 2 === 0 ? 1001 : 1002,
+    local_body_id: 5001,
+    ward_id: i % 3 === 0 ? 7001 : 7002,
+    polling_station_id: i % 2 === 0 ? 9001 : 9002,
+    gender: realVoter.gender as 'Male' | 'Female',
+    age: realVoter.age + (i >= realVoterNames.length ? Math.floor(i / realVoterNames.length) : 0),
+    dob: '1990-01-01',
+    address_line1: '123 Street',
+    pincode: '695001',
+    mobile_number: realVoter.mobile || `99999${(10000 + i).toString().slice(-5)}`,
+    political_inclination: realVoter.inclination,
+    status: 'Active',
+    created_at: todayIso,
+    updated_at: todayIso,
+  };
+});
 
 const mockApplications: Application[] = Array.from({ length: 24 }).map((_, i) => ({
   id: i + 1,
