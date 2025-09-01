@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
 import SplashScreen from "./splash";
 import { ConfirmProvider, ConfirmContainer } from "@/hooks/useConfirm";
+import { trpc, trpcClient } from "@/lib/trpc";
 
 ExpoSplashScreen.preventAutoHideAsync();
 
@@ -105,6 +106,11 @@ function RootLayoutNav() {
           gestureEnabled: true,
           animation: 'slide_from_right'
         }} />
+        <Stack.Screen name="backend-test" options={{ 
+          title: "Backend Test",
+          headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
+          headerTintColor: colors?.text?.primary || '#000000'
+        }} />
         <Stack.Screen name="splash" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
@@ -127,16 +133,18 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppSettingsProvider>
-        <ConfirmProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootLayoutNav />
-            <ConfirmContainer />
-          </GestureHandlerRootView>
-        </ConfirmProvider>
-      </AppSettingsProvider>
-    </QueryClientProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AppSettingsProvider>
+          <ConfirmProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <RootLayoutNav />
+              <ConfirmContainer />
+            </GestureHandlerRootView>
+          </ConfirmProvider>
+        </AppSettingsProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 
