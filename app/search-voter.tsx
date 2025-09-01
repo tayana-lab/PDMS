@@ -785,7 +785,9 @@ const createStyles = (colors: any) => StyleSheet.create({
     paddingHorizontal: 0,
     backgroundColor: 'transparent',
     borderWidth: 0,
-    minHeight: 48,
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center',
   },
   barcodeButton: {
     padding: Spacing.sm,

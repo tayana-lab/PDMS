@@ -442,7 +442,9 @@ bannerWrapper: {
       paddingHorizontal: 0,
       backgroundColor: "transparent",
       borderWidth: 0,
-      minHeight: 48,
+      minHeight: 50,
+      height: 50,
+      textAlignVertical: 'center',
     },
     pinInput: {
       paddingRight: 50,

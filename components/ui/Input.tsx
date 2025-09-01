@@ -77,6 +77,8 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: colors.border,
+    minHeight: 50,
+    height: 50,
     ...Shadows.small,
   },
   input: {
@@ -87,7 +89,9 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: colors.text.primary,
     backgroundColor: 'transparent',
     borderWidth: 0,
-    minHeight: 48
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center'
   },
   inputWithLeftIcon: {
     paddingLeft: 50
