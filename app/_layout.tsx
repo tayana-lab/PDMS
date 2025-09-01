@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
 import SplashScreen from "./splash";
 import { ConfirmProvider, ConfirmContainer } from "@/hooks/useConfirm";
-import { trpc, trpcClient } from "@/lib/trpc";
+
 
 ExpoSplashScreen.preventAutoHideAsync();
 
@@ -133,8 +133,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
         <AppSettingsProvider>
           <ConfirmProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -144,7 +143,6 @@ export default function RootLayout() {
           </ConfirmProvider>
         </AppSettingsProvider>
       </QueryClientProvider>
-    </trpc.Provider>
   );
 }
 

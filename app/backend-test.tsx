@@ -1,53 +1,57 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { trpc } from '@/lib/trpc';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useDashboardAnalytics } from '@/hooks/useApi';
 
 export default function BackendTest() {
-  const [name, setName] = useState('');
-  const [result, setResult] = useState<string>('');
+  const [testResult, setTestResult] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const dashboardQuery = useDashboardAnalytics();
 
-  const hiMutation = trpc.example.hi.useMutation({
-    onSuccess: (data) => {
-      setResult(`Hello ${data.hello}! Server time: ${data.date}`);
-    },
-    onError: (error) => {
-      Alert.alert('Error', error.message);
-    },
-  });
-
-  const handleTest = () => {
-    if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a name');
-      return;
+  const handleTest = async () => {
+    setIsLoading(true);
+    try {
+      await dashboardQuery.refetch();
+      if (dashboardQuery.data) {
+        setTestResult(`API Test Successful! Found ${dashboardQuery.data.total_applications} applications and ${dashboardQuery.data.total_voters} voters.`);
+      } else {
+        setTestResult('API connected but no data received.');
+      }
+    } catch {
+      Alert.alert('Error', 'Failed to connect to API');
+      setTestResult('API connection failed.');
+    } finally {
+      setIsLoading(false);
     }
-    hiMutation.mutate({ name: name.trim() });
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Backend Test</Text>
-      <Text style={styles.subtitle}>Test your tRPC backend connection</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={setName}
-      />
+      <Text style={styles.subtitle}>Test your REST API backend connection</Text>
       
       <TouchableOpacity 
         style={styles.button} 
         onPress={handleTest}
-        disabled={hiMutation.isPending}
+        disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {hiMutation.isPending ? 'Testing...' : 'Test Backend'}
+          {isLoading ? 'Testing...' : 'Test API Connection'}
         </Text>
       </TouchableOpacity>
       
-      {result ? (
+      {testResult ? (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>{result}</Text>
+          <Text style={styles.resultText}>{testResult}</Text>
+        </View>
+      ) : null}
+      
+      {dashboardQuery.data ? (
+        <View style={styles.dataContainer}>
+          <Text style={styles.dataTitle}>Dashboard Data:</Text>
+          <Text style={styles.dataText}>Applications: {dashboardQuery.data.total_applications}</Text>
+          <Text style={styles.dataText}>Voters: {dashboardQuery.data.total_voters}</Text>
+          <Text style={styles.dataText}>Schemes: {dashboardQuery.data.total_schemes}</Text>
         </View>
       ) : null}
     </View>
@@ -74,15 +78,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     color: '#666',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-  },
+
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
@@ -106,5 +102,25 @@ const styles = StyleSheet.create({
     color: '#2E7D32',
     fontSize: 16,
     textAlign: 'center',
+  },
+  dataContainer: {
+    backgroundColor: '#f0f8ff',
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2196F3',
+    marginTop: 10,
+  },
+  dataTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1976D2',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  dataText: {
+    color: '#1976D2',
+    fontSize: 14,
+    marginBottom: 5,
   },
 });
