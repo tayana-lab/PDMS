@@ -890,5 +890,5 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(false,false);
+export const apiClient = new ApiClient();
 export default apiClient;
