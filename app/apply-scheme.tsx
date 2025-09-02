@@ -707,7 +707,7 @@ export default function ApplySchemeScreen() {
           >
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Apply for Scheme</Text>
+          <Text style={styles.headerTitle}>{scheme?.name || 'Apply for Scheme'}</Text>
           <View style={styles.headerSpacer} />
         </View>
       </SafeAreaView>
@@ -719,12 +719,6 @@ export default function ApplySchemeScreen() {
       >
         {/* Step Indicator */}
         {renderStepIndicator()}
-        
-        {/* Scheme Info */}
-        <Card style={styles.schemeInfoCard}>
-          <Text style={[styles.schemeName, { color: colors.text.primary }]}>{scheme.name}</Text>
-          <Text style={[styles.schemeCategory, { color: colors.primary }]}>{scheme.category}</Text>
-        </Card>
         
         {/* Form Content */}
         <ScrollView 
@@ -839,19 +833,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     height: 2,
     marginHorizontal: Spacing.xs,
   },
-  schemeInfoCard: {
-    margin: Spacing.md,
-    padding: Spacing.md,
-  },
-  schemeName: {
-    ...Typography.subtitle,
-    fontWeight: '600',
-    marginBottom: Spacing.xs,
-  },
-  schemeCategory: {
-    ...Typography.caption,
-    fontWeight: '600',
-  },
+
   formContainer: {
     flex: 1,
   },
