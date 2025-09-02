@@ -228,34 +228,36 @@ export default function LoginScreen() {
 
           {/* Login Card */}
           <View style={styles.loginCard}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
-              <View style={styles.inputWrapper}>
-                <Phone
-                  size={20}
-                  color={colors.text.light}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={mobileNumber}
-                  onChangeText={setMobileNumber}
-                  placeholder={t('enterMobileNumber')}
-                  placeholderTextColor={colors.text.light}
-                  keyboardType="phone-pad"
-                  maxLength={10}
-                />
-              </View>
-            </View>
-
             {!otpSent ? (
-              <Button
-                title={isLoading ? "Sending OTP..." : "Send OTP"}
-                onPress={handleRequestOtp}
-                disabled={isLoading || mobileNumber.length !== 10}
-                loading={isLoading}
-                style={styles.loginButton}
-              />
+              <>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
+                  <View style={styles.inputWrapper}>
+                    <Phone
+                      size={20}
+                      color={colors.text.light}
+                      style={styles.inputIcon}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      value={mobileNumber}
+                      onChangeText={setMobileNumber}
+                      placeholder={t('enterMobileNumber')}
+                      placeholderTextColor={colors.text.light}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                    />
+                  </View>
+                </View>
+
+                <Button
+                  title={isLoading ? "Sending OTP..." : "Send OTP"}
+                  onPress={handleRequestOtp}
+                  disabled={isLoading || mobileNumber.length !== 10}
+                  loading={isLoading}
+                  style={styles.loginButton}
+                />
+              </>
             ) : (
               <>
                 <View style={styles.inputContainer}>
