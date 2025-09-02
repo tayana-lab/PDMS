@@ -11,12 +11,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react-native';
+import { FileText, Clock, CheckCircle, XCircle, Search } from 'lucide-react-native';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { TextInput } from 'react-native';
 import schemeData from '../SchemeDetails.json';
 import applicationData from '../ApplicationDetails.json';
 
@@ -263,12 +264,17 @@ export default function ApplicationsScreen() {
         <View style={styles.tabContent}>
           {/* Search and Filter */}
           <View style={styles.searchFilterContainer}>
-            <Input
-              placeholder={t('searchSchemes')}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              style={styles.searchInput}
-            />
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color={colors.text.light} style={styles.searchIcon} />
+              <TextInput
+                placeholder={t('searchSchemes')}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={styles.searchInput}
+                placeholderTextColor={colors.text.light}
+                returnKeyType="search"
+              />
+            </View>
             
             <ScrollView 
               horizontal 
@@ -409,8 +415,35 @@ const createStyles = (colors: any) => StyleSheet.create({
   searchFilterContainer: {
     marginBottom: Spacing.lg,
   },
-  searchInput: {
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
     marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  searchIcon: {
+    marginRight: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center',
   },
   filterContainer: {
     marginBottom: Spacing.sm,
