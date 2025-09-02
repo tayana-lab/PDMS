@@ -190,7 +190,13 @@ export default function ApplicationsScreen() {
         </Text>
       </View>
       
-      <TouchableOpacity style={styles.viewDetailsButton}>
+      <TouchableOpacity 
+        style={styles.viewDetailsButton}
+        onPress={() => {
+          console.log('Navigating to application details for:', item.application_id);
+          router.push(`/application-details?applicationId=${item.application_id}`);
+        }}
+      >
         <Text style={[styles.viewDetailsText, { color: colors.primary }]}>{t('viewDetails')}</Text>
       </TouchableOpacity>
     </Card>
