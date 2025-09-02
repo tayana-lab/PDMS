@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBar
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -211,26 +212,28 @@ export default function VoterHelpDeskScreen() {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: `${t('helpDesk') || 'HelpDesk'} - ${decodedVoterName}`,
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <ArrowLeft size={24} color={colors.text.primary} />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            fontSize: 16,
-            fontWeight: '600',
-            color: colors.text.primary,
-          },
-        }}
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      <StatusBar 
+        backgroundColor={colors.primary} 
+        barStyle="light-content" 
+        translucent={false}
       />
+      
+      {/* Header */}
+      <SafeAreaView edges={['top']} style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <ArrowLeft size={24} color={colors.text.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{`${t('helpDesk') || 'HelpDesk'} - ${decodedVoterName}`}</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+      </SafeAreaView>
       
       {/* Voter Info Header */}
       <View style={styles.voterInfoHeader}>
@@ -334,7 +337,7 @@ export default function VoterHelpDeskScreen() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -343,9 +346,34 @@ const createStyles = (colors: any) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  header: {
+    backgroundColor: colors.primary,
+  },
+  headerContent: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    minHeight: 56,
+  },
   backButton: {
+    position: 'absolute',
+    left: Spacing.md,
     padding: Spacing.xs,
-    marginLeft: -Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  headerTitle: {
+    ...Typography.title,
+    color: colors.text.white,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: Spacing.md,
+  },
+  headerSpacer: {
+    width: 40,
   },
   voterInfoHeader: {
     flexDirection: 'row',
