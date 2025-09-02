@@ -178,16 +178,22 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     const target = voter ?? selectedVoter;
     if (target) {
       router.push({
-        pathname: '/help-desk',
+        pathname: '/voter-help-desk',
         params: { 
           voterId: target.voterId,
           voterName: encodeURIComponent(target.name),
           age: String(target.age ?? ''),
-          gender: target.gender ?? ''
+          gender: target.gender ?? '',
+          mobileNumber: target.mobileNumber ?? '',
+          guardianName: encodeURIComponent(target.guardianName ?? ''),
+          houseName: encodeURIComponent(target.houseName ?? ''),
+          address: encodeURIComponent(target.address ?? ''),
+          ward: target.ward ?? '',
+          assemblyConstituency: encodeURIComponent(target.assemblyConstituency ?? '')
         }
       });
     } else {
-      router.push('/help-desk');
+      router.push('/voter-help-desk');
     }
   };
 

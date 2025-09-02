@@ -4,8 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  Alert
+  TouchableOpacity
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,7 +39,18 @@ interface GovernmentScheme {
 }
 
 export default function VoterHelpDeskScreen() {
-  const { voterId, voterName } = useLocalSearchParams();
+  const { 
+    voterId, 
+    voterName, 
+    age, 
+    gender, 
+    mobileNumber, 
+    guardianName, 
+    houseName, 
+    address, 
+    ward, 
+    assemblyConstituency 
+  } = useLocalSearchParams();
   const { colors, t } = useAppSettings();
 
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
@@ -106,26 +116,24 @@ export default function VoterHelpDeskScreen() {
     console.log('Applying for scheme:', scheme.name);
     console.log('Voter ID:', voterId);
     console.log('Voter Name:', decodedVoterName);
-    Alert.alert(
-      t('applyForScheme') || 'Apply for Scheme',
-      `${t('applyingFor') || 'Applying for'}: ${scheme.name}\n\n${t('voterDetails') || 'Voter Details'}:\n${t('name') || 'Name'}: ${decodedVoterName}\n${t('voterId') || 'Voter ID'}: ${voterId}\n\n${t('applicationWillBeProcessed') || 'Application will be processed with the above voter details.'}`,
-      [
-        {
-          text: t('cancel') || 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: t('submit') || 'Submit',
-          onPress: () => {
-            Alert.alert(
-              t('applicationSubmitted') || 'Application Submitted',
-              t('applicationSubmittedMessage') || 'Your application has been submitted successfully and will be processed soon.',
-              [{ text: t('ok') || 'OK' }]
-            );
-          }
-        }
-      ]
-    );
+    
+    // Navigate to apply-scheme page with voter data and scheme ID
+    router.push({
+      pathname: '/apply-scheme',
+      params: {
+        schemeId: scheme.id,
+        voterId: voterId,
+        voterName: encodeURIComponent(decodedVoterName),
+        age: age || '',
+        gender: gender || '',
+        mobileNumber: mobileNumber || '',
+        guardianName: guardianName || '',
+        houseName: houseName || '',
+        address: address || '',
+        ward: ward || '',
+        assemblyConstituency: assemblyConstituency || ''
+      }
+    });
   };
 
   const renderApplicationItem = ({ item }: { item: HelpDeskApplication }) => (

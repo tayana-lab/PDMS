@@ -96,7 +96,32 @@ const maritalStatusOptions = ['Single', 'Married', 'Divorced', 'Widowed'];
 const incomeRangeOptions = ['Below 1L', '1-3L', '3-5L', '5-10L', '10L+'];
 
 export default function ApplySchemeScreen() {
-  const { schemeId } = useLocalSearchParams<{ schemeId: string }>();
+  const { 
+    schemeId, 
+    voterId, 
+    voterName, 
+    age, 
+    gender, 
+    mobileNumber, 
+    guardianName, 
+    houseName, 
+    address, 
+    ward, 
+    assemblyConstituency 
+  } = useLocalSearchParams<{ 
+    schemeId: string;
+    voterId?: string;
+    voterName?: string;
+    age?: string;
+    gender?: string;
+    mobileNumber?: string;
+    guardianName?: string;
+    houseName?: string;
+    address?: string;
+    ward?: string;
+    assemblyConstituency?: string;
+  }>();
+  
   const [scheme, setScheme] = useState<GovernmentScheme | null>(null);
   const [formData, setFormData] = useState<ApplicationForm>(initialFormData);
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -118,6 +143,46 @@ export default function ApplySchemeScreen() {
       }
     }
   }, [schemeId]);
+
+  // Auto-fill form with voter data when available
+  useEffect(() => {
+    if (voterId && voterName) {
+      console.log('ApplyScheme: Auto-filling form with voter data:', {
+        voterId,
+        voterName: decodeURIComponent(voterName),
+        age,
+        gender,
+        mobileNumber
+      });
+      
+      const decodedVoterName = decodeURIComponent(voterName);
+      const decodedGuardianName = guardianName ? decodeURIComponent(guardianName) : '';
+      const decodedHouseName = houseName ? decodeURIComponent(houseName) : '';
+      const decodedAddress = address ? decodeURIComponent(address) : '';
+      const decodedAssemblyConstituency = assemblyConstituency ? decodeURIComponent(assemblyConstituency) : '';
+      
+      // Calculate date of birth from age if available
+      let dateOfBirth = '';
+      if (age && parseInt(age) > 0) {
+        const currentYear = new Date().getFullYear();
+        const birthYear = currentYear - parseInt(age);
+        dateOfBirth = `01/01/${birthYear}`;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        fullName: decodedVoterName,
+        voterId: voterId,
+        mobileNumber: mobileNumber || '',
+        dateOfBirth: dateOfBirth,
+        gender: gender?.toUpperCase() || '',
+        addressLine1: decodedHouseName,
+        addressLine2: decodedAddress,
+        ward: ward || '',
+        assemblyMandalam: decodedAssemblyConstituency
+      }));
+    }
+  }, [voterId, voterName, age, gender, mobileNumber, guardianName, houseName, address, ward, assemblyConstituency]);
 
   const updateFormData = (field: keyof ApplicationForm, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
