@@ -13,6 +13,8 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { router } from "expo-router";
 import { Phone } from "lucide-react-native";
@@ -166,14 +168,15 @@ export default function LoginScreen() {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
-        backgroundColor={colors.surface}
-      />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+          backgroundColor={colors.surface}
+        />
 
-      {/* BJP Banner Carousel */}
-      <View style={styles.bannerWrapper}>
+        {/* BJP Banner Carousel */}
+        <View style={styles.bannerWrapper}>
         <ScrollView
           ref={scrollViewRef}
           horizontal
@@ -344,7 +347,8 @@ export default function LoginScreen() {
           </View>
   
       </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
