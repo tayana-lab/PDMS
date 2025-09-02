@@ -105,7 +105,9 @@ export default function ProfileScreen() {
               <Text style={[styles.userName, { color: colors.text.primary }]}>{user.name}</Text>
               <Text style={[styles.userRole, { color: colors.primary }]}>{user.role}</Text>
             </View>
-
+            <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+              <Edit size={20} color={colors.primary} />
+            </TouchableOpacity>
           </View>
 
           <View style={styles.profileDetails}>
