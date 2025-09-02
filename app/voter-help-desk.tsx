@@ -65,8 +65,47 @@ export default function VoterHelpDeskScreen() {
     console.log('VoterHelpDesk: All available applications:', applicationData.applications.map(app => ({ id: app.application_id, voter_id: app.voter_id, name: app.name })));
     const filtered = applicationData.applications.filter(app => app.voter_id === voterId);
     console.log('VoterHelpDesk: Found applications for this voter:', filtered.map(app => ({ id: app.application_id, name: app.name })));
+    
+    // If no real applications found, return dummy data for Rajesh Kumar
+    if (filtered.length === 0 && decodedVoterName.toLowerCase().includes('rajesh')) {
+      // Dummy recent requests for Rajesh Kumar
+      const dummyRequests: HelpDeskApplication[] = [
+        {
+          id: 'dummy-1',
+          name: 'Pradhan Mantri Awas Yojana Application',
+          voter_id: voterId as string,
+          mobile_number: mobileNumber as string || '9876543210',
+          status: 'PENDING',
+          application_id: 'PMAY-2024-001',
+          created_at: '2024-01-15T10:30:00Z',
+          required_help: 'Document verification assistance required'
+        },
+        {
+          id: 'dummy-2',
+          name: 'PM Kisan Samman Nidhi Scheme',
+          voter_id: voterId as string,
+          mobile_number: mobileNumber as string || '9876543210',
+          status: 'APPROVED',
+          application_id: 'PMKSN-2024-002',
+          created_at: '2024-01-10T14:20:00Z',
+          required_help: 'Bank account linking support'
+        },
+        {
+          id: 'dummy-3',
+          name: 'Ayushman Bharat Health Insurance',
+          voter_id: voterId as string,
+          mobile_number: mobileNumber as string || '9876543210',
+          status: 'REJECTED',
+          application_id: 'ABHI-2024-003',
+          created_at: '2024-01-05T09:15:00Z',
+          required_help: 'Income certificate clarification needed'
+        }
+      ];
+      return dummyRequests;
+    }
+    
     return filtered;
-  }, [voterId]);
+  }, [voterId, decodedVoterName, mobileNumber]);
 
   const filteredSchemes = useMemo(() => {
     let schemes = schemeData.items;
