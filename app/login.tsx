@@ -38,6 +38,7 @@ export default function LoginScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const otpInputRefs = useRef<TextInput[]>([]);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   // Banner images array
   const bannerImages = [
@@ -75,6 +76,23 @@ export default function LoginScreen() {
     }, 4000);
     return () => clearInterval(interval);
   }, [bannerImages.length]);
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   // OTP Timer
   useEffect(() => {
@@ -175,41 +193,41 @@ export default function LoginScreen() {
           backgroundColor={colors.surface}
         />
 
-        {/* BJP Banner Carousel */}
-        <View style={styles.bannerWrapper}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onMomentumScrollEnd={(event) => {
-            const index = Math.round(event.nativeEvent.contentOffset.x / width);
-            setCurrentBannerIndex(index);
-          }}
-        >
-          {bannerImages.map((banner, index) => (
-            <View key={index} style={styles.bannerSlide}>
-              <Image 
-                source={{ uri: banner.uri }} 
-                style={styles.bannerImage} 
-                resizeMode="cover"
-              />
-              <View style={styles.bannerOverlay}>
-                <Text style={styles.bannerSlogan}>
-                  &ldquo;{banner.slogan}&rdquo;
-                </Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-        
-   
-      </View>
+        {/* BJP Banner Carousel - Hide when keyboard is visible */}
+        {!isKeyboardVisible && (
+          <View style={styles.bannerWrapper}>
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={16}
+              onMomentumScrollEnd={(event) => {
+                const index = Math.round(event.nativeEvent.contentOffset.x / width);
+                setCurrentBannerIndex(index);
+              }}
+            >
+              {bannerImages.map((banner, index) => (
+                <View key={index} style={styles.bannerSlide}>
+                  <Image 
+                    source={{ uri: banner.uri }} 
+                    style={styles.bannerImage} 
+                    resizeMode="cover"
+                  />
+                  <View style={styles.bannerOverlay}>
+                    <Text style={styles.bannerSlogan}>
+                      &ldquo;{banner.slogan}&rdquo;
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
       {/* Main Content */}
       <KeyboardAvoidingView
-        style={styles.mainContent}
+        style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
@@ -419,6 +437,10 @@ bannerWrapper: {
       flex: 0.7,
       marginHorizontal: Spacing.lg,  
       justifyContent: "center", 
+    },
+    mainContentKeyboardVisible: {
+      flex: 1,
+      justifyContent: "center",
     },
     scrollContent: {
       flexGrow: 1,
