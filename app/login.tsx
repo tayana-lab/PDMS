@@ -15,7 +15,7 @@ import {
   TextInput,
 } from "react-native";
 import { router } from "expo-router";
-import { Eye, EyeOff, Phone, Lock } from "lucide-react-native";
+import { Phone } from "lucide-react-native";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 
@@ -27,13 +27,15 @@ const { width } = Dimensions.get("window");
 
 export default function LoginScreen() {
   const [mobileNumber, setMobileNumber] = useState("");
-  const [otp, setOtp] = useState("");
+
+  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
   const [showOtp, setShowOtp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otpTimer, setOtpTimer] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const otpInputRefs = useRef<TextInput[]>([]);
 
   // Banner images array
   const bannerImages = [
@@ -106,12 +108,30 @@ export default function LoginScreen() {
     }
   };
 
+  const handleOtpChange = (value: string, index: number) => {
+    const newOtpDigits = [...otpDigits];
+    newOtpDigits[index] = value;
+    setOtpDigits(newOtpDigits);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyPress = (key: string, index: number) => {
+    if (key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
   const handleLogin = async () => {
-    if (!mobileNumber.trim() || !otp.trim()) {
+    const otpValue = otpDigits.join('');
+    if (!mobileNumber.trim() || !otpValue.trim()) {
       Alert.alert(t('error'), "Please enter both mobile number and OTP");
       return;
     }
-    if (otp.length !== 6) {
+    if (otpValue.length !== 6) {
       Alert.alert(t('error'), "OTP must be 6 digits");
       return;
     }
@@ -120,11 +140,11 @@ export default function LoginScreen() {
     try {
       const response = await loginMutation.mutateAsync({
         mobile_number: mobileNumber,
-        otp: otp,
+        otp: otpValue,
       });
       
       // Update local auth state
-      await login(mobileNumber, otp);
+      await login(mobileNumber, otpValue);
       
       Alert.alert(t('success'), `Welcome ${response.karyakarta.name}!`);
       router.replace("/(tabs)");
@@ -239,40 +259,51 @@ export default function LoginScreen() {
             ) : (
               <>
                 <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>OTP</Text>
-                  <View style={styles.inputWrapper}>
-                    <Lock
-                      size={20}
-                      color={colors.text.light}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={[styles.input, styles.pinInput]}
-                      value={otp}
-                      onChangeText={setOtp}
-                      placeholder="Enter 6-digit OTP"
-                      placeholderTextColor={colors.text.light}
-                      secureTextEntry={!showOtp}
-                      keyboardType="numeric"
-                      maxLength={6}
-                    />
-                    <TouchableOpacity
-                      style={styles.eyeIcon}
-                      onPress={() => setShowOtp(!showOtp)}
-                    >
-                      {showOtp ? (
-                        <Eye size={20} color={colors.text.light} />
-                      ) : (
-                        <EyeOff size={20} color={colors.text.light} />
-                      )}
-                    </TouchableOpacity>
+                  <Text style={styles.inputLabel}>Enter OTP</Text>
+                  <View style={styles.otpContainer}>
+                    {otpDigits.map((digit, index) => (
+                      <TextInput
+                        key={index}
+                        ref={(ref) => {
+                          if (ref) {
+                            otpInputRefs.current[index] = ref;
+                          }
+                        }}
+                        style={[
+                          styles.otpBox,
+                          digit ? styles.otpBoxFilled : null
+                        ]}
+                        value={digit}
+                        onChangeText={(value) => {
+                          if (value.length <= 1) {
+                            handleOtpChange(value, index);
+                          }
+                        }}
+                        onKeyPress={({ nativeEvent }) => {
+                          handleOtpKeyPress(nativeEvent.key, index);
+                        }}
+                        keyboardType="numeric"
+                        maxLength={1}
+                        textAlign="center"
+                        secureTextEntry={!showOtp}
+                        selectTextOnFocus
+                      />
+                    ))}
                   </View>
+                  <TouchableOpacity
+                    style={styles.showHideButton}
+                    onPress={() => setShowOtp(!showOtp)}
+                  >
+                    <Text style={styles.showHideText}>
+                      {showOtp ? 'Hide' : 'Show'} OTP
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
                 <Button
                   title={isLoading ? t('loggingIn') : t('login')}
                   onPress={handleLogin}
-                  disabled={isLoading || otp.length !== 6}
+                  disabled={isLoading || otpDigits.join('').length !== 6}
                   loading={isLoading}
                   style={styles.loginButton}
                 />
@@ -489,5 +520,35 @@ bannerWrapper: {
       fontSize: 14,
       color: colors.primary,
       fontWeight: "500",
+    },
+    otpContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: Spacing.sm,
+    },
+    otpBox: {
+      width: 45,
+      height: 50,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: BorderRadius.md,
+      backgroundColor: colors.surface,
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.text.primary,
+      ...Shadows.small,
+    },
+    otpBoxFilled: {
+      borderColor: colors.primary,
+      backgroundColor: colors.background,
+    },
+    showHideButton: {
+      alignSelf: 'flex-end',
+      paddingVertical: Spacing.xs,
+    },
+    showHideText: {
+      fontSize: 14,
+      color: colors.primary,
+      fontWeight: '500',
     },
   });
