@@ -6,11 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, FileText, Clock, CheckCircle, XCircle, Eye } from 'lucide-react-native';
-import Input from '@/components/ui/Input';
+import { ArrowLeft, FileText, Clock, CheckCircle, XCircle, Eye, Search } from 'lucide-react-native';
+
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
@@ -415,12 +416,17 @@ export default function HelpDeskScreen() {
           
           {/* Search and Filter */}
           <View style={styles.searchFilterContainer}>
-            <Input
-              placeholder="Search schemes..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              style={styles.searchInput}
-            />
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color={colors.text.light} style={styles.searchIcon} />
+              <TextInput
+                placeholder="Search schemes..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={styles.searchInput}
+                placeholderTextColor={colors.text.light}
+                returnKeyType="search"
+              />
+            </View>
             
             <ScrollView 
               horizontal 
@@ -788,8 +794,31 @@ headerContent: {
     paddingTop: Spacing.md,
     marginBottom: Spacing.lg,
   },
-  searchInput: {
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...Shadows.small,
     marginBottom: Spacing.md,
+  },
+  searchIcon: {
+    marginRight: Spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center',
   },
   filterContainer: {
     marginBottom: Spacing.sm,
