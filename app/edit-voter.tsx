@@ -576,7 +576,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     textAlign: 'left',
   },
   editFieldContainer: {
-    marginBottom: Spacing.lg,
+    //marginBottom: Spacing.lg,
   },
 
   multilineInput: {
