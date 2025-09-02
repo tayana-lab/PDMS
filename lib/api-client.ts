@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_CONFIG = {
   baseUrl: 'https://pdms.tayana.in/v1',
-  stagingUrl: 'https://staging.pdms.tayana.in/v1',
+  stagingUrl: 'https://stagingpdms.tayana.in/v1',
   timeout: 30000,
 };
 
