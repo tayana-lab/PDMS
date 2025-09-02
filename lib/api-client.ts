@@ -585,7 +585,7 @@ class ApiClient {
     }
     if (endpoint === '/auth/login' && method === 'POST') {
       const res = {
-        token: 'mock-token-123',
+        token: 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc4ODM1NDQ3MiwiaWF0IjoxNzU2ODE4NDcyfQ.OibuVcxz-JfKtlyN-uCsCGDvPFvqhG_JDS1Occt4kP4',
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         karyakarta: { id: 1, name: 'Mock User', mobile_number: '9999900000', role: 'Admin', status: 'Active' },
         permissions: ['read', 'write'],
