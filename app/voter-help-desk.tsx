@@ -339,12 +339,6 @@ export default function VoterHelpDeskScreen() {
                 placeholderTextColor={colors.text.light}
                 returnKeyType="search"
               />
-              <TouchableOpacity 
-                style={styles.searchIconButton}
-                onPress={() => {}}
-              >
-                <Search size={18} color={colors.primary} />
-              </TouchableOpacity>
             </View>
             
             <ScrollView 
@@ -628,14 +622,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     height: 50,
     textAlignVertical: 'center',
   },
-  searchIconButton: {
-    padding: Spacing.sm,
-    marginLeft: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
+
   filterContainer: {
     marginBottom: Spacing.sm,
   },
