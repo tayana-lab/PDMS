@@ -236,48 +236,71 @@ export default function ApplicationDetailsScreen() {
     app => app.application_id === applicationId
   ) as HelpDeskApplication | undefined;
 
-  // If not found in real data and it looks like a dummy application ID, create a dummy application
-  if (!application && typeof applicationId === 'string' && applicationId.startsWith('VK')) {
+  // If not found in real data, create a dummy application for demo purposes
+  if (!application && typeof applicationId === 'string') {
     console.log('ApplicationDetails: Creating dummy application for ID:', applicationId);
+    
+    // Determine details based on application ID
+    let requiredHelp = 'Need assistance with application documentation.';
+    let status = 'PENDING';
+    let createdDate = new Date().toISOString();
+    
+    if (applicationId.includes('PMAY')) {
+      requiredHelp = 'Document verification assistance required';
+      status = 'PENDING';
+      createdDate = '2024-01-15T10:30:00Z';
+    } else if (applicationId.includes('PMKSN')) {
+      requiredHelp = 'Bank account linking support';
+      status = 'APPROVED';
+      createdDate = '2024-01-10T14:20:00Z';
+    } else if (applicationId.includes('ABHI')) {
+      requiredHelp = 'Income certificate clarification needed';
+      status = 'REJECTED';
+      createdDate = '2024-01-05T09:15:00Z';
+    }
+    
     const scheme = schemeData.items[0]; // Use first scheme as default
     application = {
       id: `demo-${applicationId}`,
       user_id: 'demo-user',
-      name: 'Demo Voter',
+      name: 'Rajesh Kumar',
       voter_id: 'EPIC100000',
-      aadhaar_number: 'XXXX-XXXX-XXXX',
-      mobile_number: '9999999999',
-      email: 'demo@example.com',
-      dob: '1990-01-01T00:00:00',
+      aadhaar_number: '123456789013',
+      mobile_number: '9876543210',
+      email: 'rajesh.kumar@example.com',
+      dob: '1978-05-15T18:30:00',
       gender: 'MALE',
       religion: 'Hindu',
       caste: 'General',
-      address_line1: '123 Demo Street',
-      address_line2: 'Near Demo Circle',
-      district: 'Demo District',
-      assembly_mandalam: 'Demo Mandal',
+      address_line1: 'MG Road',
+      address_line2: 'Kochi',
+      district: 'Ernakulam',
+      assembly_mandalam: 'Kochi Central',
       panchayat: null,
-      municipalitie: null,
+      municipalitie: 'Kochi Corporation',
       corporation: null,
-      ward: 'Ward 1',
-      pincode: '500001',
-      occupation: 'Household',
+      ward: 'Ward 12',
+      pincode: '682001',
+      occupation: 'Business',
       marital_status: 'Married',
-      income_range: '0-2.5L',
+      income_range: '10-15L',
       benefited_scheme: 'NO',
       scheme_id: scheme?.id ?? 'scheme-demo',
       scheme_details: '',
-      required_help: 'Need assistance with pension application documentation.',
-      documents: [],
-      status: 'PENDING',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      state_id: '36',
-      district_id: '501',
-      mandal_id: '1001',
-      ward_id: '1',
+      required_help: requiredHelp,
+      documents: [
+        'https://example.com/documents/application_form.pdf',
+        'https://example.com/documents/supporting_docs.pdf'
+      ],
+      status: status,
+      created_at: createdDate,
+      updated_at: createdDate,
+      state_id: 'kerala',
+      district_id: 'ernakulam',
+      mandal_id: 'ernakulam_kochi_central',
+      ward_id: 'ernakulam_kochi_central_ward_12',
       panchayath_id: null,
-      municipalitie_id: null,
+      municipalitie_id: 'ernakulam_kochi_central_kochi_corporation',
       corporation_id: null,
       application_id: applicationId,
     } as HelpDeskApplication;
