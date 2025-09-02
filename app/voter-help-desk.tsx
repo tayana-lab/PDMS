@@ -230,7 +230,7 @@ export default function VoterHelpDeskScreen() {
           >
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{`${t('helpDesk') || 'HelpDesk'} - ${decodedVoterName}`}</Text>
+          <Text style={styles.headerTitle}>{t('helpDesk') || 'HelpDesk'}</Text>
           <View style={styles.headerSpacer} />
         </View>
       </SafeAreaView>
