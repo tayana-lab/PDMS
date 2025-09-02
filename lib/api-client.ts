@@ -527,10 +527,19 @@ class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const method = options.method || 'GET';
+    const timestamp = new Date().toISOString();
+    
     if (this.useMock) {
-      console.log(`[MOCK] ${options.method || 'GET'} ${endpoint}`);
+      console.log(`🔄 [MOCK API] ${method} ${endpoint}`);
+      console.log(`📅 Timestamp: ${timestamp}`);
+      if (options.body) {
+        console.log(`📤 Request Body:`, JSON.parse(options.body as string));
+      }
       await delay(400);
-      return this.mockRoute<T>(endpoint, options);
+      const result = this.mockRoute<T>(endpoint, options);
+      console.log(`✅ [MOCK API] Response:`, result);
+      return result;
     }
 
     const url = `${this.baseUrl}${endpoint}`;
@@ -538,14 +547,33 @@ class ApiClient {
       ...options,
       headers: { ...this.getHeaders(), ...(options.headers ?? {}) },
     };
-    console.log(`API Request: ${config.method || 'GET'} ${url}`);
-    const response = await fetch(url, config);
-    const data = (await response.json()) as T;
-    if (!response.ok) {
-      const error = data as unknown as ApiError;
-      throw new Error(error.message || `HTTP ${response.status}`);
+    
+    console.log(`🌐 [REAL API] ${method} ${url}`);
+    console.log(`📅 Timestamp: ${timestamp}`);
+    console.log(`🔑 Headers:`, config.headers);
+    if (options.body) {
+      console.log(`📤 Request Body:`, JSON.parse(options.body as string));
     }
-    return data;
+    
+    try {
+      const response = await fetch(url, config);
+      const data = (await response.json()) as T;
+      
+      console.log(`📊 Response Status: ${response.status} ${response.statusText}`);
+      console.log(`📥 Response Data:`, data);
+      
+      if (!response.ok) {
+        const error = data as unknown as ApiError;
+        console.error(`❌ API Error: ${error.message || `HTTP ${response.status}`}`);
+        throw new Error(error.message || `HTTP ${response.status}`);
+      }
+      
+      console.log(`✅ [REAL API] Request completed successfully`);
+      return data;
+    } catch (error) {
+      console.error(`💥 [REAL API] Request failed:`, error);
+      throw error;
+    }
   }
 
   private mockRoute<T>(endpoint: string, options: RequestInit): T {
