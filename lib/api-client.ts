@@ -557,19 +557,61 @@ class ApiClient {
     
     try {
       const response = await fetch(url, config);
-      const data = (await response.json()) as T;
       
       console.log(`📊 Response Status: ${response.status} ${response.statusText}`);
-      console.log(`📥 Response Data:`, data);
+      console.log(`📊 Response Headers:`, Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
-        const error = data as unknown as ApiError;
-        console.error(`❌ API Error: ${error.message || `HTTP ${response.status}`}`);
-        throw new Error(error.message || `HTTP ${response.status}`);
+        let errorMessage = `HTTP ${response.status} ${response.statusText}`;
+        try {
+          const errorText = await response.text();
+          console.log(`📥 Error Response Text:`, errorText);
+          if (errorText) {
+            try {
+              const errorData = JSON.parse(errorText) as ApiError;
+              errorMessage = errorData.message || errorMessage;
+            } catch {
+              errorMessage = errorText || errorMessage;
+            }
+          }
+        } catch (textError) {
+          console.error(`Failed to read error response:`, textError);
+        }
+        console.error(`❌ API Error: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
       
-      console.log(`✅ [REAL API] Request completed successfully`);
-      return data;
+      // Check if response has content
+      const contentLength = response.headers.get('content-length');
+      const contentType = response.headers.get('content-type');
+      
+      console.log(`📏 Content-Length: ${contentLength}`);
+      console.log(`📄 Content-Type: ${contentType}`);
+      
+      // Handle empty responses
+      if (contentLength === '0' || (!contentType?.includes('application/json') && !contentType?.includes('text/json'))) {
+        console.log(`📥 Empty or non-JSON response`);
+        return {} as T;
+      }
+      
+      const responseText = await response.text();
+      console.log(`📥 Response Text:`, responseText);
+      
+      if (!responseText || responseText.trim() === '') {
+        console.log(`📥 Empty response body`);
+        return {} as T;
+      }
+      
+      try {
+        const data = JSON.parse(responseText) as T;
+        console.log(`📥 Parsed Response Data:`, data);
+        console.log(`✅ [REAL API] Request completed successfully`);
+        return data;
+      } catch (parseError) {
+        console.error(`💥 JSON Parse Error:`, parseError);
+        console.error(`📄 Raw response text:`, responseText);
+        throw new Error(`Invalid JSON response: ${parseError}`);
+      }
     } catch (error) {
       console.error(`💥 [REAL API] Request failed:`, error);
       throw error;
