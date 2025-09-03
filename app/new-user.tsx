@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,16 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, router } from 'expo-router';
-import { Phone, MessageSquare, Lock, ArrowLeft } from 'lucide-react-native';
+import { Phone, MessageSquare, Lock, ArrowLeft, Check } from 'lucide-react-native';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { Spacing, BorderRadius } from '@/constants/theme';
+import { Spacing, BorderRadius, Shadows } from '@/constants/theme';
 
 type Step = 'mobile' | 'otp' | 'pin';
 
@@ -56,12 +57,13 @@ const steps: StepConfig[] = [
 export default function NewUserScreen() {
   const [currentStep, setCurrentStep] = useState<Step>('mobile');
   const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const otpInputRefs = useRef<TextInput[]>([]);
 
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
   const { sendOTP, verifyOTP, createAccount } = useAuth();
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
@@ -79,11 +81,12 @@ export default function NewUserScreen() {
         await sendOTP(mobile);
         setCurrentStep('otp');
       } else if (currentStep === 'otp') {
-        if (!otp.trim() || otp.length !== 4) {
-          Alert.alert('Error', 'Please enter a valid 4-digit OTP');
+        const otpValue = otpDigits.join('');
+        if (!otpValue.trim() || otpValue.length !== 6) {
+          Alert.alert('Error', 'Please enter a valid 6-digit OTP');
           return;
         }
-        const result = await verifyOTP(mobile, otp);
+        const result = await verifyOTP(mobile, otpValue);
         if (result.success) {
           setCurrentStep('pin');
         } else {
@@ -111,6 +114,23 @@ export default function NewUserScreen() {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOtpChange = (value: string, index: number) => {
+    const newOtpDigits = [...otpDigits];
+    newOtpDigits[index] = value;
+    setOtpDigits(newOtpDigits);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyPress = (key: string, index: number) => {
+    if (key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -163,28 +183,46 @@ export default function NewUserScreen() {
               const StepIcon = step.icon;
 
               return (
-                <View key={step.id} style={styles.stepWrapper}>
-                  <View style={[
-                    styles.stepIconContainer,
-                    isActive && styles.stepIconActive,
-                    isCompleted && styles.stepIconCompleted,
-                    !isActive && !isCompleted && styles.stepIconInactive
-                  ]}>
-                    <StepIcon
-                      size={24}
-                      color={isActive ? colors.primary : isCompleted ? colors.primary : 'rgba(255,255,255,0.6)'}
-                    />
+                <React.Fragment key={step.id}>
+                  <View style={styles.stepWrapper}>
+                    <View style={[
+                      styles.stepIconContainer,
+                      isActive && styles.stepIconActive,
+                      isCompleted && styles.stepIconCompleted,
+                      !isActive && !isCompleted && styles.stepIconInactive
+                    ]}>
+                      {isCompleted ? (
+                        <Check
+                          size={24}
+                          color={colors.primary}
+                        />
+                      ) : (
+                        <StepIcon
+                          size={24}
+                          color={isActive ? colors.primary : 'rgba(255,255,255,0.6)'}
+                        />
+                      )}
+                    </View>
+                    
+                    <Text style={[
+                      styles.stepLabel,
+                      isActive && styles.stepLabelActive,
+                      isCompleted && styles.stepLabelCompleted,
+                      !isActive && !isCompleted && styles.stepLabelInactive
+                    ]}>
+                      {step.label}
+                    </Text>
                   </View>
                   
-                  <Text style={[
-                    styles.stepLabel,
-                    isActive && styles.stepLabelActive,
-                    isCompleted && styles.stepLabelCompleted,
-                    !isActive && !isCompleted && styles.stepLabelInactive
-                  ]}>
-                    {step.label}
-                  </Text>
-                </View>
+                  {/* Connector Line */}
+                  {index < steps.length - 1 && (
+                    <View style={[
+                      styles.stepConnector,
+                      isCompleted && styles.stepConnectorCompleted,
+                      index < currentStepIndex && styles.stepConnectorCompleted
+                    ]} />
+                  )}
+                </React.Fragment>
               );
             })}
           </View>
@@ -218,16 +256,36 @@ export default function NewUserScreen() {
 
                   {currentStep === 'otp' && (
                     <>
-                      <Input
-                        label="Verification Code"
-                        value={otp}
-                        onChangeText={setOtp}
-                        placeholder="Enter 4-digit OTP"
-                        keyboardType="numeric"
-                        maxLength={4}
-                        leftIcon={<MessageSquare size={20} color={colors.text.secondary} />}
-                        style={styles.otpInput}
-                      />
+                      <Text style={styles.inputLabel}>Verification Code</Text>
+                      <View style={styles.otpContainer}>
+                        {otpDigits.map((digit, index) => (
+                          <TextInput
+                            key={index}
+                            ref={(ref) => {
+                              if (ref) {
+                                otpInputRefs.current[index] = ref;
+                              }
+                            }}
+                            style={[
+                              styles.otpBox,
+                              digit ? styles.otpBoxFilled : null
+                            ]}
+                            value={digit}
+                            onChangeText={(value) => {
+                              if (value.length <= 1) {
+                                handleOtpChange(value, index);
+                              }
+                            }}
+                            onKeyPress={({ nativeEvent }) => {
+                              handleOtpKeyPress(nativeEvent.key, index);
+                            }}
+                            keyboardType="numeric"
+                            maxLength={1}
+                            textAlign="center"
+                            selectTextOnFocus
+                          />
+                        ))}
+                      </View>
                       <Text style={styles.helperText}>
                         Code sent to +91 {mobile}
                       </Text>
@@ -304,7 +362,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
@@ -316,7 +374,16 @@ const createStyles = (colors: any) => StyleSheet.create({
   stepWrapper: {
     flexDirection: 'column',
     alignItems: 'center',
-    flex: 1,
+  },
+  stepConnector: {
+    width: 40,
+    height: 2,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    marginHorizontal: Spacing.sm,
+    marginTop: -20,
+  },
+  stepConnectorCompleted: {
+    backgroundColor: '#fff',
   },
   stepIconContainer: {
     width: 60,
@@ -413,5 +480,32 @@ const createStyles = (colors: any) => StyleSheet.create({
     color: colors.text.secondary,
     textAlign: "center",
     marginTop: 8,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontWeight: "500",
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
+  otpBox: {
+    width: 45,
+    height: 50,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: BorderRadius.md,
+    backgroundColor: colors.surface,
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text.primary,
+    ...Shadows.small,
+  },
+  otpBoxFilled: {
+    borderColor: colors.primary,
+    backgroundColor: colors.background,
   },
 });
