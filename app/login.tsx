@@ -430,7 +430,6 @@ bannerWrapper: {
       height: 200,
       marginHorizontal: Spacing.lg,
       marginTop: Spacing.lg,
-      marginBottom: Spacing.lg,
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
