@@ -491,12 +491,14 @@ class ApiClient {
   constructor(useStaging = false, useMock = true) {
     this.baseUrl = useStaging ? API_CONFIG.stagingUrl : API_CONFIG.baseUrl;
     this.useMock = useMock;
+    console.log('🌐 API Client initialized:', { baseUrl: this.baseUrl, useMock: this.useMock });
     this.loadToken();
   }
 
   private async loadToken() {
     try {
       this.token = await AsyncStorage.getItem('auth_token');
+      console.log('🔑 Token loaded:', this.token ? 'Token exists' : 'No token found');
     } catch (error) {
       console.error('Failed to load token:', error);
     }
@@ -506,6 +508,7 @@ class ApiClient {
     try {
       await AsyncStorage.setItem('auth_token', token);
       this.token = token;
+      console.log('🔑 Token saved successfully');
     } catch (error) {
       console.error('Failed to save token:', error);
     }
@@ -522,7 +525,14 @@ class ApiClient {
 
   private getHeaders(skipAuth = false): Record<string, string> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (this.token && !skipAuth) headers.Authorization = `Bearer ${this.token}`;
+    if (this.token && !skipAuth) {
+      headers.Authorization = `Bearer ${this.token}`;
+      console.log('🔑 Authorization header added with Bearer token');
+    } else if (!skipAuth) {
+      console.log('🔑 No token available for authorization');
+    } else {
+      console.log('🔑 Skipping authorization for this request');
+    }
     return headers;
   }
 
@@ -839,7 +849,9 @@ class ApiClient {
   }
 
   async login(request: LoginRequest): Promise<LoginResponse> {
+    console.log('🔐 Attempting login with mobile:', request.mobile_number);
     const response = await this.request<LoginResponse>('/auth/login', { method: 'POST', body: JSON.stringify(request) }, true);
+    console.log('🔐 Login successful, saving token');
     await this.saveToken(response.token);
     return response;
   }

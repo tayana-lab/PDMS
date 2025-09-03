@@ -56,7 +56,7 @@ export default function LoginScreen() {
     }
   ];
 
-  const { login } = useAuth();
+  const { login, setAuthData } = useAuth();
   const { colors, currentTheme, t } = useAppSettings();
   const requestOtpMutation = useRequestOtp();
   const loginMutation = useLogin();
@@ -163,8 +163,8 @@ export default function LoginScreen() {
         otp: otpValue,
       });
       
-      // Update local auth state
-      await login(mobileNumber, otpValue);
+      // Set authentication data with token from API response
+      await setAuthData(response);
       
       Alert.alert(t('success'), `${t('welcome')} ${response.karyakarta.name}!`);
       router.replace("/(tabs)");
