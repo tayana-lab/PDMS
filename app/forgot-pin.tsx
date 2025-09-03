@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  SafeAreaView,
   StatusBar,
   TextInput,
   TouchableWithoutFeedback,
@@ -146,8 +145,7 @@ export default function ForgotPinScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-
+      <View style={styles.container}>
         <StatusBar
           barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
           backgroundColor={colors.surface}
@@ -350,7 +348,7 @@ export default function ForgotPinScreen() {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

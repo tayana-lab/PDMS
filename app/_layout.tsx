@@ -70,20 +70,28 @@ function RootLayoutNav() {
       <Stack screenOptions={{ 
         headerBackTitle: "Back",
         gestureEnabled: true,
-        animation: 'slide_from_right'
+        animation: 'slide_from_right',
+        headerStyle: {
+          backgroundColor: colors?.surface || '#FFFFFF'
+        },
+        headerTintColor: colors?.text?.primary || '#000000'
       }}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="new-user" options={{ 
           title: "New User Registration",
           headerBackTitle: "Back",
-          headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
+          headerStyle: { 
+            backgroundColor: colors?.surface || '#FFFFFF'
+          },
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
         <Stack.Screen name="forgot-pin" options={{ 
           title: "Reset PIN",
           headerBackTitle: "Back",
-          headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
+          headerStyle: { 
+            backgroundColor: colors?.surface || '#FFFFFF'
+          },
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
