@@ -252,8 +252,8 @@ export default function LoginScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-       
-          {/* Logo Section */}
+          <View style={{ flex: 1 }}>
+            {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
               <Image
@@ -384,7 +384,7 @@ export default function LoginScreen() {
               
             </Text>
           </View>
-  
+          </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
