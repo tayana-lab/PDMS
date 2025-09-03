@@ -194,15 +194,15 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.outerContainer}>
       <StatusBar
         barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={colors.surface}
       />
-
-      {/* BJP Banner Carousel - Hide when keyboard is visible */}
-      {!isKeyboardVisible && (
-        <View style={styles.bannerWrapper}>
+      <SafeAreaView style={styles.container}>
+        {/* BJP Banner Carousel - Hide when keyboard is visible */}
+        {!isKeyboardVisible && (
+          <View style={styles.bannerWrapper}>
           <ScrollView
             ref={scrollViewRef}
             horizontal
@@ -242,157 +242,158 @@ export default function LoginScreen() {
               />
             ))}
           </View>
-        </View>
-      )}
-
-      {/* Main Content */}
-      <KeyboardAvoidingView
-        style={styles.mainContent}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={{ flex: 1 }}>
-            {/* Logo Section */}
-          <View style={styles.logoSection}>
-            <View style={styles.logoContainer}>
-              <Image
-                source={{
-                  uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/883hzv1gvf1dh5pk5dd8q",
-                }}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
-            </View>
-
-            <Text style={styles.welcomeSubtitle}>BHARATIYA JANATA PARTY</Text>
           </View>
+        )}
 
-          {/* Login Card */}
-          <View style={styles.loginCard}>
-            {!otpSent ? (
-              <>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
-                  <View style={styles.inputWrapper}>
-                    <Phone
-                      size={20}
-                      color={colors.text.light}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      value={mobileNumber}
-                      onChangeText={setMobileNumber}
-                      placeholder={t('enterMobileNumber')}
-                      placeholderTextColor={colors.text.light}
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                    />
-                  </View>
+        {/* Main Content */}
+        <KeyboardAvoidingView
+          style={styles.mainContent}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <TouchableWithoutFeedback onPress={dismissKeyboard}>
+            <View style={{ flex: 1 }}>
+              {/* Logo Section */}
+              <View style={styles.logoSection}>
+                <View style={styles.logoContainer}>
+                  <Image
+                    source={{
+                      uri: "https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/883hzv1gvf1dh5pk5dd8q",
+                    }}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
                 </View>
 
-                <Button
-                  title={isLoading ? t('sendingOtp') : t('sendOtp')}
-                  onPress={handleRequestOtp}
-                  disabled={isLoading || mobileNumber.length !== 10}
-                  loading={isLoading}
-                  style={styles.loginButton}
-                />
-              </>
-            ) : (
-              <>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>{t('enterOtp')}</Text>
-                  <View style={styles.otpContainer}>
-                    {otpDigits.map((digit, index) => (
-                      <TextInput
-                        key={index}
-                        ref={(ref) => {
-                          if (ref) {
-                            otpInputRefs.current[index] = ref;
-                          }
-                        }}
-                        style={[
-                          styles.otpBox,
-                          digit ? styles.otpBoxFilled : null
-                        ]}
-                        value={digit}
-                        onChangeText={(value) => {
-                          if (value.length <= 1) {
-                            handleOtpChange(value, index);
-                          }
-                        }}
-                        onKeyPress={({ nativeEvent }) => {
-                          handleOtpKeyPress(nativeEvent.key, index);
-                        }}
-                        keyboardType="numeric"
-                        maxLength={1}
-                        textAlign="center"
-                        secureTextEntry={!showOtp}
-                        selectTextOnFocus
-                      />
-                    ))}
-                  </View>
-                  <TouchableOpacity
-                    style={styles.showHideButton}
-                    onPress={() => setShowOtp(!showOtp)}
-                  >
-                    <Text style={styles.showHideText}>
-                      {showOtp ? t('hideOtp') : t('showOtp')}
-                    </Text>
+                <Text style={styles.welcomeSubtitle}>BHARATIYA JANATA PARTY</Text>
+              </View>
+
+              {/* Login Card */}
+              <View style={styles.loginCard}>
+                {!otpSent ? (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
+                      <View style={styles.inputWrapper}>
+                        <Phone
+                          size={20}
+                          color={colors.text.light}
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          value={mobileNumber}
+                          onChangeText={setMobileNumber}
+                          placeholder={t('enterMobileNumber')}
+                          placeholderTextColor={colors.text.light}
+                          keyboardType="phone-pad"
+                          maxLength={10}
+                        />
+                      </View>
+                    </View>
+
+                    <Button
+                      title={isLoading ? t('sendingOtp') : t('sendOtp')}
+                      onPress={handleRequestOtp}
+                      disabled={isLoading || mobileNumber.length !== 10}
+                      loading={isLoading}
+                      style={styles.loginButton}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.inputLabel}>{t('enterOtp')}</Text>
+                      <View style={styles.otpContainer}>
+                        {otpDigits.map((digit, index) => (
+                          <TextInput
+                            key={index}
+                            ref={(ref) => {
+                              if (ref) {
+                                otpInputRefs.current[index] = ref;
+                              }
+                            }}
+                            style={[
+                              styles.otpBox,
+                              digit ? styles.otpBoxFilled : null
+                            ]}
+                            value={digit}
+                            onChangeText={(value) => {
+                              if (value.length <= 1) {
+                                handleOtpChange(value, index);
+                              }
+                            }}
+                            onKeyPress={({ nativeEvent }) => {
+                              handleOtpKeyPress(nativeEvent.key, index);
+                            }}
+                            keyboardType="numeric"
+                            maxLength={1}
+                            textAlign="center"
+                            secureTextEntry={!showOtp}
+                            selectTextOnFocus
+                          />
+                        ))}
+                      </View>
+                      <TouchableOpacity
+                        style={styles.showHideButton}
+                        onPress={() => setShowOtp(!showOtp)}
+                      >
+                        <Text style={styles.showHideText}>
+                          {showOtp ? t('hideOtp') : t('showOtp')}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <Button
+                      title={isLoading ? t('loggingIn') : t('login')}
+                      onPress={handleLogin}
+                      disabled={isLoading || otpDigits.join('').length !== 6}
+                      loading={isLoading}
+                      style={styles.loginButton}
+                    />
+
+                    <View style={styles.resendContainer}>
+                      {otpTimer > 0 ? (
+                        <Text style={styles.timerText}>
+                          {t('resendOtpIn')} {otpTimer}s
+                        </Text>
+                      ) : (
+                        <TouchableOpacity onPress={handleRequestOtp}>
+                          <Text style={styles.resendText}>{t('resendOtp')}</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </>
+                )}
+
+                <View style={styles.forgotPin}>
+                  <TouchableOpacity onPress={handleForgotPassword}>
+                    <Text style={styles.registerLink}>{t('forgotPin')}</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
 
-                <Button
-                  title={isLoading ? t('loggingIn') : t('login')}
-                  onPress={handleLogin}
-                  disabled={isLoading || otpDigits.join('').length !== 6}
-                  loading={isLoading}
-                  style={styles.loginButton}
-                />
-
-                <View style={styles.resendContainer}>
-                  {otpTimer > 0 ? (
-                    <Text style={styles.timerText}>
-                      {t('resendOtpIn')} {otpTimer}s
-                    </Text>
-                  ) : (
-                    <TouchableOpacity onPress={handleRequestOtp}>
-                      <Text style={styles.resendText}>{t('resendOtp')}</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </>
-            )}
-
-
-
-            <View style={styles.forgotPin}>
-              <TouchableOpacity onPress={handleForgotPassword}>
-                <Text style={styles.registerLink}>{t('forgotPin')}</Text>
-              </TouchableOpacity>
+              {/* Register Section */}
+              <View style={styles.registerSection}>
+                <Text style={styles.registerText}>
+                  {t('dontHaveAccount')}{" "}
+                  <Text style={styles.registerLink} onPress={handleRegister} >{t('register')}</Text>
+                </Text>
+              </View>
             </View>
-          </View>
-
-          {/* Register Section */}
-          <View style={styles.registerSection}>
-            <Text style={styles.registerText}>
-              {t('dontHaveAccount')}{" "}
-             
-                <Text style={styles.registerLink} onPress={handleRegister} >{t('register')}</Text>
-              
-            </Text>
-          </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const createStyles = (colors: any, isKeyboardVisible: boolean, screenWidth: number) =>
   StyleSheet.create({
+    outerContainer: {
+      flex: 1,
+      backgroundColor: colors.surface,
+    },
     container: {
       flex: 1,
       backgroundColor: colors.surface,
@@ -405,7 +406,7 @@ bannerWrapper: {
       overflow: "hidden",
       position: "relative",
       marginBottom: isKeyboardVisible ? 0 : Spacing.lg,
-      marginTop: Spacing.md,
+      marginTop: Spacing.sm,
     },
     bannerSlide: {
       width: screenWidth - (Spacing.lg * 2),
