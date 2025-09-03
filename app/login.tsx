@@ -486,7 +486,7 @@ bannerWrapper: {
     mainContent: {
       flex: 1,
       marginHorizontal: Spacing.lg,  
-      justifyContent: isKeyboardVisible ? "flex-start" : "center",
+      justifyContent: "center",
       paddingTop: isKeyboardVisible ? Spacing.lg : 0,
     },
     mainContentKeyboardVisible: {
