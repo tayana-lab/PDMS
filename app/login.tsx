@@ -77,18 +77,31 @@ export default function LoginScreen() {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  // Keyboard visibility listeners
+  // Keyboard visibility listeners with debouncing
   useEffect(() => {
+    let keyboardTimer: NodeJS.Timeout;
+    
     const keyboardDidShowListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => setIsKeyboardVisible(true)
+      () => {
+        clearTimeout(keyboardTimer);
+        setIsKeyboardVisible(true);
+      }
     );
+    
     const keyboardDidHideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setIsKeyboardVisible(false)
+      () => {
+        clearTimeout(keyboardTimer);
+        // Add a small delay to prevent flickering
+        keyboardTimer = setTimeout(() => {
+          setIsKeyboardVisible(false);
+        }, 100);
+      }
     );
 
     return () => {
+      clearTimeout(keyboardTimer);
       keyboardDidShowListener?.remove();
       keyboardDidHideListener?.remove();
     };
@@ -185,52 +198,54 @@ export default function LoginScreen() {
 
   const styles = createStyles(colors);
 
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
-          backgroundColor={colors.surface}
-        />
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
-        {/* BJP Banner Carousel - Hide when keyboard is visible */}
-        {!isKeyboardVisible && (
-          <View style={styles.bannerWrapper}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={16}
-              onMomentumScrollEnd={(event) => {
-                const index = Math.round(event.nativeEvent.contentOffset.x / width);
-                setCurrentBannerIndex(index);
-              }}
-            >
-              {bannerImages.map((banner, index) => (
-                <View key={index} style={styles.bannerSlide}>
-                  <Image 
-                    source={{ uri: banner.uri }} 
-                    style={styles.bannerImage} 
-                    resizeMode="cover"
-                  />
-                  <View style={styles.bannerOverlay}>
-                    <Text style={styles.bannerSlogan}>
-                      &ldquo;{banner.slogan}&rdquo;
-                    </Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-        )}
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colors.surface}
+      />
+
+      {/* BJP Banner Carousel - Use opacity instead of conditional rendering */}
+      <View style={[styles.bannerWrapper, isKeyboardVisible && styles.bannerHidden]}>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onMomentumScrollEnd={(event) => {
+            const index = Math.round(event.nativeEvent.contentOffset.x / width);
+            setCurrentBannerIndex(index);
+          }}
+        >
+          {bannerImages.map((banner, index) => (
+            <View key={index} style={styles.bannerSlide}>
+              <Image 
+                source={{ uri: banner.uri }} 
+                style={styles.bannerImage} 
+                resizeMode="cover"
+              />
+              <View style={styles.bannerOverlay}>
+                <Text style={styles.bannerSlogan}>
+                  &ldquo;{banner.slogan}&rdquo;
+                </Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
 
       {/* Main Content */}
-      <KeyboardAvoidingView
-        style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <KeyboardAvoidingView
+          style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
        
           {/* Logo Section */}
           <View style={styles.logoSection}>
@@ -364,9 +379,9 @@ export default function LoginScreen() {
             </Text>
           </View>
   
-      </KeyboardAvoidingView>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
@@ -383,6 +398,12 @@ bannerWrapper: {
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
+      opacity: 1,
+    },
+    bannerHidden: {
+      opacity: 0,
+      height: 0,
+      flex: 0,
     },
     bannerSlide: {
       width: width - (Spacing.lg * 2),
@@ -440,7 +461,8 @@ bannerWrapper: {
     },
     mainContentKeyboardVisible: {
       flex: 1,
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      paddingTop: Spacing.lg,
     },
     scrollContent: {
       flexGrow: 1,
