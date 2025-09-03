@@ -67,7 +67,6 @@ export default function NewUserScreen() {
   const { sendOTP, verifyOTP, createAccount } = useAuth();
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
-  const currentStepConfig = steps[currentStepIndex];
 
   const handleNext = async () => {
     setIsLoading(true);
@@ -208,7 +207,9 @@ export default function NewUserScreen() {
                     isCompleted && styles.stepLabelCompleted,
                     !isActive && !isCompleted && styles.stepLabelInactive
                   ]}>
-                    {t(step.label.toLowerCase())}
+                    {step.id === 'mobile' ? t('mobile') : 
+                     step.id === 'otp' ? 'OTP' : 
+                     'PIN'}
                   </Text>
                 </View>
                 
@@ -232,10 +233,14 @@ export default function NewUserScreen() {
           <View style={styles.center}>
             <View style={styles.loginCard}>
               <Text style={styles.title}>
-                {t(currentStepConfig.title.toLowerCase().replace(/\s+/g, ''))}
+                {currentStep === 'mobile' ? t('enterMobileNumberTitle') : 
+                 currentStep === 'otp' ? t('verifyOtpTitle') : 
+                 t('setPinTitle')}
               </Text>
               <Text style={styles.subtitle}>
-                {t(currentStepConfig.subtitle.toLowerCase().replace(/\s+/g, '').replace(/'/g, ''))}
+                {currentStep === 'mobile' ? t('verificationCodeSent') : 
+                 currentStep === 'otp' ? t('enterCodeSent') : 
+                 t('createSecurePin')}
               </Text>
 
               {/* Form Fields */}

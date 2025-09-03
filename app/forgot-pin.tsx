@@ -67,7 +67,6 @@ export default function ForgotPinScreen() {
   const { sendOTP, verifyOTP, resetPin } = useAuth();
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
-  const currentStepConfig = steps[currentStepIndex];
 
   const handleNext = async () => {
     setIsLoading(true);
@@ -208,7 +207,9 @@ export default function ForgotPinScreen() {
                     isCompleted && styles.stepLabelCompleted,
                     !isActive && !isCompleted && styles.stepLabelInactive
                   ]}>
-                    {t(step.label.toLowerCase())}
+                    {step.id === 'mobile' ? t('mobile') : 
+                     step.id === 'otp' ? 'OTP' : 
+                     t('newPin')}
                   </Text>
                 </View>
                 
@@ -232,10 +233,14 @@ export default function ForgotPinScreen() {
           <View style={styles.center}>
             <View style={styles.loginCard}>
               <Text style={styles.title}>
-                {t(currentStepConfig.title.toLowerCase().replace(/\s+/g, ''))}
+                {currentStep === 'mobile' ? t('enterMobileNumberTitle') : 
+                 currentStep === 'otp' ? t('verifyOtpTitle') : 
+                 t('resetPinTitle')}
               </Text>
               <Text style={styles.subtitle}>
-                {t(currentStepConfig.subtitle.toLowerCase().replace(/\s+/g, '').replace(/'/g, ''))}
+                {currentStep === 'mobile' ? t('verificationCodeSent') : 
+                 currentStep === 'otp' ? t('enterCodeSent') : 
+                 t('createNewPin')}
               </Text>
 
               {/* Form Fields */}

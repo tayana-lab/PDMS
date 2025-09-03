@@ -155,6 +155,20 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     continue: 'Continue',
     codeSentTo: 'Code sent to',
     
+    // Registration Steps
+    enterMobileNumberTitle: 'Enter Mobile Number',
+    verificationCodeSent: "We'll send you a verification code",
+    verifyOtpTitle: 'Verify OTP',
+    enterCodeSent: 'Enter the code sent to your mobile',
+    setPinTitle: 'Set PIN',
+    createSecurePin: 'Create a 4-digit PIN for secure access',
+    resetPinTitle: 'Reset PIN',
+    createNewPin: 'Create a new 4-digit PIN',
+    
+    // Forgot PIN
+    resetPin: 'Reset PIN',
+    newPin: 'New PIN',
+    
     // Common
     error: 'Error',
     ok: 'OK',
@@ -282,6 +296,20 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     continue: 'ಮುಂದುವರಿಸಿ',
     codeSentTo: 'ಕೋಡ್ ಕಳುಹಿಸಲಾಗಿದೆ',
     
+    // Registration Steps
+    enterMobileNumberTitle: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ',
+    verificationCodeSent: 'ನಾವು ನಿಮಗೆ ಪರಿಶೀಲನಾ ಕೋಡ್ ಕಳುಹಿಸುತ್ತೇವೆ',
+    verifyOtpTitle: 'OTP ಪರಿಶೀಲಿಸಿ',
+    enterCodeSent: 'ನಿಮ್ಮ ಮೊಬೈಲ್‌ಗೆ ಕಳುಹಿಸಿದ ಕೋಡ್ ನಮೂದಿಸಿ',
+    setPinTitle: 'ಪಿನ್ ಸೆಟ್ ಮಾಡಿ',
+    createSecurePin: 'ಸುರಕ್ಷಿತ ಪ್ರವೇಶಕ್ಕಾಗಿ 4-ಅಂಕಿಯ ಪಿನ್ ರಚಿಸಿ',
+    resetPinTitle: 'ಪಿನ್ ಮರುಹೊಂದಿಸಿ',
+    createNewPin: 'ಹೊಸ 4-ಅಂಕಿಯ ಪಿನ್ ರಚಿಸಿ',
+    
+    // Forgot PIN
+    resetPin: 'ಪಿನ್ ಮರುಹೊಂದಿಸಿ',
+    newPin: 'ಹೊಸ ಪಿನ್',
+    
     // Common
     error: 'ದೋಷ',
     ok: 'ಸರಿ',
@@ -408,6 +436,20 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     createAccount: 'கணக்கு உருவாக்கு',
     continue: 'தொடரவும்',
     codeSentTo: 'குறியீடு அனுப்பப்பட்டது',
+    
+    // Registration Steps
+    enterMobileNumberTitle: 'மொபைல் எண்ணை உள்ளிடவும்',
+    verificationCodeSent: 'நாங்கள் உங்களுக்கு சரிபார்ப்பு குறியீட்டை அனுப்புவோம்',
+    verifyOtpTitle: 'OTP சரிபார்க்கவும்',
+    enterCodeSent: 'உங்கள் மொபைலுக்கு அனுப்பப்பட்ட குறியீட்டை உள்ளிடவும்',
+    setPinTitle: 'பின் அமைக்கவும்',
+    createSecurePin: 'பாதுகாப்பான அணுகலுக்காக 4-இலக்க பின் உருவாக்கவும்',
+    resetPinTitle: 'பின் மீட்டமைக்கவும்',
+    createNewPin: 'புதிய 4-இலக்க பின் உருவாக்கவும்',
+    
+    // Forgot PIN
+    resetPin: 'பின் மீட்டமைக்கவும்',
+    newPin: 'புதிய பின்',
     
     // Common
     error: 'பிழை',
@@ -694,6 +736,20 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     createAccount: 'खाता बनाएं',
     continue: 'जारी रखें',
     codeSentTo: 'कोड भेजा गया',
+    
+    // Registration Steps
+    enterMobileNumberTitle: 'मोबाइल नंबर दर्ज करें',
+    verificationCodeSent: 'हम आपको एक सत्यापन कोड भेजेंगे',
+    verifyOtpTitle: 'OTP सत्यापित करें',
+    enterCodeSent: 'आपके मोबाइल पर भेजा गया कोड दर्ज करें',
+    setPinTitle: 'पिन सेट करें',
+    createSecurePin: 'सुरक्षित पहुंच के लिए 4-अंकीय पिन बनाएं',
+    resetPinTitle: 'पिन रीसेट करें',
+    createNewPin: 'नया 4-अंकीय पिन बनाएं',
+    
+    // Forgot PIN
+    resetPin: 'पिन रीसेट करें',
+    newPin: 'नया पिन',
     
     // Common
     error: 'त्रुटि',
