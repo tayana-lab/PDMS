@@ -427,8 +427,10 @@ const createStyles = (colors: any, isKeyboardVisible: boolean) =>
     },
 
 bannerWrapper: {
-      flex: 0.3,
+      height: 200,
       marginHorizontal: Spacing.lg,
+      marginTop: Spacing.md,
+      marginBottom: Spacing.lg,
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
@@ -483,14 +485,10 @@ bannerWrapper: {
 
     // Main Content
     mainContent: {
-      flex: isKeyboardVisible ? 1 : 0.7,
+      flex: 1,
       marginHorizontal: Spacing.lg,  
       justifyContent: isKeyboardVisible ? "flex-start" : "center",
       paddingTop: isKeyboardVisible ? Spacing.lg : 0,
-      // Prevent layout shifts on Android
-      ...(Platform.OS === 'android' && {
-        minHeight: isKeyboardVisible ? undefined : '70%',
-      }),
     },
     mainContentKeyboardVisible: {
       flex: 1,
