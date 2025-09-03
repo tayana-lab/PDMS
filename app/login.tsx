@@ -16,6 +16,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from "expo-router";
 import { Phone } from "lucide-react-native";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
@@ -39,6 +40,7 @@ export default function LoginScreen() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const otpInputRefs = useRef<TextInput[]>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   // Banner images array
   const bannerImages = [
@@ -187,7 +189,7 @@ export default function LoginScreen() {
     router.push("/new-user");
   };
 
-  const styles = createStyles(colors, isKeyboardVisible, width);
+  const styles = createStyles(colors, isKeyboardVisible, width, insets);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -198,6 +200,7 @@ export default function LoginScreen() {
       <StatusBar
         barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={colors.surface}
+        translucent={false}
       />
       <SafeAreaView style={styles.container}>
         {/* BJP Banner Carousel - Hide when keyboard is visible */}
@@ -388,7 +391,7 @@ export default function LoginScreen() {
   );
 }
 
-const createStyles = (colors: any, isKeyboardVisible: boolean, screenWidth: number) =>
+const createStyles = (colors: any, isKeyboardVisible: boolean, screenWidth: number, insets: any) =>
   StyleSheet.create({
     outerContainer: {
       flex: 1,
@@ -406,7 +409,7 @@ bannerWrapper: {
       overflow: "hidden",
       position: "relative",
       marginBottom: isKeyboardVisible ? 0 : Spacing.lg,
-      marginTop: Spacing.sm,
+      marginTop: isKeyboardVisible ? 0 : Spacing.md,
     },
     bannerSlide: {
       width: screenWidth - (Spacing.lg * 2),

@@ -3,6 +3,7 @@ import { Stack, router } from "expo-router";
 import * as ExpoSplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettingsProvider, useAppSettings } from "@/hooks/useAppSettings";
@@ -80,6 +81,12 @@ function RootLayoutNav() {
           headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
+        <Stack.Screen name="forgot-pin" options={{ 
+          title: "Reset PIN",
+          headerBackTitle: "Back",
+          headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
+          headerTintColor: colors?.text?.primary || '#000000'
+        }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="search-voter" options={{ 
           headerShown: false,
@@ -138,16 +145,18 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-        <AppSettingsProvider>
-          <ConfirmProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <RootLayoutNav />
-              <ConfirmContainer />
-            </GestureHandlerRootView>
-          </ConfirmProvider>
-        </AppSettingsProvider>
-      </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+          <AppSettingsProvider>
+            <ConfirmProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <RootLayoutNav />
+                <ConfirmContainer />
+              </GestureHandlerRootView>
+            </ConfirmProvider>
+          </AppSettingsProvider>
+        </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
 
