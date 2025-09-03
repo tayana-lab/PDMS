@@ -6,10 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-  
   Platform,
-  TextInput,
-  Image
+  TextInput
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,8 +19,7 @@ import Card from '@/components/ui/Card';
 import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useConfirm } from '@/hooks/useConfirm';
-import { useVoterSearch, useAdvancedVoterSearch } from '@/hooks/useApi';
-import { Voter as ApiVoter } from '@/lib/api-client';
+import { mockVoters } from '@/constants/mockData';
 
 interface Voter {
   id: string;
@@ -41,57 +38,37 @@ interface Voter {
   assemblyConstituency: string;
 }
 
-// Helper function to convert API voter to local voter format
-const convertApiVoter = (apiVoter: ApiVoter): Voter => ({
-  id: apiVoter.id?.toString() || '',
-  name: apiVoter.name || '',
-  voterId: apiVoter.id_card_no || '',
-  mobileNumber: apiVoter.mobile_number || '',
-  guardianName: apiVoter.guardian_name || '',
-  houseName: apiVoter.house_name || '',
-  address: `${apiVoter.address_line1 || ''} ${apiVoter.address_line2 || ''}`.trim(),
-  lastInteractionDate: apiVoter.updated_at ? new Date(apiVoter.updated_at).toLocaleDateString() : '',
-  karyakartaName: 'Unknown', // Not available in API
-  partyInclination: apiVoter.political_inclination || 'Unknown',
-  age: apiVoter.age || 0,
-  gender: apiVoter.gender || '',
-  ward: `Ward ${apiVoter.ward_id || ''}`,
-  assemblyConstituency: `Assembly ${apiVoter.assembly_id || ''}`,
-});
+
 
 type SearchVoterScreenProps = { showBack?: boolean };
 
 export default function SearchVoterScreen({ showBack = true }: SearchVoterScreenProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedVoter, setSelectedVoter] = useState<Voter | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCamera, setShowCamera] = useState<boolean>(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
   const { colors } = useAppSettings();
   const { confirm } = useConfirm();
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
-  // API hooks - search when query is at least 2 characters
-  const voterSearchQuery = useVoterSearch({
-    name: searchQuery.trim().length >= 2 && !searchQuery.trim().match(/^[A-Z0-9]+$/i) ? searchQuery.trim() : undefined,
-    epic_id: searchQuery.trim().match(/^[A-Z0-9]+$/i) ? searchQuery.trim() : undefined,
-    limit: 20,
-  });
-  
-  const advancedSearchMutation = useAdvancedVoterSearch();
+
   
   const recentSearches = ['Priya Nair', 'TVM001234567', 'Arun Pillai'];
   const filterOptions = ['All', 'Party Voter', 'Inclined', 'Neutral', 'Anti'];
 
   const filteredVoters = useMemo(() => {
-    if (!searchQuery.trim() || !voterSearchQuery.data) return [];
+    if (!searchQuery.trim()) return [];
     
-    // Convert API voters to local format and filter out voters without valid IDs
-    let voters = voterSearchQuery.data.data
-      .filter(apiVoter => apiVoter.id && apiVoter.name) // Only include voters with valid ID and name
-      .map(convertApiVoter);
+    // Search in mock data
+    let voters = mockVoters.filter(voter => {
+      const query = searchQuery.trim().toLowerCase();
+      return (
+        voter.name.toLowerCase().includes(query) ||
+        voter.voterId.toLowerCase().includes(query) ||
+        voter.mobileNumber.includes(query)
+      );
+    });
     
     // Apply filter
     if (selectedFilter !== 'All') {
@@ -112,7 +89,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     }
     
     return voters;
-  }, [voterSearchQuery.data, selectedFilter, searchQuery]);
+  }, [searchQuery, selectedFilter]);
 
   const handleVoterSelect = (voter: Voter) => {
     //alert("clicked");
@@ -205,32 +182,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
       return;
     }
 
-    setSearchTriggered(true);
-    setIsLoading(true);
-    
-    try {
-      // The useVoterSearch hook will automatically trigger when searchQuery changes
-      // For advanced search, we can use the mutation
-      if (searchQuery.length >= 3) {
-        await advancedSearchMutation.mutateAsync({
-          search_criteria: {
-            name: {
-              value: searchQuery,
-              match_type: 'partial',
-              case_sensitive: false,
-            },
-          },
-          pagination: {
-            page: 1,
-            limit: 20,
-          },
-        });
-      }
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    // No need for loading state with mock data
   };
 
   const handleBarcodePress = async () => {
@@ -599,10 +551,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
               value={searchQuery}
               onChangeText={(text) => {
                 setSearchQuery(text);
-                // Auto-search as user types (debounced by the API hook)
-                if (text.trim().length >= 2) {
-                  setSearchTriggered(true);
-                }
+                // Auto-search as user types with mock data
               }}
               style={styles.searchInput}
               testID="search-input"
@@ -613,7 +562,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
             <TouchableOpacity 
               style={styles.searchIconButton}
               onPress={handleSearch}
-              disabled={isLoading}
+              disabled={false}
             >
               <Search size={18} color={colors.primary} />
             </TouchableOpacity>
@@ -672,30 +621,8 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
           </View>
         )}
 
-        {/* Loading State */}
-        {(voterSearchQuery.isLoading || advancedSearchMutation.isPending || isLoading) && searchQuery.trim() && (
-          <View style={styles.noResults}>
-            <Text style={styles.noResultsText}>Searching voters...</Text>
-          </View>
-        )}
-
-        {/* Error State */}
-        {(voterSearchQuery.error || advancedSearchMutation.error) && searchQuery.trim() && (
-          <View style={styles.noResults}>
-            <Text style={[styles.noResultsText, { color: colors.error }]}>
-              Search failed. Please try again.
-            </Text>
-          </View>
-        )}
-
         {/* No Results */}
-        {searchQuery.trim() && 
-         !voterSearchQuery.isLoading && 
-         !advancedSearchMutation.isPending && 
-         !isLoading && 
-         filteredVoters.length === 0 && 
-         !voterSearchQuery.error && 
-         !advancedSearchMutation.error && (
+        {searchQuery.trim() && filteredVoters.length === 0 && (
           <View style={styles.noResults}>
             <Text style={styles.noResultsText}>No voters found matching your search</Text>
           </View>
