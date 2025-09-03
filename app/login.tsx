@@ -274,12 +274,18 @@ export default function LoginScreen() {
       )}
 
       {/* Main Content */}
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <KeyboardAvoidingView
-          style={styles.mainContent}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-        >
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.mainContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
        
           {/* Logo Section */}
           <View style={styles.logoSection}>
@@ -413,8 +419,9 @@ export default function LoginScreen() {
             </Text>
           </View>
   
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -483,20 +490,19 @@ bannerWrapper: {
     },
 
     // Main Content
+    keyboardAvoidingView: {
+      flex: 1,
+    },
+    scrollContainer: {
+      flex: 1,
+    },
     mainContent: {
-      flex: 1,
-      marginHorizontal: Spacing.lg,  
-      justifyContent: "center",
-      paddingTop: isKeyboardVisible ? Spacing.lg : 0,
-    },
-    mainContentKeyboardVisible: {
-      flex: 1,
-      justifyContent: "flex-start",
-      paddingTop: Spacing.lg,
-    },
-    scrollContent: {
       flexGrow: 1,
-      paddingHorizontal: Spacing.lg
+      marginHorizontal: Spacing.lg,
+      justifyContent: isKeyboardVisible ? "flex-start" : "center",
+      paddingTop: isKeyboardVisible ? Spacing.md : 0,
+      paddingBottom: Spacing.lg,
+      minHeight: isKeyboardVisible ? undefined : "100%",
     },
 
     logoSection: {
