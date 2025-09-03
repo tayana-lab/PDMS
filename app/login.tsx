@@ -107,11 +107,11 @@ export default function LoginScreen() {
 
   const handleRequestOtp = async () => {
     if (!mobileNumber.trim()) {
-      Alert.alert(t('error'), "Please enter mobile number");
+      Alert.alert(t('error'), t('pleaseEnterMobileNumber'));
       return;
     }
     if (mobileNumber.length !== 10) {
-      Alert.alert(t('error'), "Mobile number must be 10 digits");
+      Alert.alert(t('error'), t('mobileNumberMust10Digits'));
       return;
     }
 
@@ -120,9 +120,9 @@ export default function LoginScreen() {
       await requestOtpMutation.mutateAsync({ mobile_number: mobileNumber });
       setOtpSent(true);
       setOtpTimer(60); // 60 seconds timer
-      Alert.alert(t('success'), "OTP sent successfully");
+      Alert.alert(t('success'), t('otpSentSuccessfully'));
     } catch (error: any) {
-      Alert.alert(t('error'), error.message || "Failed to send OTP");
+      Alert.alert(t('error'), error.message || t('failedToSendOtp'));
     } finally {
       setIsLoading(false);
     }
@@ -148,11 +148,11 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     const otpValue = otpDigits.join('');
     if (!mobileNumber.trim() || !otpValue.trim()) {
-      Alert.alert(t('error'), "Please enter both mobile number and OTP");
+      Alert.alert(t('error'), t('pleaseEnterBothMobileAndOtp'));
       return;
     }
     if (otpValue.length !== 6) {
-      Alert.alert(t('error'), "OTP must be 6 digits");
+      Alert.alert(t('error'), t('otpMust6Digits'));
       return;
     }
 
@@ -166,10 +166,10 @@ export default function LoginScreen() {
       // Update local auth state
       await login(mobileNumber, otpValue);
       
-      Alert.alert(t('success'), `Welcome ${response.karyakarta.name}!`);
+      Alert.alert(t('success'), `${t('welcome')} ${response.karyakarta.name}!`);
       router.replace("/(tabs)");
     } catch (error: any) {
-      Alert.alert(t('error'), error.message || "Login failed");
+      Alert.alert(t('error'), error.message || t('loginFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -272,7 +272,7 @@ export default function LoginScreen() {
                 </View>
 
                 <Button
-                  title={isLoading ? "Sending OTP..." : "Send OTP"}
+                  title={isLoading ? t('sendingOtp') : t('sendOtp')}
                   onPress={handleRequestOtp}
                   disabled={isLoading || mobileNumber.length !== 10}
                   loading={isLoading}
@@ -282,7 +282,7 @@ export default function LoginScreen() {
             ) : (
               <>
                 <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Enter OTP</Text>
+                  <Text style={styles.inputLabel}>{t('enterOtp')}</Text>
                   <View style={styles.otpContainer}>
                     {otpDigits.map((digit, index) => (
                       <TextInput
@@ -318,7 +318,7 @@ export default function LoginScreen() {
                     onPress={() => setShowOtp(!showOtp)}
                   >
                     <Text style={styles.showHideText}>
-                      {showOtp ? 'Hide' : 'Show'} OTP
+                      {showOtp ? t('hideOtp') : t('showOtp')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -334,11 +334,11 @@ export default function LoginScreen() {
                 <View style={styles.resendContainer}>
                   {otpTimer > 0 ? (
                     <Text style={styles.timerText}>
-                      Resend OTP in {otpTimer}s
+                      {t('resendOtpIn')} {otpTimer}s
                     </Text>
                   ) : (
                     <TouchableOpacity onPress={handleRequestOtp}>
-                      <Text style={styles.resendText}>Resend OTP</Text>
+                      <Text style={styles.resendText}>{t('resendOtp')}</Text>
                     </TouchableOpacity>
                   )}
                 </View>

@@ -74,7 +74,7 @@ interface GovernmentScheme {
 
 export default function HelpDeskScreen() {
   const { voterId, voterName, age, gender } = useLocalSearchParams();
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
 
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -270,10 +270,10 @@ export default function HelpDeskScreen() {
         
         <View style={styles.requestMeta}>
           <Text style={[styles.requestMetaText, { color: colors.text.secondary }]}>
-            Submitted By: {voter?.karyakartaName || 'Unknown'}
+            {t('submittedBy')}: {voter?.karyakartaName || t('unknown')}
           </Text>
           <Text style={[styles.requestMetaText, { color: colors.text.secondary }]}>
-            Submission Date: {new Date(item.created_at).toLocaleDateString('en-GB')}
+            {t('submissionDate')}: {new Date(item.created_at).toLocaleDateString('en-GB')}
           </Text>
         </View>
         
@@ -289,7 +289,7 @@ export default function HelpDeskScreen() {
             onPress={() => router.push(`/application-details?applicationId=${item.application_id}`)}
           >
             <Eye size={16} color={colors.primary} testID={`view-details-icon-${item.application_id}`} />
-            <Text style={[styles.viewDetailsText, { color: colors.primary }]}>View Details</Text>
+            <Text style={[styles.viewDetailsText, { color: colors.primary }]}>{t('viewDetails')}</Text>
           </TouchableOpacity>
         </View>
       </Card>
@@ -314,12 +314,12 @@ export default function HelpDeskScreen() {
         </Text>
         
         <View style={styles.beneficiariesContainer}>
-          <Text style={styles.beneficiariesLabel}>Beneficiaries: </Text>
+          <Text style={styles.beneficiariesLabel}>{t('beneficiaries')}: </Text>
           <Text style={styles.beneficiariesText}>{item.beneficiaries}</Text>
         </View>
         
         <Button
-          title="Apply"
+          title={t('apply')}
           onPress={() => handleApplyScheme(item)}
           variant="primary"
           size="small"
@@ -358,7 +358,7 @@ export default function HelpDeskScreen() {
           >
             <ArrowLeft size={24} color={colors.text.white} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>HelpDesk</Text>
+          <Text style={styles.headerTitle}>{t('helpDesk')}</Text>
         </View>
       </SafeAreaView>
       
@@ -385,7 +385,7 @@ export default function HelpDeskScreen() {
         {/* Section A: Voter Requests */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Voter Requests</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>{t('voterRequests')}</Text>
             <Text style={[styles.sectionCount, { color: colors.text.secondary }]}>
               ({voterApplications.length})
             </Text>
@@ -401,7 +401,7 @@ export default function HelpDeskScreen() {
             ) : (
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={[styles.emptyText, { color: colors.text.light }]}>No requests found for this voter</Text>
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>{t('noRequestsFoundForVoter')}</Text>
               </View>
             )}
           </View>
@@ -410,7 +410,7 @@ export default function HelpDeskScreen() {
         {/* Section B: Government Schemes */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Available Schemes</Text>
+            <Text style={styles.sectionTitle}>{t('availableSchemes')}</Text>
             <Text style={styles.sectionCount}>({filteredSchemes.length})</Text>
           </View>
           
@@ -419,7 +419,7 @@ export default function HelpDeskScreen() {
             <View style={styles.searchInputContainer}>
               <Search size={20} color={colors.text.light} style={styles.searchIcon} />
               <TextInput
-                placeholder="Search schemes..."
+                placeholder={t('searchSchemes')}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 style={styles.searchInput}
@@ -463,7 +463,7 @@ export default function HelpDeskScreen() {
             {filteredSchemes.length === 0 && (
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={styles.emptyText}>No schemes found</Text>
+                <Text style={styles.emptyText}>{t('noSchemesFound')}</Text>
               </View>
             )}
           </View>

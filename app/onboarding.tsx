@@ -26,7 +26,7 @@ interface StepItem {
 }
 
 export default function OnboardingScreen() {
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('steps');
   const [mobileNumber, setMobileNumber] = useState('');
   const [otp, setOtp] = useState('');
@@ -94,8 +94,8 @@ export default function OnboardingScreen() {
 
   const renderStepsView = () => (
     <View style={styles.stepsContainer}>
-      <Text style={styles.stepsTitle}>New User Registration</Text>
-      <Text style={styles.stepsSubtitle}>Follow these simple steps to get started</Text>
+      <Text style={styles.stepsTitle}>{t('newUserRegistration')}</Text>
+      <Text style={styles.stepsSubtitle}>{t('followSteps')}</Text>
       
       <View style={styles.stepsRow}>
         {steps.map((step, index) => (
@@ -120,7 +120,7 @@ export default function OnboardingScreen() {
       </View>
       
       <Button
-        title="Start Registration"
+        title={t('startRegistration')}
         onPress={() => setCurrentStep('mobile')}
         style={styles.startButton}
       />
@@ -135,17 +135,17 @@ export default function OnboardingScreen() {
         <View style={styles.stepDot} />
       </View>
       
-      <Text style={styles.formTitle}>Enter Mobile Number</Text>
-      <Text style={styles.formSubtitle}>We&apos;ll send you a verification code</Text>
+      <Text style={styles.formTitle}>{t('enterMobileNumberTitle')}</Text>
+      <Text style={styles.formSubtitle}>{t('verificationCodeSent')}</Text>
       
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Mobile Number</Text>
+        <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
         <View style={styles.phoneInputContainer}>
           <Phone size={20} color="#007AFF" style={styles.phoneIcon} />
           <Input
             value={mobileNumber}
             onChangeText={setMobileNumber}
-            placeholder="Enter mobile number"
+            placeholder={t('enterMobileNumber')}
             keyboardType="phone-pad"
             maxLength={10}
             style={styles.phoneInput}
@@ -154,7 +154,7 @@ export default function OnboardingScreen() {
       </View>
       
       <Button
-        title="Send OTP"
+        title={t('sendOtp')}
         onPress={handleMobileSubmit}
         loading={isLoading}
         disabled={mobileNumber.length !== 10}
@@ -162,7 +162,7 @@ export default function OnboardingScreen() {
       />
       
       <TouchableOpacity onPress={() => setCurrentStep('steps')}>
-        <Text style={styles.backText}>Back to Steps</Text>
+        <Text style={styles.backText}>{t('backToSteps')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -175,15 +175,15 @@ export default function OnboardingScreen() {
         <View style={styles.stepDot} />
       </View>
       
-      <Text style={styles.formTitle}>Verify OTP</Text>
-      <Text style={styles.formSubtitle}>Enter the 6-digit code sent to {mobileNumber}</Text>
+      <Text style={styles.formTitle}>{t('verifyOtpTitle')}</Text>
+      <Text style={styles.formSubtitle}>{t('enterCodeSent')} {mobileNumber}</Text>
       
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>OTP Code</Text>
+        <Text style={styles.inputLabel}>{t('enterOtp')}</Text>
         <Input
           value={otp}
           onChangeText={setOtp}
-          placeholder="Enter 6-digit OTP"
+          placeholder={t('enterOtp')}
           keyboardType="numeric"
           maxLength={6}
           style={styles.otpInput}
@@ -191,7 +191,7 @@ export default function OnboardingScreen() {
       </View>
       
       <Button
-        title="Verify OTP"
+        title={t('verifyOtpTitle')}
         onPress={handleOtpSubmit}
         loading={isLoading}
         disabled={otp.length !== 6}
@@ -199,7 +199,7 @@ export default function OnboardingScreen() {
       />
       
       <TouchableOpacity onPress={() => setCurrentStep('mobile')}>
-        <Text style={styles.backText}>Back to Mobile</Text>
+        <Text style={styles.backText}>{t('backToMobile')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -212,15 +212,15 @@ export default function OnboardingScreen() {
         <View style={[styles.stepDot, styles.stepDotActive]} />
       </View>
       
-      <Text style={styles.formTitle}>Set PIN</Text>
-      <Text style={styles.formSubtitle}>Create a 4-digit PIN for secure access</Text>
+      <Text style={styles.formTitle}>{t('setPinTitle')}</Text>
+      <Text style={styles.formSubtitle}>{t('createSecurePin')}</Text>
       
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>PIN</Text>
+        <Text style={styles.inputLabel}>{t('pin')}</Text>
         <Input
           value={pin}
           onChangeText={setPin}
-          placeholder="Enter 4-digit PIN"
+          placeholder={t('createPin')}
           keyboardType="numeric"
           maxLength={4}
           secureTextEntry
@@ -229,7 +229,7 @@ export default function OnboardingScreen() {
       </View>
       
       <Button
-        title="Complete Registration"
+        title={t('completeRegistration')}
         onPress={handlePinSubmit}
         loading={isLoading}
         disabled={pin.length !== 4}
@@ -237,7 +237,7 @@ export default function OnboardingScreen() {
       />
       
       <TouchableOpacity onPress={() => setCurrentStep('otp')}>
-        <Text style={styles.backText}>Back to OTP</Text>
+        <Text style={styles.backText}>{t('backToOtp')}</Text>
       </TouchableOpacity>
     </View>
   );

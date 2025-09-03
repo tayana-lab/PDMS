@@ -389,7 +389,68 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     error: 'പിശക്',
     ok: 'ശരി',
     back: 'പിന്നോട്ട്',
-    done: 'പൂർത്തിയായി'
+    done: 'പൂർത്തിയായി',
+    success: 'വിജയം',
+    
+    // Login & Registration
+    sendOtp: 'OTP അയയ്ക്കുക',
+    sendingOtp: 'OTP അയയ്ക്കുന്നു...',
+    enterOtp: 'OTP നൽകുക',
+    resendOtp: 'OTP വീണ്ടും അയയ്ക്കുക',
+    resendOtpIn: 'OTP വീണ്ടും അയയ്ക്കുക',
+    showOtp: 'OTP കാണിക്കുക',
+    hideOtp: 'OTP മറയ്ക്കുക',
+    newUserRegistration: 'പുതിയ ഉപയോക്താവ് രജിസ്ട്രേഷൻ',
+    followSteps: 'ആരംഭിക്കാൻ ഈ ലളിതമായ ഘട്ടങ്ങൾ പിന്തുടരുക',
+    startRegistration: 'രജിസ്ട്രേഷൻ ആരംഭിക്കുക',
+    enterMobileNumberTitle: 'മൊബൈൽ നമ്പർ നൽകുക',
+    verificationCodeSent: 'ഞങ്ങൾ നിങ്ങൾക്ക് ഒരു സ്ഥിരീകരണ കോഡ് അയയ്ക്കും',
+    verifyOtpTitle: 'OTP സ്ഥിരീകരിക്കുക',
+    enterCodeSent: 'നിങ്ങളുടെ മൊബൈലിലേക്ക് അയച്ച കോഡ് നൽകുക',
+    setPinTitle: 'PIN സജ്ജമാക്കുക',
+    createSecurePin: 'സുരക്ഷിത ആക്സസിനായി 4-അക്ക PIN സൃഷ്ടിക്കുക',
+    createPin: 'PIN സൃഷ്ടിക്കുക',
+    confirmPin: 'PIN സ്ഥിരീകരിക്കുക',
+    reenterPin: 'PIN വീണ്ടും നൽകുക',
+    createAccount: 'അക്കൗണ്ട് സൃഷ്ടിക്കുക',
+    continue: 'തുടരുക',
+    codeSentTo: 'കോഡ് അയച്ചത്',
+    
+    // Help Desk
+    voterRequests: 'വോട്ടർ അഭ്യർത്ഥനകൾ',
+    noRequestsFoundForVoter: 'ഈ വോട്ടർക്ക് അഭ്യർത്ഥനകൾ കണ്ടെത്തിയില്ല',
+    submittedBy: 'സമർപ്പിച്ചത്',
+    submissionDate: 'സമർപ്പണ തീയതി',
+    unknown: 'അജ്ഞാതം',
+    
+    // Categories
+    all: 'എല്ലാം',
+    employment: 'തൊഴിൽ',
+    agriculture: 'കൃഷി',
+    health: 'ആരോഗ്യം',
+    education: 'വിദ്യാഭ്യാസം',
+    socialWelfare: 'സാമൂഹിക ക്ഷേമം',
+    
+    // Validation Messages
+    pleaseEnterMobileNumber: 'ദയവായി മൊബൈൽ നമ്പർ നൽകുക',
+    mobileNumberMust10Digits: 'മൊബൈൽ നമ്പർ 10 അക്കങ്ങൾ ആയിരിക്കണം',
+    otpSentSuccessfully: 'OTP വിജയകരമായി അയച്ചു',
+    failedToSendOtp: 'OTP അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു',
+    pleaseEnterBothMobileAndOtp: 'ദയവായി മൊബൈൽ നമ്പറും OTP യും നൽകുക',
+    otpMust6Digits: 'OTP 6 അക്കങ്ങൾ ആയിരിക്കണം',
+    loginFailed: 'ലോഗിൻ പരാജയപ്പെട്ടു',
+    welcome: 'സ്വാഗതം',
+    
+    // Profile & Settings additions
+    help: 'സഹായം',
+    areYouSureLogout: 'നിങ്ങൾക്ക് ലോഗൗട്ട് ചെയ്യണമെന്ന് ഉറപ്പാണോ?',
+    
+    // Additional common terms
+    verificationCode: 'സ്ഥിരീകരണ കോഡ്',
+    backToSteps: 'ഘട്ടങ്ങളിലേക്ക് തിരികെ',
+    backToMobile: 'മൊബൈലിലേക്ക് തിരികെ',
+    backToOtp: 'OTP യിലേക്ക് തിരികെ',
+    completeRegistration: 'രജിസ്ട്രേഷൻ പൂർത്തിയാക്കുക'
   },
   hi: {
     // Navigation
