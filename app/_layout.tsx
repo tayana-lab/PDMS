@@ -80,6 +80,12 @@ function RootLayoutNav() {
           headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
           headerTintColor: colors?.text?.primary || '#000000'
         }} />
+        <Stack.Screen name="forgot-pin" options={{ 
+          title: "Reset PIN",
+          headerBackTitle: "Back",
+          headerStyle: { backgroundColor: colors?.surface || '#FFFFFF' },
+          headerTintColor: colors?.text?.primary || '#000000'
+        }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="search-voter" options={{ 
           headerShown: false,

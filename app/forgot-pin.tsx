@@ -8,13 +8,12 @@ import {
   Alert,
   SafeAreaView,
   StatusBar,
-  TouchableOpacity,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { Stack, router } from 'expo-router';
-import { Phone, MessageSquare, Lock, ArrowLeft, Check } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { Phone, MessageSquare, Lock, Check } from 'lucide-react-native';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
@@ -148,26 +147,7 @@ export default function ForgotPinScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: t('resetPin'),
-            headerShown: true,
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
-                <ArrowLeft size={24} color={colors.text.primary} />
-              </TouchableOpacity>
-            ),
-            headerStyle: {
-              backgroundColor: colors.surface,
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontWeight: '600',
-              color: colors.text.primary,
-            },
-            headerTintColor: colors.text.primary,
-          }}
-        />
+
         <StatusBar
           barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
           backgroundColor={colors.surface}
@@ -379,10 +359,6 @@ const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.surface,
-  },
-  headerBackButton: {
-    padding: Spacing.xs,
-    marginLeft: -Spacing.xs,
   },
 
   // Step Indicator Styles
