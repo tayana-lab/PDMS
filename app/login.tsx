@@ -274,18 +274,12 @@ export default function LoginScreen() {
       )}
 
       {/* Main Content */}
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.mainContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <KeyboardAvoidingView
+          style={styles.mainContent}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
        
           {/* Logo Section */}
           <View style={styles.logoSection}>
@@ -419,9 +413,8 @@ export default function LoginScreen() {
             </Text>
           </View>
   
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -490,24 +483,25 @@ bannerWrapper: {
     },
 
     // Main Content
-    keyboardAvoidingView: {
-      flex: 1,
-    },
-    scrollContainer: {
-      flex: 1,
-    },
     mainContent: {
+      flex: 1,
+      marginHorizontal: Spacing.lg,  
+      justifyContent: "center",
+      paddingTop: isKeyboardVisible ? Spacing.lg : 0,
+    },
+    mainContentKeyboardVisible: {
+      flex: 1,
+      justifyContent: "flex-start",
+      paddingTop: Spacing.lg,
+    },
+    scrollContent: {
       flexGrow: 1,
-      marginHorizontal: Spacing.lg,
-      justifyContent: isKeyboardVisible ? "flex-start" : "center",
-      paddingTop: isKeyboardVisible ? Spacing.sm : 0,
-      paddingBottom: Spacing.lg,
-      minHeight: isKeyboardVisible ? undefined : "100%",
+      paddingHorizontal: Spacing.lg
     },
 
     logoSection: {
       alignItems: "center",
-      marginBottom: 5,
+      marginBottom: 10,
     },
     logoContainer: {
       alignItems: "center",
