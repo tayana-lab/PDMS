@@ -187,7 +187,7 @@ export default function LoginScreen() {
     router.push("/new-user");
   };
 
-  const styles = createStyles(colors, isKeyboardVisible);
+  const styles = createStyles(colors, isKeyboardVisible, width);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -229,16 +229,29 @@ export default function LoginScreen() {
               </View>
             ))}
           </ScrollView>
+          
+          {/* Pagination Dots */}
+          <View style={styles.paginationContainer}>
+            {bannerImages.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.paginationDot,
+                  currentBannerIndex === index && styles.paginationDotActive,
+                ]}
+              />
+            ))}
+          </View>
         </View>
       )}
 
       {/* Main Content */}
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <KeyboardAvoidingView
-          style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        >
+      <KeyboardAvoidingView
+        style={styles.mainContent}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
        
           {/* Logo Section */}
           <View style={styles.logoSection}>
@@ -372,13 +385,13 @@ export default function LoginScreen() {
             </Text>
           </View>
   
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const createStyles = (colors: any, isKeyboardVisible: boolean) =>
+const createStyles = (colors: any, isKeyboardVisible: boolean, screenWidth: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -386,16 +399,16 @@ const createStyles = (colors: any, isKeyboardVisible: boolean) =>
     },
 
 bannerWrapper: {
-      height: isKeyboardVisible ? 0 : 200,
+      height: isKeyboardVisible ? 0 : 250,
       marginHorizontal: isKeyboardVisible ? 0 : Spacing.lg,
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
-      opacity: isKeyboardVisible ? 0 : 1,
-      marginBottom: isKeyboardVisible ? 0 : Spacing.md,
+      marginBottom: isKeyboardVisible ? 0 : Spacing.lg,
+      marginTop: Spacing.md,
     },
     bannerSlide: {
-      width: width - (Spacing.lg * 2),
+      width: screenWidth - (Spacing.lg * 2),
       height: "100%",
       position: "relative",
     },
@@ -442,16 +455,17 @@ bannerWrapper: {
       textAlign: "center",
     },
 
-    // Main Content 60%
+    // Main Content
     mainContent: {
-      flex: 0.7,
+      flex: 1,
       marginHorizontal: Spacing.lg,  
-      justifyContent: "center", 
+      justifyContent: isKeyboardVisible ? "flex-start" : "center",
+      paddingTop: isKeyboardVisible ? Spacing.md : 0,
     },
     mainContentKeyboardVisible: {
       flex: 1,
       justifyContent: "flex-start",
-      paddingTop: Spacing.lg,
+      paddingTop: Spacing.md,
     },
     scrollContent: {
       flexGrow: 1,
@@ -460,19 +474,20 @@ bannerWrapper: {
 
     logoSection: {
       alignItems: "center",
-      marginBottom: 10,
+      marginBottom: isKeyboardVisible ? Spacing.sm : Spacing.md,
     },
     logoContainer: {
       alignItems: "center",
-      marginBottom: 10,
+      marginBottom: isKeyboardVisible ? Spacing.xs : Spacing.sm,
     },
     logoImage: {
-      width: 75,
-      height: 75,
+      width: isKeyboardVisible ? 60 : 75,
+      height: isKeyboardVisible ? 60 : 75,
     },
     welcomeSubtitle: {
-      fontSize: 16,
+      fontSize: isKeyboardVisible ? 14 : 16,
       color: colors.text.secondary,
+      fontWeight: "600",
     },
 
     loginCard: {
@@ -536,8 +551,8 @@ bannerWrapper: {
 
     registerSection: {
       alignItems: "center",
-      marginTop:10,
-      marginBottom: Spacing.md,
+      marginTop: isKeyboardVisible ? Spacing.xs : Spacing.sm,
+      marginBottom: isKeyboardVisible ? Spacing.sm : Spacing.md,
     },
     registerText: {
       fontSize: 16,
