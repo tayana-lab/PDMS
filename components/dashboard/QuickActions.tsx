@@ -9,7 +9,7 @@ import Badge from '@/components/ui/Badge';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function QuickActions() {
-  const { colors } = useAppSettings();
+  const { colors, t } = useAppSettings();
   
   const handleActionPress = (route: string) => {
     console.log('Navigating to:', route);
@@ -22,7 +22,7 @@ export default function QuickActions() {
   };
    return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.text.primary }]}>Quick Actions</Text>
+      <Text style={[styles.title, { color: colors.text.primary }]}>{t('quickActions')}</Text>
       <ScrollView 
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -36,10 +36,10 @@ export default function ProgressDashboard() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>{t('progressDashboard')}</Text>
         <Card style={[styles.progressCard, styles.loadingCard]}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text.secondary }]}>Loading analytics...</Text>
+          <Text style={[styles.loadingText, { color: colors.text.secondary }]}>{t('loadingAnalytics')}</Text>
         </Card>
       </View>
     );
@@ -48,9 +48,9 @@ export default function ProgressDashboard() {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>{t('progressDashboard')}</Text>
         <Card style={styles.progressCard}>
-          <Text style={[styles.errorText, { color: colors.error }]}>Failed to load analytics</Text>
+          <Text style={[styles.errorText, { color: colors.error }]}>{t('failedToLoadAnalytics')}</Text>
         </Card>
       </View>
     );
@@ -62,25 +62,25 @@ export default function ProgressDashboard() {
   
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.text.primary }]}>Progress Dashboard</Text>
+      <Text style={[styles.title, { color: colors.text.primary }]}>{t('progressDashboard')}</Text>
       
       <Card style={styles.progressCard}>
         <ProgressBar
           achieved={analytics.approved_applications}
           total={analytics.total_applications}
-          label="Applications Approved"
+          label={t('applicationsApproved')}
         />
         
         <ProgressBar
           achieved={analytics.active_karyakartas}
           total={analytics.active_karyakartas + 50} // Assuming target is current + 50
-          label="Active Karyakartas"
+          label={t('activeKaryakartas')}
         />
         
         <ProgressBar
           achieved={analytics.total_voters}
           total={analytics.total_voters + 1000} // Assuming target is current + 1000
-          label="Registered Voters"
+          label={t('registeredVoters')}
         />
       </Card>
     </View>

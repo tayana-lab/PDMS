@@ -118,6 +118,15 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     applicationWillBeProcessed: 'Application will be processed with the above voter details.',
     applicationSubmittedMessage: 'Your application has been submitted successfully and will be processed soon.',
     
+    // Dashboard
+    progressDashboard: 'Progress Dashboard',
+    applicationsApproved: 'Applications Approved',
+    activeKaryakartas: 'Active Karyakartas',
+    registeredVoters: 'Registered Voters',
+    loadingAnalytics: 'Loading analytics...',
+    failedToLoadAnalytics: 'Failed to load analytics',
+    quickActions: 'Quick Actions',
+    
     // Common
     error: 'Error',
     ok: 'OK',
@@ -206,6 +215,15 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     name: 'ಹೆಸರು',
     applicationWillBeProcessed: 'ಮೇಲಿನ ಮತದಾರರ ವಿವರಗಳೊಂದಿಗೆ ಅರ್ಜಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುವುದು.',
     applicationSubmittedMessage: 'ನಿಮ್ಮ ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ ಮತ್ತು ಶೀಘ್ರದಲ್ಲೇ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುವುದು.',
+    
+    // Dashboard
+    progressDashboard: 'ಪ್ರಗತಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+    applicationsApproved: 'ಅನುಮೋದಿತ ಅರ್ಜಿಗಳು',
+    activeKaryakartas: 'ಸಕ್ರಿಯ ಕಾರ್ಯಕರ್ತರು',
+    registeredVoters: 'ನೋಂದಾಯಿತ ಮತದಾರರು',
+    loadingAnalytics: 'ವಿಶ್ಲೇಷಣೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
+    failedToLoadAnalytics: 'ವಿಶ್ಲೇಷಣೆ ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ',
+    quickActions: 'ತ್ವರಿತ ಕ್ರಿಯೆಗಳು',
     
     // Common
     error: 'ದೋಷ',
@@ -296,6 +314,15 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     applicationWillBeProcessed: 'மேலே உள்ள வாக்காளர் விவரங்களுடன் விண்ணப்பம் செயலாக்கப்படும்.',
     applicationSubmittedMessage: 'உங்கள் விண்ணப்பம் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டு விரைவில் செயலாக்கப்படும்.',
     
+    // Dashboard
+    progressDashboard: 'முன்னேற்ற டாஷ்போர்டு',
+    applicationsApproved: 'அங்கீகரிக்கப்பட்ட விண்ணப்பங்கள்',
+    activeKaryakartas: 'செயலில் உள்ள கார்யகர்த்தாக்கள்',
+    registeredVoters: 'பதிவு செய்யப்பட்ட வாக்காளர்கள்',
+    loadingAnalytics: 'பகுப்பாய்வு ஏற்றுகிறது...',
+    failedToLoadAnalytics: 'பகுப்பாய்வு ஏற்றுவதில் தோல்வி',
+    quickActions: 'விரைவு செயல்கள்',
+    
     // Common
     error: 'பிழை',
     ok: 'சரி',
@@ -384,6 +411,15 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     name: 'പേര്',
     applicationWillBeProcessed: 'മേൽപ്പറഞ്ഞ വോട്ടർ വിശദാംശങ്ങൾ ഉപയോഗിച്ച് അപേക്ഷ പ്രോസസ്സ് ചെയ്യപ്പെടും.',
     applicationSubmittedMessage: 'നിങ്ങളുടെ അപേക്ഷ വിജയകരമായി സമർപ്പിച്ചു, ഉടൻ പ്രോസസ്സ് ചെയ്യപ്പെടും.',
+    
+    // Dashboard
+    progressDashboard: 'പുരോഗതി ഡാഷ്ബോർഡ്',
+    applicationsApproved: 'അംഗീകരിച്ച അപേക്ഷകൾ',
+    activeKaryakartas: 'സജീവ കാര്യകർത്താക്കൾ',
+    registeredVoters: 'രജിസ്റ്റർ ചെയ്ത വോട്ടർമാർ',
+    loadingAnalytics: 'അനലിറ്റിക്സ് ലോഡ് ചെയ്യുന്നു...',
+    failedToLoadAnalytics: 'അനലിറ്റിക്സ് ലോഡ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
+    quickActions: 'പെട്ടെന്നുള്ള പ്രവർത്തനങ്ങൾ',
     
     // Common
     error: 'പിശക്',
@@ -534,6 +570,15 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     name: 'नाम',
     applicationWillBeProcessed: 'उपरोक्त मतदाता विवरण के साथ आवेदन संसाधित किया जाएगा।',
     applicationSubmittedMessage: 'आपका आवेदन सफलतापूर्वक जमा किया गया है और जल्द ही संसाधित किया जाएगा।',
+    
+    // Dashboard
+    progressDashboard: 'प्रगति डैशबोर्ड',
+    applicationsApproved: 'स्वीकृत आवेदन',
+    activeKaryakartas: 'सक्रिय कार्यकर्ता',
+    registeredVoters: 'पंजीकृत मतदाता',
+    loadingAnalytics: 'विश्लेषण लोड हो रहा है...',
+    failedToLoadAnalytics: 'विश्लेषण लोड करने में विफल',
+    quickActions: 'त्वरित कार्य',
     
     // Common
     error: 'त्रुटि',
