@@ -520,13 +520,13 @@ class ApiClient {
     }
   }
 
-  private getHeaders(): Record<string, string> {
+  private getHeaders(skipAuth = false): Record<string, string> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (this.token) headers.Authorization = `Bearer ${this.token}`;
+    if (this.token && !skipAuth) headers.Authorization = `Bearer ${this.token}`;
     return headers;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}, skipAuth = false): Promise<T> {
     const method = options.method || 'GET';
     const timestamp = new Date().toISOString();
     
@@ -545,7 +545,7 @@ class ApiClient {
     const url = `${this.baseUrl}${endpoint}`;
     const config: RequestInit = {
       ...options,
-      headers: { ...this.getHeaders(), ...(options.headers ?? {}) },
+      headers: { ...this.getHeaders(skipAuth), ...(options.headers ?? {}) },
     };
     
     console.log(`🌐 [REAL API] ${method} ${url}`);
@@ -835,11 +835,11 @@ class ApiClient {
   }
 
   async requestOtp(request: OtpRequest): Promise<OtpResponse> {
-    return this.request<OtpResponse>('/auth/request-otp', { method: 'POST', body: JSON.stringify(request) });
+    return this.request<OtpResponse>('/auth/request-otp', { method: 'POST', body: JSON.stringify(request) }, true);
   }
 
   async login(request: LoginRequest): Promise<LoginResponse> {
-    const response = await this.request<LoginResponse>('/auth/login', { method: 'POST', body: JSON.stringify(request) });
+    const response = await this.request<LoginResponse>('/auth/login', { method: 'POST', body: JSON.stringify(request) }, true);
     await this.saveToken(response.token);
     return response;
   }
