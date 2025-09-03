@@ -500,14 +500,14 @@ bannerWrapper: {
       flexGrow: 1,
       marginHorizontal: Spacing.lg,
       justifyContent: isKeyboardVisible ? "flex-start" : "center",
-      paddingTop: isKeyboardVisible ? Spacing.md : 0,
+      paddingTop: isKeyboardVisible ? Spacing.sm : 0,
       paddingBottom: Spacing.lg,
       minHeight: isKeyboardVisible ? undefined : "100%",
     },
 
     logoSection: {
       alignItems: "center",
-      marginBottom: 10,
+      marginBottom: 5,
     },
     logoContainer: {
       alignItems: "center",
