@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,16 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, router } from 'expo-router';
-import { Phone, MessageSquare, Lock, ArrowLeft } from 'lucide-react-native';
+import { Phone, MessageSquare, Lock, ArrowLeft, Check } from 'lucide-react-native';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import { Spacing, BorderRadius } from '@/constants/theme';
+import { Spacing, BorderRadius, Shadows } from '@/constants/theme';
 
 type Step = 'mobile' | 'otp' | 'newPin';
 
@@ -47,7 +48,7 @@ const steps: StepConfig[] = [
   {
     id: 'newPin',
     title: 'Reset PIN',
-    subtitle: 'Create a new 6-digit PIN',
+    subtitle: 'Create a new 4-digit PIN',
     icon: Lock,
     label: 'New PIN'
   }
@@ -56,12 +57,13 @@ const steps: StepConfig[] = [
 export default function ForgotPinScreen() {
   const [currentStep, setCurrentStep] = useState<Step>('mobile');
   const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const otpInputRefs = useRef<TextInput[]>([]);
   
-  const { colors } = useAppSettings();
+  const { colors, currentTheme, t } = useAppSettings();
   const { sendOTP, verifyOTP, resetPin } = useAuth();
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
@@ -79,19 +81,20 @@ export default function ForgotPinScreen() {
         await sendOTP(mobile);
         setCurrentStep('otp');
       } else if (currentStep === 'otp') {
-        if (!otp.trim() || otp.length !== 6) {
+        const otpValue = otpDigits.join('');
+        if (!otpValue.trim() || otpValue.length !== 6) {
           Alert.alert('Error', 'Please enter a valid 6-digit OTP');
           return;
         }
-        const result = await verifyOTP(mobile, otp);
+        const result = await verifyOTP(mobile, otpValue);
         if (result.success) {
           setCurrentStep('newPin');
         } else {
           Alert.alert('Error', result.error || 'Invalid OTP');
         }
       } else if (currentStep === 'newPin') {
-        if (!newPin.trim() || newPin.length !== 6) {
-          Alert.alert('Error', 'Please enter a 6-digit PIN');
+        if (!newPin.trim() || newPin.length !== 4) {
+          Alert.alert('Error', 'Please enter a 4-digit PIN');
           return;
         }
         if (newPin !== confirmPin) {
@@ -114,6 +117,23 @@ export default function ForgotPinScreen() {
     }
   };
 
+  const handleOtpChange = (value: string, index: number) => {
+    const newOtpDigits = [...otpDigits];
+    newOtpDigits[index] = value;
+    setOtpDigits(newOtpDigits);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyPress = (key: string, index: number) => {
+    if (key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
   const handleBack = () => {
     if (currentStep === 'mobile') {
       router.back();
@@ -127,226 +147,286 @@ export default function ForgotPinScreen() {
   const styles = createStyles(colors);
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: 'Reset PIN',
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={handleBack} style={styles.headerBackButton}>
-              <ArrowLeft size={24} color={colors.text.white} />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: colors.primary,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: colors.text.white,
-          },
-          headerTintColor: colors.text.white,
-        }}
-      />
-      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <Stack.Screen
+          options={{
+            title: t('resetPin'),
+            headerShown: true,
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                <ArrowLeft size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            ),
+            headerStyle: {
+              backgroundColor: colors.surface,
+            },
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '600',
+              color: colors.text.primary,
+            },
+            headerTintColor: colors.text.primary,
+          }}
+        />
+        <StatusBar
+          barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+          backgroundColor={colors.surface}
+        />
+        {/* Step Indicators */}
+        <View style={styles.stepIndicatorContainer}>
+          {steps.map((step, index) => {
+            const isActive = index === currentStepIndex;
+            const isCompleted = index < currentStepIndex;
+            const StepIcon = step.icon;
 
-      <LinearGradient
-        colors={[colors.primary, colors.primary + 'CC', colors.primary + '99']}
-        style={styles.gradientBackground}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          {/* Step Indicators */}
-          <View style={styles.stepIndicatorContainer}>
-            {steps.map((step, index) => {
-              const isActive = index === currentStepIndex;
-              const isCompleted = index < currentStepIndex;
-              const StepIcon = step.icon;
-              
-              return (
-                <TouchableOpacity 
-                  key={step.id} 
-                  style={styles.stepIndicator}
-                  onPress={() => {
-                    if (index < currentStepIndex) {
-                      setCurrentStep(step.id);
-                    }
-                  }}
-                  disabled={index > currentStepIndex}
-                >
+            return (
+              <React.Fragment key={step.id}>
+                <View style={styles.stepWrapper}>
                   <View style={[
                     styles.stepIconContainer,
                     isActive && styles.stepIconActive,
                     isCompleted && styles.stepIconCompleted,
                     !isActive && !isCompleted && styles.stepIconInactive
                   ]}>
-                    <StepIcon 
-                      size={16} 
-                      color={isActive || isCompleted ? '#fff' : colors.primary} 
-                    />
+                    {isCompleted ? (
+                      <Check
+                        size={20}
+                        color={colors.background}
+                      />
+                    ) : (
+                      <StepIcon
+                        size={20}
+                        color={isActive ? colors.background : colors.text.secondary}
+                      />
+                    )}
                   </View>
+                  
                   <Text style={[
                     styles.stepLabel,
                     isActive && styles.stepLabelActive,
                     isCompleted && styles.stepLabelCompleted,
                     !isActive && !isCompleted && styles.stepLabelInactive
                   ]}>
-                    {step.label}
+                    {t(step.label.toLowerCase())}
                   </Text>
-                  {index < steps.length - 1 && (
-                    <View style={[
-                      styles.stepConnector,
-                      isCompleted && styles.stepConnectorCompleted
-                    ]} />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
-            <View style={styles.center}>
-              <View style={styles.card}>
-                <Text style={styles.title}>
-                  {currentStepConfig.title}
-                </Text>
-                <Text style={styles.subtitle}>
-                  {currentStepConfig.subtitle}
-                </Text>
-
-                {/* Form Fields */}
-                <View style={styles.inputGroup}>
-                  {currentStep === 'mobile' && (
-                    <Input
-                      label="Mobile Number"
-                      value={mobile}
-                      onChangeText={setMobile}
-                      placeholder="Enter mobile number"
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                      leftIcon={<Phone size={20} color={colors.text.secondary} />}
-                    />
-                  )}
-
-                  {currentStep === 'otp' && (
-                    <>
-                      <Input
-                        label="Verification Code"
-                        value={otp}
-                        onChangeText={setOtp}
-                        placeholder="Enter 6-digit OTP"
-                        keyboardType="numeric"
-                        maxLength={6}
-                        leftIcon={<MessageSquare size={20} color={colors.text.secondary} />}
-                        style={styles.otpInput}
-                      />
-                      <Text style={styles.helperText}>
-                        Code sent to +91 {mobile}
-                      </Text>
-                    </>
-                  )}
-
-                  {currentStep === 'newPin' && (
-                    <>
-                      <Input
-                        label="New PIN"
-                        value={newPin}
-                        onChangeText={setNewPin}
-                        placeholder="Enter 6-digit PIN"
-                        keyboardType="numeric"
-                        maxLength={6}
-                        secureTextEntry
-                        leftIcon={<Lock size={20} color={colors.text.secondary} />}
-                        style={styles.pinInput}
-                      />
-                      <Input
-                        label="Confirm PIN"
-                        value={confirmPin}
-                        onChangeText={setConfirmPin}
-                        placeholder="Re-enter PIN"
-                        keyboardType="numeric"
-                        maxLength={6}
-                        secureTextEntry
-                        leftIcon={<Lock size={20} color={colors.text.secondary} />}
-                        style={styles.pinInput}
-                        containerStyle={{ marginTop: 12 }}
-                      />
-                    </>
-                  )}
                 </View>
+                
+                {/* Connector Line */}
+                {index < steps.length - 1 && (
+                  <View style={[
+                    styles.stepConnector,
+                    (isCompleted || index < currentStepIndex) && styles.stepConnectorCompleted
+                  ]} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </View>
 
-                {/* Action Buttons */}
-                <View style={styles.btnGroup}>
+        <KeyboardAvoidingView
+          style={styles.mainContent}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <View style={styles.center}>
+            <View style={styles.loginCard}>
+              <Text style={styles.title}>
+                {t(currentStepConfig.title.toLowerCase().replace(/\s+/g, ''))}
+              </Text>
+              <Text style={styles.subtitle}>
+                {t(currentStepConfig.subtitle.toLowerCase().replace(/\s+/g, '').replace(/'/g, ''))}
+              </Text>
+
+              {/* Form Fields */}
+              <View style={styles.inputGroup}>
+                {currentStep === 'mobile' && (
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.inputLabel}>{t('mobileNumber')}</Text>
+                    <View style={styles.inputWrapper}>
+                      <Phone
+                        size={20}
+                        color={colors.text.light}
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        style={styles.input}
+                        value={mobile}
+                        onChangeText={setMobile}
+                        placeholder={t('enterMobileNumber')}
+                        placeholderTextColor={colors.text.light}
+                        keyboardType="phone-pad"
+                        maxLength={10}
+                      />
+                    </View>
+                  </View>
+                )}
+
+                {currentStep === 'otp' && (
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.inputLabel}>{t('verificationCode')}</Text>
+                    <View style={styles.otpContainer}>
+                      {otpDigits.map((digit, index) => (
+                        <TextInput
+                          key={index}
+                          ref={(ref) => {
+                            if (ref) {
+                              otpInputRefs.current[index] = ref;
+                            }
+                          }}
+                          style={[
+                            styles.otpBox,
+                            digit ? styles.otpBoxFilled : null
+                          ]}
+                          value={digit}
+                          onChangeText={(value) => {
+                            if (value.length <= 1) {
+                              handleOtpChange(value, index);
+                            }
+                          }}
+                          onKeyPress={({ nativeEvent }) => {
+                            handleOtpKeyPress(nativeEvent.key, index);
+                          }}
+                          keyboardType="numeric"
+                          maxLength={1}
+                          textAlign="center"
+                          selectTextOnFocus
+                        />
+                      ))}
+                    </View>
+                    <Text style={styles.helperText}>
+                      {t('codeSentTo')} +91 {mobile}
+                    </Text>
+                  </View>
+                )}
+
+                {currentStep === 'newPin' && (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.inputLabel}>{t('newPin')}</Text>
+                      <View style={styles.inputWrapper}>
+                        <Lock
+                          size={20}
+                          color={colors.text.light}
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={[styles.input, styles.pinInput]}
+                          value={newPin}
+                          onChangeText={setNewPin}
+                          placeholder={t('enter4DigitPin')}
+                          placeholderTextColor={colors.text.light}
+                          keyboardType="numeric"
+                          maxLength={4}
+                          secureTextEntry
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.inputLabel}>{t('confirmPin')}</Text>
+                      <View style={styles.inputWrapper}>
+                        <Lock
+                          size={20}
+                          color={colors.text.light}
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={[styles.input, styles.pinInput]}
+                          value={confirmPin}
+                          onChangeText={setConfirmPin}
+                          placeholder={t('reEnterPin')}
+                          placeholderTextColor={colors.text.light}
+                          keyboardType="numeric"
+                          maxLength={4}
+                          secureTextEntry
+                        />
+                      </View>
+                    </View>
+                  </>
+                )}
+              </View>
+
+              {/* Action Buttons */}
+              <View style={styles.btnGroup}>
+                <Button
+                  title={currentStep === 'newPin' ? t('resetPin') : t('continue')}
+                  onPress={handleNext}
+                  loading={isLoading}
+                  style={styles.primaryBtn}
+                />
+                {currentStep !== 'mobile' && (
                   <Button
-                    title={currentStep === 'newPin' ? 'Reset PIN' : 'Continue'}
-                    onPress={handleNext}
-                    loading={isLoading}
-                    style={styles.primaryBtn}
-                  />
-                  <Button
-                    title="Back"
+                    title={t('back')}
                     onPress={handleBack}
                     variant="ghost"
                   />
-                </View>
+                )}
               </View>
             </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </LinearGradient>
-    </View>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const createStyles = (colors: any) => StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1,
+    backgroundColor: colors.surface,
   },
   headerBackButton: {
     padding: Spacing.xs,
     marginLeft: -Spacing.xs,
   },
-  gradientBackground: { 
-    flex: 1 
-  },
-  safeArea: { 
-    flex: 1 
-  },
+
+  // Step Indicator Styles
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.lg,
     marginTop: Spacing.sm,
+    backgroundColor: colors.background,
+    marginHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    ...Shadows.medium,
   },
-  stepIndicator: {
+  stepWrapper: {
+    flexDirection: 'column',
     alignItems: 'center',
-    flex: 1,
-    position: 'relative',
+  },
+  stepConnector: {
+    width: 40,
+    height: 2,
+    backgroundColor: colors.border,
+    marginHorizontal: Spacing.sm,
+    marginTop: -20,
+  },
+  stepConnectorCompleted: {
+    backgroundColor: colors.primary,
   },
   stepIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
     borderWidth: 2,
+    marginBottom: Spacing.sm,
   },
   stepIconActive: {
     backgroundColor: colors.primary,
-    borderColor: '#fff',
+    borderColor: colors.primary,
   },
   stepIconCompleted: {
-    backgroundColor: colors.success,
-    borderColor: '#fff',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   stepIconInactive: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    borderColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
   },
   stepLabel: {
     fontSize: 12,
@@ -354,81 +434,120 @@ const createStyles = (colors: any) => StyleSheet.create({
     textAlign: 'center',
   },
   stepLabelActive: {
-    color: '#fff',
+    color: colors.primary,
   },
   stepLabelCompleted: {
-    color: '#fff',
+    color: colors.primary,
   },
   stepLabelInactive: {
-    color: 'rgba(255,255,255,0.7)',
+    color: colors.text.secondary,
   },
-  stepConnector: {
-    position: 'absolute',
-    top: 20,
-    left: '75%',
-    right: '-75%',
-    height: 2,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    zIndex: -1,
+
+  // Main Content
+  mainContent: {
+    flex: 1,
+    marginHorizontal: Spacing.lg,
+    justifyContent: 'center',
   },
-  stepConnectorCompleted: {
-    backgroundColor: colors.success,
+
+  // Layout Center
+  center: {
+    flex: 1,
+    justifyContent: "center",
   },
-  center: { 
-    flex: 1, 
-    justifyContent: "center", 
-    paddingHorizontal: 26
-  },
-  card: {
+
+  // Card & Forms
+  loginCard: {
     backgroundColor: colors.background,
     borderRadius: BorderRadius.xl,
-    padding: Spacing.xl,
-    width: "100%",
-    maxWidth: 380,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    padding: Spacing.lg,
+    ...Shadows.medium,
   },
-  title: { 
-    fontSize: 22, 
-    fontWeight: "700", 
-    color: colors.primary, 
-    textAlign: "center" 
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: colors.primary,
+    textAlign: "center",
+    marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: 14,
     color: colors.text.secondary,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
-  inputGroup: { 
-    marginBottom: 20, 
-    gap: 12 
+  inputGroup: {
+    marginBottom: Spacing.lg,
   },
-  btnGroup: { 
-    gap: 12 
+  inputContainer: {
+    marginBottom: Spacing.md,
   },
-  primaryBtn: { 
-    borderRadius: BorderRadius.lg, 
-    paddingVertical: 12 
+  inputLabel: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontWeight: "500",
   },
-  otpInput: {
-    fontSize: 18,
-    fontWeight: '600',
-    letterSpacing: 4,
-    textAlign: 'center',
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...Shadows.small,
+  },
+  inputIcon: {
+    marginRight: Spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.text.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: 0,
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    minHeight: 50,
+    height: 50,
+    textAlignVertical: 'center',
   },
   pinInput: {
-    fontSize: 18,
-    fontWeight: '600',
     letterSpacing: 2,
     textAlign: 'center',
+  },
+  btnGroup: {
+    gap: Spacing.sm,
+  },
+  primaryBtn: {
+    marginTop: Spacing.sm,
   },
   helperText: {
     fontSize: 12,
     color: colors.text.secondary,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: Spacing.xs,
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
+  otpBox: {
+    width: 45,
+    height: 50,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: BorderRadius.md,
+    backgroundColor: colors.surface,
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text.primary,
+    ...Shadows.small,
+  },
+  otpBoxFilled: {
+    borderColor: colors.primary,
+    backgroundColor: colors.background,
   },
 });
