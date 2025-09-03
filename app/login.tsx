@@ -81,11 +81,15 @@ export default function LoginScreen() {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => setIsKeyboardVisible(true)
+      () => {
+        setIsKeyboardVisible(true);
+      }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setIsKeyboardVisible(false)
+      () => {
+        setIsKeyboardVisible(false);
+      }
     );
 
     return () => {
@@ -183,54 +187,58 @@ export default function LoginScreen() {
     router.push("/new-user");
   };
 
-  const styles = createStyles(colors);
+  const styles = createStyles(colors, isKeyboardVisible);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
-          backgroundColor={colors.surface}
-        />
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colors.surface}
+      />
 
-        {/* BJP Banner Carousel - Hide when keyboard is visible */}
-        {!isKeyboardVisible && (
-          <View style={styles.bannerWrapper}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={16}
-              onMomentumScrollEnd={(event) => {
-                const index = Math.round(event.nativeEvent.contentOffset.x / width);
-                setCurrentBannerIndex(index);
-              }}
-            >
-              {bannerImages.map((banner, index) => (
-                <View key={index} style={styles.bannerSlide}>
-                  <Image 
-                    source={{ uri: banner.uri }} 
-                    style={styles.bannerImage} 
-                    resizeMode="cover"
-                  />
-                  <View style={styles.bannerOverlay}>
-                    <Text style={styles.bannerSlogan}>
-                      &ldquo;{banner.slogan}&rdquo;
-                    </Text>
-                  </View>
+      {/* BJP Banner Carousel - Hide when keyboard is visible */}
+      {!isKeyboardVisible && (
+        <View style={styles.bannerWrapper}>
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onMomentumScrollEnd={(event) => {
+              const index = Math.round(event.nativeEvent.contentOffset.x / width);
+              setCurrentBannerIndex(index);
+            }}
+          >
+            {bannerImages.map((banner, index) => (
+              <View key={index} style={styles.bannerSlide}>
+                <Image 
+                  source={{ uri: banner.uri }} 
+                  style={styles.bannerImage} 
+                  resizeMode="cover"
+                />
+                <View style={styles.bannerOverlay}>
+                  <Text style={styles.bannerSlogan}>
+                    &ldquo;{banner.slogan}&rdquo;
+                  </Text>
                 </View>
-              ))}
-            </ScrollView>
-          </View>
-        )}
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      )}
 
       {/* Main Content */}
-      <KeyboardAvoidingView
-        style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <KeyboardAvoidingView
+          style={[styles.mainContent, isKeyboardVisible && styles.mainContentKeyboardVisible]}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
        
           {/* Logo Section */}
           <View style={styles.logoSection}>
@@ -364,13 +372,13 @@ export default function LoginScreen() {
             </Text>
           </View>
   
-      </KeyboardAvoidingView>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
-const createStyles = (colors: any) =>
+const createStyles = (colors: any, isKeyboardVisible: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -378,11 +386,13 @@ const createStyles = (colors: any) =>
     },
 
 bannerWrapper: {
-      flex: 0.3,
-      marginHorizontal: Spacing.lg,
+      height: isKeyboardVisible ? 0 : 200,
+      marginHorizontal: isKeyboardVisible ? 0 : Spacing.lg,
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
+      opacity: isKeyboardVisible ? 0 : 1,
+      marginBottom: isKeyboardVisible ? 0 : Spacing.md,
     },
     bannerSlide: {
       width: width - (Spacing.lg * 2),
@@ -440,7 +450,8 @@ bannerWrapper: {
     },
     mainContentKeyboardVisible: {
       flex: 1,
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      paddingTop: Spacing.lg,
     },
     scrollContent: {
       flexGrow: 1,
