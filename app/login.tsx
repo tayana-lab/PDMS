@@ -427,7 +427,7 @@ const createStyles = (colors: any, isKeyboardVisible: boolean) =>
     },
 
 bannerWrapper: {
-      height: 250,
+      height: 240,
       marginHorizontal: Spacing.lg,
       marginTop: Spacing.lg,
       borderRadius: 12,
