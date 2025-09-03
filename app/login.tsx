@@ -15,6 +15,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  LayoutAnimation,
 } from "react-native";
 import { router } from "expo-router";
 import { Phone } from "lucide-react-native";
@@ -79,7 +80,7 @@ export default function LoginScreen() {
     return () => clearInterval(interval);
   }, [bannerImages.length, isKeyboardVisible]);
 
-  // Keyboard visibility listeners with improved debouncing
+  // Keyboard visibility listeners with Android-specific handling
   useEffect(() => {
     let keyboardTimer: NodeJS.Timeout;
     let isKeyboardShowing = false;
@@ -90,6 +91,13 @@ export default function LoginScreen() {
         clearTimeout(keyboardTimer);
         if (!isKeyboardShowing) {
           isKeyboardShowing = true;
+          // Disable layout animations on Android to prevent flickering
+          if (Platform.OS === 'android') {
+            LayoutAnimation.configureNext({
+              duration: 0,
+              update: { type: 'linear', property: 'opacity' },
+            });
+          }
           setIsKeyboardVisible(true);
         }
       }
@@ -101,10 +109,18 @@ export default function LoginScreen() {
         clearTimeout(keyboardTimer);
         if (isKeyboardShowing) {
           isKeyboardShowing = false;
-          // Longer delay to prevent flickering when dismissing keyboard
+          // Longer delay for Android to prevent flickering
+          const delay = Platform.OS === 'android' ? 400 : 150;
           keyboardTimer = setTimeout(() => {
+            // Disable layout animations on Android to prevent flickering
+            if (Platform.OS === 'android') {
+              LayoutAnimation.configureNext({
+                duration: 0,
+                update: { type: 'linear', property: 'opacity' },
+              });
+            }
             setIsKeyboardVisible(false);
-          }, 200);
+          }, delay);
         }
       }
     );
@@ -206,6 +222,13 @@ export default function LoginScreen() {
   };
 
   const dismissKeyboard = () => {
+    // Prevent layout animation on Android to reduce flickering
+    if (Platform.OS === 'android') {
+      LayoutAnimation.configureNext({
+        duration: 0,
+        update: { type: 'linear', property: 'opacity' },
+      });
+    }
     Keyboard.dismiss();
   };
 
@@ -254,8 +277,8 @@ export default function LoginScreen() {
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <KeyboardAvoidingView
           style={styles.mainContent}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
        
           {/* Logo Section */}
@@ -464,6 +487,10 @@ bannerWrapper: {
       marginHorizontal: Spacing.lg,  
       justifyContent: isKeyboardVisible ? "flex-start" : "center",
       paddingTop: isKeyboardVisible ? Spacing.lg : 0,
+      // Prevent layout shifts on Android
+      ...(Platform.OS === 'android' && {
+        minHeight: isKeyboardVisible ? undefined : '70%',
+      }),
     },
     mainContentKeyboardVisible: {
       flex: 1,
