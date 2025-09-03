@@ -127,11 +127,40 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     failedToLoadAnalytics: 'Failed to load analytics',
     quickActions: 'Quick Actions',
     
+    // OTP & Authentication
+    sendOtp: 'Send OTP',
+    sendingOtp: 'Sending OTP...',
+    enterOtp: 'Enter OTP',
+    resendOtp: 'Resend OTP',
+    resendOtpIn: 'Resend OTP in',
+    showOtp: 'Show OTP',
+    hideOtp: 'Hide OTP',
+    otpSentSuccessfully: 'OTP sent successfully',
+    failedToSendOtp: 'Failed to send OTP',
+    pleaseEnterMobileNumber: 'Please enter mobile number',
+    mobileNumberMust10Digits: 'Mobile number must be 10 digits',
+    pleaseEnterBothMobileAndOtp: 'Please enter both mobile number and OTP',
+    otpMust6Digits: 'OTP must be 6 digits',
+    loginFailed: 'Login failed',
+    welcome: 'Welcome',
+    
+    // Registration
+    newUserRegistration: 'New User Registration',
+    verificationCode: 'Verification Code',
+    createPin: 'Create PIN',
+    confirmPin: 'Confirm PIN',
+    enter4DigitPin: 'Enter 4-digit PIN',
+    reEnterPin: 'Re-enter PIN',
+    createAccount: 'Create Account',
+    continue: 'Continue',
+    codeSentTo: 'Code sent to',
+    
     // Common
     error: 'Error',
     ok: 'OK',
     back: 'Back',
-    done: 'Done'
+    done: 'Done',
+    success: 'Success'
   },
   kn: {
     // Navigation
@@ -225,11 +254,40 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     failedToLoadAnalytics: 'ವಿಶ್ಲೇಷಣೆ ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ',
     quickActions: 'ತ್ವರಿತ ಕ್ರಿಯೆಗಳು',
     
+    // OTP & Authentication
+    sendOtp: 'OTP ಕಳುಹಿಸಿ',
+    sendingOtp: 'OTP ಕಳುಹಿಸುತ್ತಿದೆ...',
+    enterOtp: 'OTP ನಮೂದಿಸಿ',
+    resendOtp: 'OTP ಮರು ಕಳುಹಿಸಿ',
+    resendOtpIn: 'OTP ಮರು ಕಳುಹಿಸಿ',
+    showOtp: 'OTP ತೋರಿಸಿ',
+    hideOtp: 'OTP ಮರೆಮಾಡಿ',
+    otpSentSuccessfully: 'OTP ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲಾಗಿದೆ',
+    failedToSendOtp: 'OTP ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    pleaseEnterMobileNumber: 'ದಯವಿಟ್ಟು ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ',
+    mobileNumberMust10Digits: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ 10 ಅಂಕಗಳಾಗಿರಬೇಕು',
+    pleaseEnterBothMobileAndOtp: 'ದಯವಿಟ್ಟು ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು OTP ಎರಡನ್ನೂ ನಮೂದಿಸಿ',
+    otpMust6Digits: 'OTP 6 ಅಂಕಗಳಾಗಿರಬೇಕು',
+    loginFailed: 'ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ',
+    welcome: 'ಸ್ವಾಗತ',
+    
+    // Registration
+    newUserRegistration: 'ಹೊಸ ಬಳಕೆದಾರ ನೋಂದಣಿ',
+    verificationCode: 'ಪರಿಶೀಲನಾ ಕೋಡ್',
+    createPin: 'ಪಿನ್ ರಚಿಸಿ',
+    confirmPin: 'ಪಿನ್ ದೃಢೀಕರಿಸಿ',
+    enter4DigitPin: '4-ಅಂಕಿಯ ಪಿನ್ ನಮೂದಿಸಿ',
+    reEnterPin: 'ಪಿನ್ ಮರು ನಮೂದಿಸಿ',
+    createAccount: 'ಖಾತೆ ರಚಿಸಿ',
+    continue: 'ಮುಂದುವರಿಸಿ',
+    codeSentTo: 'ಕೋಡ್ ಕಳುಹಿಸಲಾಗಿದೆ',
+    
     // Common
     error: 'ದೋಷ',
     ok: 'ಸರಿ',
     back: 'ಹಿಂದೆ',
-    done: 'ಮುಗಿದಿದೆ'
+    done: 'ಮುಗಿದಿದೆ',
+    success: 'ಯಶಸ್ಸು'
   },
   ta: {
     // Navigation
@@ -323,11 +381,40 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     failedToLoadAnalytics: 'பகுப்பாய்வு ஏற்றுவதில் தோல்வி',
     quickActions: 'விரைவு செயல்கள்',
     
+    // OTP & Authentication
+    sendOtp: 'OTP அனுப்பு',
+    sendingOtp: 'OTP அனுப்புகிறது...',
+    enterOtp: 'OTP உள்ளிடவும்',
+    resendOtp: 'OTP மீண்டும் அனுப்பு',
+    resendOtpIn: 'OTP மீண்டும் அனுப்பு',
+    showOtp: 'OTP காட்டு',
+    hideOtp: 'OTP மறை',
+    otpSentSuccessfully: 'OTP வெற்றிகரமாக அனுப்பப்பட்டது',
+    failedToSendOtp: 'OTP அனுப்புவதில் தோல்வி',
+    pleaseEnterMobileNumber: 'தயவுசெய்து மொபைல் எண்ணை உள்ளிடவும்',
+    mobileNumberMust10Digits: 'மொபைல் எண் 10 இலக்கமாக இருக்க வேண்டும்',
+    pleaseEnterBothMobileAndOtp: 'தயவுசெய்து மொபைல் எண் மற்றும் OTP இரண்டையும் உள்ளிடவும்',
+    otpMust6Digits: 'OTP 6 இலக்கமாக இருக்க வேண்டும்',
+    loginFailed: 'உள்நுழைவு தோல்வி',
+    welcome: 'வரவேற்கிறோம்',
+    
+    // Registration
+    newUserRegistration: 'புதிய பயனர் பதிவு',
+    verificationCode: 'சரிபார்ப்பு குறியீடு',
+    createPin: 'பின் உருவாக்கு',
+    confirmPin: 'பின் உறுதிப்படுத்து',
+    enter4DigitPin: '4-இலக்க பின் உள்ளிடவும்',
+    reEnterPin: 'பின் மீண்டும் உள்ளிடவும்',
+    createAccount: 'கணக்கு உருவாக்கு',
+    continue: 'தொடரவும்',
+    codeSentTo: 'குறியீடு அனுப்பப்பட்டது',
+    
     // Common
     error: 'பிழை',
     ok: 'சரி',
     back: 'பின்',
-    done: 'முடிந்தது'
+    done: 'முடிந்தது',
+    success: 'வெற்றி'
   },
   ml: {
     // Navigation
@@ -580,10 +667,39 @@ export const Translations: Record<LanguageType, Record<string, string>> = {
     failedToLoadAnalytics: 'विश्लेषण लोड करने में विफल',
     quickActions: 'त्वरित कार्य',
     
+    // OTP & Authentication
+    sendOtp: 'OTP भेजें',
+    sendingOtp: 'OTP भेजा जा रहा है...',
+    enterOtp: 'OTP दर्ज करें',
+    resendOtp: 'OTP पुनः भेजें',
+    resendOtpIn: 'OTP पुनः भेजें',
+    showOtp: 'OTP दिखाएं',
+    hideOtp: 'OTP छुपाएं',
+    otpSentSuccessfully: 'OTP सफलतापूर्वक भेजा गया',
+    failedToSendOtp: 'OTP भेजने में विफल',
+    pleaseEnterMobileNumber: 'कृपया मोबाइल नंबर दर्ज करें',
+    mobileNumberMust10Digits: 'मोबाइल नंबर 10 अंकों का होना चाहिए',
+    pleaseEnterBothMobileAndOtp: 'कृपया मोबाइल नंबर और OTP दोनों दर्ज करें',
+    otpMust6Digits: 'OTP 6 अंकों का होना चाहिए',
+    loginFailed: 'लॉगिन विफल',
+    welcome: 'स्वागत है',
+    
+    // Registration
+    newUserRegistration: 'नया उपयोगकर्ता पंजीकरण',
+    verificationCode: 'सत्यापन कोड',
+    createPin: 'पिन बनाएं',
+    confirmPin: 'पिन की पुष्टि करें',
+    enter4DigitPin: '4-अंकीय पिन दर्ज करें',
+    reEnterPin: 'पिन पुनः दर्ज करें',
+    createAccount: 'खाता बनाएं',
+    continue: 'जारी रखें',
+    codeSentTo: 'कोड भेजा गया',
+    
     // Common
     error: 'त्रुटि',
     ok: 'ठीक है',
     back: 'वापस',
-    done: 'हो गया'
+    done: 'हो गया',
+    success: 'सफलता'
   }
 };
