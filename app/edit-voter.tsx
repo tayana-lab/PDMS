@@ -50,8 +50,10 @@ export default function EditVoterScreen() {
 
   useEffect(() => {
     if (voterId) {
+      // Find voter by ID in mock data
       const foundVoter = mockVoters.find(v => v.id === voterId);
       if (foundVoter) {
+        console.log('Found voter:', foundVoter);
         setVoter(foundVoter);
         setEditData({
           mobileNumber: foundVoter.mobileNumber,
@@ -59,6 +61,9 @@ export default function EditVoterScreen() {
           partyInclination: foundVoter.partyInclination,
           occupation: foundVoter.occupation || 'Business'
         });
+      } else {
+        console.log('Voter not found with ID:', voterId);
+        console.log('Available voter IDs:', mockVoters.map(v => v.id));
       }
     }
   }, [voterId]);

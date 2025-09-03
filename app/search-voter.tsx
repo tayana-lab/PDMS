@@ -73,10 +73,10 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   
-  // API hooks
+  // API hooks - search when query is at least 2 characters
   const voterSearchQuery = useVoterSearch({
-    name: searchQuery.length >= 2 && !searchQuery.match(/^[A-Z0-9]+$/i) ? searchQuery : undefined,
-    epic_id: searchQuery.match(/^[A-Z0-9]+$/i) ? searchQuery : undefined,
+    name: searchQuery.trim().length >= 2 && !searchQuery.trim().match(/^[A-Z0-9]+$/i) ? searchQuery.trim() : undefined,
+    epic_id: searchQuery.trim().match(/^[A-Z0-9]+$/i) ? searchQuery.trim() : undefined,
     limit: 20,
   });
   
@@ -88,8 +88,10 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const filteredVoters = useMemo(() => {
     if (!searchQuery.trim() || !voterSearchQuery.data) return [];
     
-    // Convert API voters to local format
-    let voters = voterSearchQuery.data.data.map(convertApiVoter);
+    // Convert API voters to local format and filter out voters without valid IDs
+    let voters = voterSearchQuery.data.data
+      .filter(apiVoter => apiVoter.id && apiVoter.name) // Only include voters with valid ID and name
+      .map(convertApiVoter);
     
     // Apply filter
     if (selectedFilter !== 'All') {
@@ -593,9 +595,15 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
           <View style={styles.searchInputContainer}>
             <Search size={20} color={colors.text.light} style={styles.searchIcon} />
             <TextInput
-              placeholder="Enter Voter ID to search..."
+              placeholder="Enter voter name or ID to search..."
               value={searchQuery}
-              onChangeText={setSearchQuery}
+              onChangeText={(text) => {
+                setSearchQuery(text);
+                // Auto-search as user types (debounced by the API hook)
+                if (text.trim().length >= 2) {
+                  setSearchTriggered(true);
+                }
+              }}
               style={styles.searchInput}
               testID="search-input"
               placeholderTextColor={colors.text.light}

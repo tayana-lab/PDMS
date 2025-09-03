@@ -30,30 +30,6 @@ interface StepConfig {
   label: string;
 }
 
-const steps: StepConfig[] = [
-  {
-    id: 'mobile',
-    title: 'Enter Mobile Number',
-    subtitle: "We'll send you a verification code",
-    icon: Phone,
-    label: 'Mobile'
-  },
-  {
-    id: 'otp',
-    title: 'Verify OTP',
-    subtitle: 'Enter the code sent to your mobile',
-    icon: MessageSquare,
-    label: 'OTP'
-  },
-  {
-    id: 'pin',
-    title: 'Set PIN',
-    subtitle: 'Create a 4-digit PIN for secure access',
-    icon: Lock,
-    label: 'PIN'
-  }
-];
-
 export default function NewUserScreen() {
   const [currentStep, setCurrentStep] = useState<Step>('mobile');
   const [mobile, setMobile] = useState('');
@@ -65,6 +41,30 @@ export default function NewUserScreen() {
 
   const { colors, currentTheme, t } = useAppSettings();
   const { sendOTP, verifyOTP, createAccount } = useAuth();
+
+  const steps: StepConfig[] = [
+    {
+      id: 'mobile',
+      title: t('enterMobileNumberTitle'),
+      subtitle: t('verificationCodeSent'),
+      icon: Phone,
+      label: t('mobile')
+    },
+    {
+      id: 'otp',
+      title: t('verifyOtpTitle'),
+      subtitle: t('enterCodeSent'),
+      icon: MessageSquare,
+      label: 'OTP'
+    },
+    {
+      id: 'pin',
+      title: t('setPinTitle'),
+      subtitle: t('createSecurePin'),
+      icon: Lock,
+      label: 'PIN'
+    }
+  ];
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
@@ -157,7 +157,7 @@ export default function NewUserScreen() {
           <TouchableOpacity onPress={handleBack} style={styles.headerBackButton}>
             <ArrowLeft size={24} color={colors.text.primary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('resetPin')}</Text>
+          <Text style={styles.headerTitle}>{t('newUserRegistration')}</Text>
         </View>
         
         {/* Step Indicators */}

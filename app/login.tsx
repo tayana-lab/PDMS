@@ -204,7 +204,7 @@ export default function LoginScreen() {
       // Set authentication data with token from API response
       await setAuthData(response);
       
-      Alert.alert(t('success'), `${t('welcome')} ${response.karyakarta.name}!`);
+      // Success - no alert needed, just navigate
       router.replace("/(tabs)");
     } catch (error: any) {
       Alert.alert(t('error'), error.message || t('loginFailed'));

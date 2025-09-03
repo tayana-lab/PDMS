@@ -30,29 +30,7 @@ interface StepConfig {
   label: string;
 }
 
-const steps: StepConfig[] = [
-  {
-    id: 'mobile',
-    title: 'Enter Mobile Number',
-    subtitle: "We'll send you a verification code",
-    icon: Phone,
-    label: 'Mobile'
-  },
-  {
-    id: 'otp',
-    title: 'Verify OTP',
-    subtitle: 'Enter the code sent to your mobile',
-    icon: MessageSquare,
-    label: 'OTP'
-  },
-  {
-    id: 'newPin',
-    title: 'Reset PIN',
-    subtitle: 'Create a new 4-digit PIN',
-    icon: Lock,
-    label: 'New PIN'
-  }
-];
+// Steps will use translations dynamically
 
 export default function ForgotPinScreen() {
   const [currentStep, setCurrentStep] = useState<Step>('mobile');
@@ -65,6 +43,30 @@ export default function ForgotPinScreen() {
   
   const { colors, currentTheme, t } = useAppSettings();
   const { sendOTP, verifyOTP, resetPin } = useAuth();
+
+  const steps: StepConfig[] = [
+    {
+      id: 'mobile',
+      title: t('enterMobileNumberTitle'),
+      subtitle: t('verificationCodeSent'),
+      icon: Phone,
+      label: t('mobile')
+    },
+    {
+      id: 'otp',
+      title: t('verifyOtpTitle'),
+      subtitle: t('enterCodeSent'),
+      icon: MessageSquare,
+      label: 'OTP'
+    },
+    {
+      id: 'newPin',
+      title: t('resetPinTitle'),
+      subtitle: t('createNewPin'),
+      icon: Lock,
+      label: t('newPin')
+    }
+  ];
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
