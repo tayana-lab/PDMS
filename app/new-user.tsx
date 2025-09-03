@@ -6,13 +6,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  SafeAreaView,
   StatusBar,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Phone, MessageSquare, Lock, Check } from 'lucide-react-native';
+import { Phone, MessageSquare, Lock, Check, ArrowLeft } from 'lucide-react-native';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
@@ -145,11 +147,19 @@ export default function NewUserScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+
         <StatusBar
           barStyle={currentTheme === "dark" ? "light-content" : "dark-content"}
           backgroundColor={colors.surface}
         />
+            <View style={styles.customHeader}>
+          <TouchableOpacity onPress={handleBack} style={styles.headerBackButton}>
+            <ArrowLeft size={24} color={colors.text.primary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('resetPin')}</Text>
+        </View>
+        
         {/* Step Indicators */}
         <View style={styles.stepIndicatorContainer}>
           {steps.map((step, index) => {
@@ -348,7 +358,7 @@ export default function NewUserScreen() {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 }
@@ -358,6 +368,31 @@ const createStyles = (colors: any) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
   },
+
+
+  customHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: Spacing.md,
+  backgroundColor: colors.surface,
+  //borderBottomWidth: 1,
+  borderBottomColor: colors.border,
+},
+
+headerBackButton: {
+  position: 'absolute',
+  left: Spacing.lg,
+  padding: Spacing.xs,
+},
+
+headerTitle: {
+  fontSize: 18,
+  fontWeight: '600',
+  color: colors.text.primary,
+  textAlign: 'center',
+},
+
 
   // Step Indicator Styles
   stepIndicatorContainer: {
