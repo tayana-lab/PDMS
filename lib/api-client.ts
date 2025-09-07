@@ -993,5 +993,11 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient();
+// Choose your configuration:
+// new ApiClient() - Production URL with mock data
+// new ApiClient(false, false) - Production URL with real API
+// new ApiClient(true, false) - Staging URL with real API
+// new ApiClient(true, true) - Staging URL with mock data
+
+export const apiClient = new ApiClient(false, false);
 export default apiClient;
