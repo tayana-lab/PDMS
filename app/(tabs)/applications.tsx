@@ -25,7 +25,7 @@ export default function ApplicationsScreen() {
   const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('myApplications');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [page] = useState<number>(0);
+  const [page] = useState<number>(1);
 
   const { colors, t } = useAppSettings();
 
@@ -33,20 +33,72 @@ export default function ApplicationsScreen() {
   const applicationsQuery = useApplications({ page, limit: 20 });
   const schemesQuery = useSchemes({ page, limit: 50 });
 
-  const applications = applicationsQuery.data?.data || [];
-  const schemes = schemesQuery.data?.data || [];
-  const applicationsTotal = applicationsQuery.data?.meta?.total || 0;
-  const schemesTotal = schemesQuery.data?.meta?.total || 0;
+  // Handle different possible API response structures
+  const applications = useMemo(() => {
+    const data = applicationsQuery.data;
+    if (!data) return [];
+    
+    // Try different possible structures
+    if (Array.isArray(data)) return data as Application[]; // Direct array
+    if (data.data && Array.isArray(data.data)) return data.data; // Wrapped in data property
+    if ((data as any).applications && Array.isArray((data as any).applications)) return (data as any).applications; // applications property
+    
+    console.warn('⚠️ Unexpected applications data structure:', data);
+    return [];
+  }, [applicationsQuery.data]);
+  
+  const schemes = useMemo(() => {
+    const data = schemesQuery.data;
+    if (!data) return [];
+    
+    // Try different possible structures
+    if (Array.isArray(data)) return data as Scheme[]; // Direct array
+    if (data.data && Array.isArray(data.data)) return data.data; // Wrapped in data property
+    if ((data as any).schemes && Array.isArray((data as any).schemes)) return (data as any).schemes; // schemes property
+    
+    console.warn('⚠️ Unexpected schemes data structure:', data);
+    return [];
+  }, [schemesQuery.data]);
+  
+  const applicationsTotal = applicationsQuery.data?.meta?.total || (applicationsQuery.data as any)?.total || applications.length;
+  const schemesTotal = schemesQuery.data?.meta?.total || (schemesQuery.data as any)?.total || schemes.length;
+
+  // Debug logging
+  console.log('🔍 Applications Query Status:', {
+    isLoading: applicationsQuery.isLoading,
+    isError: applicationsQuery.isError,
+    error: applicationsQuery.error?.message,
+    dataLength: applications.length,
+    rawData: applicationsQuery.data,
+    dataStructure: applicationsQuery.data ? Object.keys(applicationsQuery.data) : 'No data'
+  });
+  
+  console.log('🔍 Schemes Query Status:', {
+    isLoading: schemesQuery.isLoading,
+    isError: schemesQuery.isError,
+    error: schemesQuery.error?.message,
+    dataLength: schemes.length,
+    rawData: schemesQuery.data,
+    dataStructure: schemesQuery.data ? Object.keys(schemesQuery.data) : 'No data'
+  });
+  
+  // Log first few items to understand structure
+  if (applications.length > 0) {
+    console.log('📋 First Application:', applications[0]);
+  }
+  if (schemes.length > 0) {
+    console.log('📋 First Scheme:', schemes[0]);
+  }
 
   const filteredSchemes = useMemo(() => {
     let filteredSchemes = schemes;
     
     if (filterCategory !== 'ALL') {
-      filteredSchemes = filteredSchemes.filter(scheme => scheme.category === filterCategory);
+      filteredSchemes = filteredSchemes.filter((scheme: Scheme) => scheme.category === filterCategory);
     }
     
     if (searchQuery.trim()) {
-      filteredSchemes = filteredSchemes.filter(scheme => 
+      filteredSchemes = filteredSchemes.filter((scheme: Scheme) => 
         scheme.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         scheme.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -57,7 +109,7 @@ export default function ApplicationsScreen() {
 
   const filteredApplications = useMemo(() => {
     if (searchQuery.trim()) {
-      return applications.filter(app => 
+      return applications.filter((app: Application) => 
         app.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         app.helpdesk_id?.toLowerCase().includes(searchQuery.toLowerCase())
       );
