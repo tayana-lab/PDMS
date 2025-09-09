@@ -999,5 +999,5 @@ class ApiClient {
 // new ApiClient(true, false) - Staging URL with real API
 // new ApiClient(true, true) - Staging URL with mock data
 
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient(true,false);
 export default apiClient;
