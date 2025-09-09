@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Linking,
   Platform,
-  TextInput
+  TextInput,
+  ActivityIndicator
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,7 +20,8 @@ import Card from '@/components/ui/Card';
 import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { useConfirm } from '@/hooks/useConfirm';
-import { mockVoters } from '@/constants/mockData';
+import { useVoterSearch } from '@/hooks/useApi';
+import { Voter as ApiVoter } from '@/lib/api-client';
 
 interface Voter {
   id: string;
@@ -38,6 +40,26 @@ interface Voter {
   assemblyConstituency: string;
 }
 
+// Helper function to convert API voter to local voter format
+const convertApiVoterToLocal = (apiVoter: ApiVoter): Voter => {
+  return {
+    id: apiVoter.id?.toString() || '',
+    name: apiVoter.name || '',
+    voterId: apiVoter.id_card_no || '',
+    mobileNumber: apiVoter.mobile_number || '',
+    guardianName: apiVoter.guardian_name || '',
+    houseName: apiVoter.house_name || '',
+    address: `${apiVoter.address_line1 || ''} ${apiVoter.address_line2 || ''}`.trim(),
+    lastInteractionDate: apiVoter.updated_at ? new Date(apiVoter.updated_at).toLocaleDateString() : 'N/A',
+    karyakartaName: 'System', // Default value as API doesn't have this field
+    partyInclination: apiVoter.political_inclination || 'Neutral',
+    age: apiVoter.age || 0,
+    gender: apiVoter.gender || 'Male',
+    ward: apiVoter.ward_id?.toString() || '',
+    assemblyConstituency: apiVoter.assembly_id?.toString() || ''
+  };
+};
+
 
 
 type SearchVoterScreenProps = { showBack?: boolean };
@@ -51,6 +73,40 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const { confirm } = useConfirm();
 
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
+  const [searchResults, setSearchResults] = useState<Voter[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  
+  // API hook for voter search - only enabled when we have search query
+  const voterSearchQuery = useVoterSearch({
+    name: searchQuery.trim() || undefined,
+    epic_id: searchQuery.trim() || undefined,
+    page: 1,
+    limit: 50
+  });
+  
+  // Update search results when API data changes
+  useEffect(() => {
+    if (voterSearchQuery.data?.data) {
+      const convertedVoters = voterSearchQuery.data.data.map(convertApiVoterToLocal);
+      setSearchResults(convertedVoters);
+      setIsSearching(false);
+    }
+  }, [voterSearchQuery.data]);
+  
+  // Handle loading state
+  useEffect(() => {
+    if (voterSearchQuery.isLoading) {
+      setIsSearching(true);
+    }
+  }, [voterSearchQuery.isLoading]);
+  
+  // Handle errors
+  useEffect(() => {
+    if (voterSearchQuery.error) {
+      console.error('Voter search error:', voterSearchQuery.error);
+      setIsSearching(false);
+    }
+  }, [voterSearchQuery.error]);
   
 
   
@@ -60,15 +116,8 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const filteredVoters = useMemo(() => {
     if (!searchQuery.trim()) return [];
     
-    // Search in mock data
-    let voters = mockVoters.filter(voter => {
-      const query = searchQuery.trim().toLowerCase();
-      return (
-        voter.name.toLowerCase().includes(query) ||
-        voter.voterId.toLowerCase().includes(query) ||
-        voter.mobileNumber.includes(query)
-      );
-    });
+    // Use API search results
+    let voters = searchResults;
     
     // Apply filter
     if (selectedFilter !== 'All') {
@@ -89,7 +138,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     }
     
     return voters;
-  }, [searchQuery, selectedFilter]);
+  }, [searchResults, selectedFilter]);
 
   const handleVoterSelect = (voter: Voter) => {
     //alert("clicked");
@@ -182,7 +231,11 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
       return;
     }
 
-    // No need for loading state with mock data
+    console.log('🔍 Searching for voters with query:', searchQuery);
+    setIsSearching(true);
+    
+    // The search will be triggered automatically by the useVoterSearch hook
+    // when searchQuery changes, so we don't need to manually trigger it here
   };
 
   const handleBarcodePress = async () => {
@@ -550,8 +603,12 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
               placeholder="Enter voter name or ID to search..."
               value={searchQuery}
               onChangeText={(text) => {
+                console.log('🔍 Search query changed:', text);
                 setSearchQuery(text);
-                // Auto-search as user types with mock data
+                // Clear previous results when query changes
+                if (!text.trim()) {
+                  setSearchResults([]);
+                }
               }}
               style={styles.searchInput}
               testID="search-input"
@@ -621,15 +678,30 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
           </View>
         )}
 
+        {/* Loading State */}
+        {isSearching && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Searching voters...</Text>
+          </View>
+        )}
+
+        {/* Error State */}
+        {voterSearchQuery.error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Error searching voters. Please try again.</Text>
+          </View>
+        )}
+
         {/* No Results */}
-        {searchQuery.trim() && filteredVoters.length === 0 && (
+        {searchQuery.trim() && !isSearching && filteredVoters.length === 0 && !voterSearchQuery.error && (
           <View style={styles.noResults}>
             <Text style={styles.noResultsText}>No voters found matching your search</Text>
           </View>
         )}
 
         {/* Search Results */}
-        {filteredVoters.length > 0 && !selectedVoter && (
+        {filteredVoters.length > 0 && !selectedVoter && !isSearching && (
           <View style={styles.resultsSection}>
             {filteredVoters.map(renderVoterCard)}
           </View>
@@ -1135,5 +1207,25 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  loadingContainer: {
+    padding: Spacing.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    ...Typography.body,
+    color: colors.text.secondary,
+    marginTop: Spacing.md,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    padding: Spacing.xl,
+    alignItems: 'center',
+  },
+  errorText: {
+    ...Typography.body,
+    color: '#FF3B30',
+    textAlign: 'center',
   },
 });
