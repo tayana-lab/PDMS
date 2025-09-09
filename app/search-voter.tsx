@@ -76,13 +76,50 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
   const [searchResults, setSearchResults] = useState<Voter[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   
+  // Helper function to detect if search query is an EPIC ID
+  const isEpicId = (query: string): boolean => {
+    // EPIC ID patterns: typically alphanumeric, 10+ characters
+    // Examples: BJP001234, TVM001234567, V123456789, 123456789101
+    const trimmed = query.trim();
+    if (trimmed.length < 6) return false;
+    
+    // Check if it's mostly numeric or follows EPIC patterns
+    const hasNumbers = /\d/.test(trimmed);
+    const isAlphaNumeric = /^[A-Za-z0-9]+$/.test(trimmed);
+    const startsWithLetters = /^[A-Za-z]{2,4}\d/.test(trimmed);
+    const isNumericOnly = /^\d+$/.test(trimmed);
+    
+    return hasNumbers && (isAlphaNumeric || isNumericOnly) && (startsWithLetters || isNumericOnly || trimmed.length >= 8);
+  };
+  
+  // Determine search parameters based on query type
+  const getSearchParams = () => {
+    const query = searchQuery.trim();
+    if (!query) return {};
+    
+    const isEpic = isEpicId(query);
+    
+    if (isEpic) {
+      console.log('🔍 Detected EPIC ID search:', query, '- Using exact_match=true');
+      return {
+        epic_id: query,
+        exact_match: true,
+        page: 1,
+        limit: 50
+      };
+    } else {
+      console.log('🔍 Detected name search:', query, '- Using exact_match=false');
+      return {
+        name: query,
+        exact_match: false,
+        page: 1,
+        limit: 50
+      };
+    }
+  };
+  
   // API hook for voter search - only enabled when we have search query
-  const voterSearchQuery = useVoterSearch({
-    name: searchQuery.trim() || undefined,
-    epic_id: searchQuery.trim() || undefined,
-    page: 1,
-    limit: 50
-  });
+  const voterSearchQuery = useVoterSearch(getSearchParams());
   
   // Update search results when API data changes
   useEffect(() => {
@@ -138,7 +175,7 @@ export default function SearchVoterScreen({ showBack = true }: SearchVoterScreen
     }
     
     return voters;
-  }, [searchResults, selectedFilter]);
+  }, [searchResults, selectedFilter, searchQuery]);
 
   const handleVoterSelect = (voter: Voter) => {
     //alert("clicked");
