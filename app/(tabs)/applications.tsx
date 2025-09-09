@@ -25,7 +25,7 @@ export default function ApplicationsScreen() {
   const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('myApplications');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [page] = useState<number>(1);
+  const [page] = useState<number>(0);
 
   const { colors, t } = useAppSettings();
 
