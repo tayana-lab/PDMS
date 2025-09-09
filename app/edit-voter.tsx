@@ -227,16 +227,16 @@ export default function EditVoterScreen() {
             <View style={styles.profileSection}>
               <TouchableOpacity style={styles.profileImageContainer}>
                 <View style={styles.profileImage}>
-                  <Text style={styles.profileInitial}>{voter.name?.charAt(0) || 'V'}</Text>
+                  <Text style={styles.profileInitial}>{voter?.name?.charAt(0) || 'V'}</Text>
                 </View>
                 <TouchableOpacity style={styles.cameraButton}>
                   <Camera size={16} color={colors.text.white} />
                 </TouchableOpacity>
               </TouchableOpacity>
               <View style={styles.voterInfo}>
-                <Text style={styles.voterName}>{voter.name}</Text>
-                <Text style={styles.voterMeta}>{voter.id_card_no}</Text>
-                <Text style={styles.voterMeta}>{voter.age}Y • {voter.gender}</Text>
+                <Text style={styles.voterName}>{voter?.name || 'N/A'}</Text>
+                <Text style={styles.voterMeta}>{voter?.id_card_no || 'N/A'}</Text>
+                <Text style={styles.voterMeta}>{voter?.age || 0}Y • {voter?.gender || 'N/A'}</Text>
               </View>
             </View>
             
@@ -249,55 +249,55 @@ export default function EditVoterScreen() {
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>GUARDIAN NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.guardian_name}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.guardian_name || 'N/A'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>HOUSE NUMBER</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.house_no || 'H-123'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.house_no || 'H-123'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>HOUSE NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.house_name}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.house_name || 'N/A'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>POLLING STATION</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.polling_station_id || 'PS-001'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.polling_station_id || 'PS-001'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>WARD</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.ward_id}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.ward_id || 'N/A'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>OLD WARD NO.</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.old_ward_no || '12'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.old_ward_no || '12'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>ASSEMBLY</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.assembly_id}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.assembly_id || 'N/A'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>DISTRICT</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.district_id}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.district_id || 'N/A'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>LAST UPDATE DATE</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.updated_at ? new Date(voter.updated_at).toLocaleDateString() : 'N/A'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter?.updated_at ? new Date(voter.updated_at).toLocaleDateString() : 'N/A'}</Text>
             </View>
           </View>
 
