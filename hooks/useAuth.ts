@@ -152,6 +152,17 @@ export function useAuth() {
     }
   };
 
+  const updateUser = async (updatedUser: User) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return { success: false, error: 'Failed to update user data' };
+    }
+  };
+
   return {
     user,
     token,
@@ -162,6 +173,7 @@ export function useAuth() {
     sendOTP,
     verifyOTP,
     createAccount,
-    resetPin
+    resetPin,
+    updateUser
   };
 }

@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Image
+
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,71 +16,59 @@ import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
-import { mockVoters } from '@/constants/mockData';
-
-interface Voter {
-  id: string;
-  name: string;
-  voterId: string;
-  mobileNumber: string;
-  guardianName: string;
-  houseName: string;
-  houseNumber: string;
-  pollingStation: string;
-  oldWardNo: string;
-  panchayatMandal: string;
-  address: string;
-  lastInteractionDate: string;
-  karyakartaName: string;
-  partyInclination: string;
-  age: number;
-  gender: string;
-  ward: string;
-  assemblyConstituency: string;
-  district: string;
-  occupation: string;
-}
+import { useUpdateVoter, useVoter } from '@/hooks/useApi';
+import { Voter } from '@/lib/api-client';
 
 export default function EditVoterScreen() {
   const { voterId } = useLocalSearchParams<{ voterId: string }>();
-  const [voter, setVoter] = useState<Voter | null>(null);
-  const [editData, setEditData] = useState<Partial<Voter>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [editData, setEditData] = useState<{
+    mobile_number?: string;
+    address_line1?: string;
+    political_inclination?: string;
+    occupation?: string;
+  }>({});
   const { colors } = useAppSettings();
+  
+  // Use API hooks
+  const voterQuery = useVoter(Number(voterId));
+  const updateVoterMutation = useUpdateVoter();
+  
+  const voter = voterQuery.data;
+  const isLoading = updateVoterMutation.isPending;
 
   useEffect(() => {
-    if (voterId) {
-      // Find voter by ID in mock data
-      const foundVoter = mockVoters.find(v => v.id === voterId);
-      if (foundVoter) {
-        console.log('Found voter:', foundVoter);
-        setVoter(foundVoter);
-        setEditData({
-          mobileNumber: foundVoter.mobileNumber,
-          address: foundVoter.address,
-          partyInclination: foundVoter.partyInclination,
-          occupation: foundVoter.occupation || 'Business'
-        });
-      } else {
-        console.log('Voter not found with ID:', voterId);
-        console.log('Available voter IDs:', mockVoters.map(v => v.id));
-      }
+    if (voter) {
+      console.log('Found voter:', voter);
+      setEditData({
+        mobile_number: voter.mobile_number || '',
+        address_line1: voter.address_line1 || '',
+        political_inclination: voter.political_inclination || '',
+        occupation: voter.occupation || 'Business'
+      });
     }
-  }, [voterId]);
+  }, [voter]);
 
   const handleSave = async () => {
-    if (!voter) return;
+    if (!voter || !voter.id) return;
     
-    setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       console.log('Saving voter data:', {
         voterId: voter.id,
         updates: editData,
         timestamp: new Date().toISOString(),
         location: 'GPS coordinates would be captured here'
+      });
+      
+      await updateVoterMutation.mutateAsync({
+        id: voter.id!,
+        voter: {
+          ...voter,
+          mobile_number: editData.mobile_number,
+          address_line1: editData.address_line1,
+          political_inclination: editData.political_inclination,
+          occupation: editData.occupation,
+          updated_at: new Date().toISOString()
+        }
       });
       
       Alert.alert(
@@ -93,10 +81,9 @@ export default function EditVoterScreen() {
           }
         ]
       );
-    } catch {
+    } catch (error) {
+      console.error('Update voter error:', error);
       Alert.alert('Error', 'Failed to update voter information. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -115,25 +102,46 @@ export default function EditVoterScreen() {
     }
   };
 
-  const renderPartyInclinationIcon = (inclination: string) => {
-    const isInclined = inclination === 'BJP';
-    return (
-      <View style={[
-        styles.partyIcon,
-        { backgroundColor: isInclined ? colors.primary : '#E0E0E0' }
-      ]}>
-        <Text style={[
-          styles.partyIconText,
-          { color: isInclined ? colors.text.white : colors.text.light }
-        ]}>
-          🪷
-        </Text>
-      </View>
-    );
-  };
+
 
   const styles = createStyles(colors);
 
+  if (voterQuery.isLoading) {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              onPress={() => {
+                console.log('Edit Voter: Back button pressed (loading case)');
+                try {
+                  if (router.canGoBack()) {
+                    console.log('Going back...');
+                    router.back();
+                  } else {
+                    console.log('Cannot go back, replacing with tabs...');
+                    router.replace('/(tabs)');
+                  }
+                } catch (error) {
+                  console.error('Navigation error:', error);
+                  router.replace('/(tabs)');
+                }
+              }} 
+              style={styles.backButton}
+            >
+              <ArrowLeft size={24} color={colors.text.white} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Voter</Text>
+          </View>
+        </SafeAreaView>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Loading voter information...</Text>
+        </View>
+      </View>
+    );
+  }
+  
   if (!voter) {
     return (
       <View style={styles.container}>
@@ -210,7 +218,7 @@ export default function EditVoterScreen() {
             <View style={styles.profileSection}>
               <TouchableOpacity style={styles.profileImageContainer}>
                 <View style={styles.profileImage}>
-                  <Text style={styles.profileInitial}>{voter.name.charAt(0)}</Text>
+                  <Text style={styles.profileInitial}>{voter.name?.charAt(0) || 'V'}</Text>
                 </View>
                 <TouchableOpacity style={styles.cameraButton}>
                   <Camera size={16} color={colors.text.white} />
@@ -218,7 +226,7 @@ export default function EditVoterScreen() {
               </TouchableOpacity>
               <View style={styles.voterInfo}>
                 <Text style={styles.voterName}>{voter.name}</Text>
-                <Text style={styles.voterMeta}>{voter.voterId}</Text>
+                <Text style={styles.voterMeta}>{voter.id_card_no}</Text>
                 <Text style={styles.voterMeta}>{voter.age}Y • {voter.gender}</Text>
               </View>
             </View>
@@ -232,67 +240,55 @@ export default function EditVoterScreen() {
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>GUARDIAN NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.guardianName}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.guardian_name}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>HOUSE NUMBER</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.houseNumber || 'H-123'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.house_no || 'H-123'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>HOUSE NAME</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.houseName}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.house_name}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>POLLING STATION</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.pollingStation || 'PS-001'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.polling_station_id || 'PS-001'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>WARD</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.ward}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.ward_id}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>OLD WARD NO.</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.oldWardNo || '12'}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.old_ward_no || '12'}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>PANCHAYAT/MANDAL</Text>
+              <Text style={styles.inlineDetailLabel}>ASSEMBLY</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.panchayatMandal || 'Guruvayoor'}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>CONSTITUENCY</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.assemblyConstituency}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.assembly_id}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>DISTRICT</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.district || 'Thrissur'}</Text>
-            </View>
-            
-            <View style={styles.inlineDetailRow}>
-              <Text style={styles.inlineDetailLabel}>KARYAKARTHA NAME</Text>
-              <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.karyakartaName}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.district_id}</Text>
             </View>
             
             <View style={styles.inlineDetailRow}>
               <Text style={styles.inlineDetailLabel}>LAST UPDATE DATE</Text>
               <Text style={styles.inlineDetailSeparator}>:</Text>
-              <Text style={styles.inlineDetailValue}>{voter.lastInteractionDate}</Text>
+              <Text style={styles.inlineDetailValue}>{voter.updated_at ? new Date(voter.updated_at).toLocaleDateString() : 'N/A'}</Text>
             </View>
           </View>
 
@@ -304,8 +300,8 @@ export default function EditVoterScreen() {
             <View style={styles.editFieldContainer}>
               <Input
                 label="Mobile Number"
-                value={editData.mobileNumber || ''}
-                onChangeText={(text) => setEditData(prev => ({ ...prev, mobileNumber: text }))}
+                value={editData.mobile_number || ''}
+                onChangeText={(text) => setEditData(prev => ({ ...prev, mobile_number: text }))}
                 placeholder="Enter mobile number"
                 keyboardType="phone-pad"
                 maxLength={10}
@@ -317,8 +313,8 @@ export default function EditVoterScreen() {
             <View style={styles.editFieldContainer}>
               <Input
                 label="Address"
-                value={editData.address || ''}
-                onChangeText={(text) => setEditData(prev => ({ ...prev, address: text }))}
+                value={editData.address_line1 || ''}
+                onChangeText={(text) => setEditData(prev => ({ ...prev, address_line1: text }))}
                 placeholder="Enter complete address"
                 multiline
                 numberOfLines={3}
@@ -349,7 +345,7 @@ export default function EditVoterScreen() {
                   { key: 'Neutral', label: 'Neutral' },
                   { key: 'Anti', label: 'Anti Party' }
                 ].map((option) => {
-                  const isSelected = editData.partyInclination === option.key;
+                  const isSelected = editData.political_inclination === option.key;
                   const partyStatus = getPartyStatus(option.key);
                   
                   return (
@@ -362,7 +358,7 @@ export default function EditVoterScreen() {
                           borderColor: partyStatus.color 
                         }
                       ]}
-                      onPress={() => setEditData(prev => ({ ...prev, partyInclination: option.key }))}
+                      onPress={() => setEditData(prev => ({ ...prev, political_inclination: option.key }))}
                     >
                       <Text style={[
                         styles.partyOptionText,
