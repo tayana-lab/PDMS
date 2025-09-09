@@ -39,11 +39,18 @@ export default function EditVoterScreen() {
   useEffect(() => {
     if (voter) {
       console.log('Found voter:', voter);
+      console.log('Voter data structure:', {
+        mobile_number: voter.mobile_number,
+        address_line1: voter.address_line1,
+        political_inclination: voter.political_inclination,
+        occupation: voter.occupation
+      });
+      
       setEditData({
         mobile_number: voter.mobile_number || '',
         address_line1: voter.address_line1 || '',
         political_inclination: voter.political_inclination || '',
-        occupation: voter.occupation || 'Business'
+        occupation: voter.occupation || ''
       });
     }
   }, [voter]);
@@ -106,7 +113,7 @@ export default function EditVoterScreen() {
 
   const styles = createStyles(colors);
 
-  if (voterQuery.isLoading) {
+  if (voterQuery.isLoading || voterQuery.isFetching) {
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
@@ -142,7 +149,7 @@ export default function EditVoterScreen() {
     );
   }
   
-  if (!voter) {
+  if (voterQuery.isError || (!voter && !voterQuery.isLoading)) {
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
@@ -173,7 +180,9 @@ export default function EditVoterScreen() {
           </View>
         </SafeAreaView>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Voter not found</Text>
+          <Text style={styles.errorText}>
+            {voterQuery.isError ? `Error: ${voterQuery.error?.message || 'Failed to load voter'}` : 'Voter not found'}
+          </Text>
         </View>
       </View>
     );

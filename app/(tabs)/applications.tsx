@@ -6,99 +6,64 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
-  Alert,
-  StatusBar
+  StatusBar,
+  TextInput
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { FileText, Clock, CheckCircle, XCircle, Search } from 'lucide-react-native';
+import { FileText, Clock, CheckCircle, XCircle, Search, RefreshCw } from 'lucide-react-native';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import { TextInput } from 'react-native';
-import schemeData from '../SchemeDetails.json';
-import applicationData from '../ApplicationDetails.json';
+import { useApplications, useSchemes } from '@/hooks/useApi';
+import { Application, Scheme } from '@/lib/api-client';
 
-interface GovernmentScheme {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  beneficiaries: string;
-  budget: number;
-  status: string;
-  min_age: number;
-  max_age: number;
-  gender: string;
-}
 
-interface MyApplication {
-  id: string;
-  user_id: string;
-  name: string;
-  voter_id: string;
-  aadhaar_number: string;
-  mobile_number: string;
-  email: string;
-  dob: string;
-  gender: string;
-  religion: string;
-  caste: string;
-  address_line1: string;
-  address_line2: string;
-  district: string;
-  assembly_mandalam: string;
-  panchayat: string | null;
-  municipalitie: string | null;
-  corporation: string | null;
-  ward: string;
-  pincode: string;
-  occupation: string;
-  marital_status: string;
-  income_range: string;
-  benefited_scheme: string;
-  scheme_id: string;
-  scheme_details: string;
-  required_help: string;
-  documents: string[];
-  status: string;
-  created_at: string;
-  updated_at: string;
-  state_id: string;
-  district_id: string;
-  mandal_id: string;
-  ward_id: string;
-  panchayath_id: string | null;
-  municipalitie_id: string | null;
-  corporation_id: string | null;
-  application_id: string;
-}
 
 export default function ApplicationsScreen() {
   const [selectedTab, setSelectedTab] = useState<'schemes' | 'myApplications'>('myApplications');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [page] = useState<number>(1);
 
   const { colors, t } = useAppSettings();
 
+  // API hooks
+  const applicationsQuery = useApplications({ page, limit: 20 });
+  const schemesQuery = useSchemes({ page, limit: 50 });
+
+  const applications = applicationsQuery.data?.data || [];
+  const schemes = schemesQuery.data?.data || [];
+  const applicationsTotal = applicationsQuery.data?.meta?.total || 0;
+  const schemesTotal = schemesQuery.data?.meta?.total || 0;
+
   const filteredSchemes = useMemo(() => {
-    let schemes = schemeData.items;
+    let filteredSchemes = schemes;
     
     if (filterCategory !== 'ALL') {
-      schemes = schemes.filter(scheme => scheme.category === filterCategory);
+      filteredSchemes = filteredSchemes.filter(scheme => scheme.category === filterCategory);
     }
     
     if (searchQuery.trim()) {
-      schemes = schemes.filter(scheme => 
-        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        scheme.description.toLowerCase().includes(searchQuery.toLowerCase())
+      filteredSchemes = filteredSchemes.filter(scheme => 
+        scheme.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        scheme.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     
-    return schemes;
-  }, [filterCategory, searchQuery]);
+    return filteredSchemes;
+  }, [schemes, filterCategory, searchQuery]);
+
+  const filteredApplications = useMemo(() => {
+    if (searchQuery.trim()) {
+      return applications.filter(app => 
+        app.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        app.helpdesk_id?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return applications;
+  }, [applications, searchQuery]);
 
   const categories = ['ALL', 'EMPLOYMENT', 'AGRICULTURE', 'HEALTH', 'EDUCATION', 'SOCIAL_WELFARE'];
 
@@ -128,15 +93,23 @@ export default function ApplicationsScreen() {
     }
   };
 
-  const handleApplyScheme = (scheme: GovernmentScheme) => {
+  const handleApplyScheme = (scheme: Scheme) => {
     console.log('Navigating to apply scheme for:', scheme.name);
     router.push(`/apply-scheme?schemeId=${scheme.id}`);
   };
 
+  const handleRefresh = () => {
+    if (selectedTab === 'schemes') {
+      schemesQuery.refetch();
+    } else {
+      applicationsQuery.refetch();
+    }
+  };
 
 
-  const renderSchemeItem = ({ item }: { item: GovernmentScheme }) => {
-    const cleanDescription = item.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...';
+
+  const renderSchemeItem = ({ item }: { item: Scheme }) => {
+    const cleanDescription = item.description?.replace(/<[^>]*>/g, '').substring(0, 150) + '...' || 'No description available';
     
     return (
       <Card style={styles.schemeCard}>
@@ -145,7 +118,7 @@ export default function ApplicationsScreen() {
             <Text style={[styles.schemeName, { color: colors.text.primary }]}>{item.name}</Text>
             <Text style={[styles.schemeCategory, { color: colors.primary }]}>{item.category}</Text>
           </View>
-          <Text style={[styles.schemeBudget, { color: colors.secondary }]}>₹{item.budget.toLocaleString()}</Text>
+          <Text style={[styles.schemeBudget, { color: colors.secondary }]}>₹{item.budget?.toLocaleString() || '0'}</Text>
         </View>
         
         <Text style={[styles.schemeDescription, { color: colors.text.secondary }]} numberOfLines={3}>
@@ -154,7 +127,7 @@ export default function ApplicationsScreen() {
         
         <Text style={[styles.schemeBeneficiaries, { color: colors.text.secondary }]} numberOfLines={2}>
           <Text style={[styles.beneficiariesLabel, { color: colors.text.primary }]}>{t('beneficiaries')}: </Text>
-          {item.beneficiaries}
+          {item.beneficiaries || 'Not specified'}
         </Text>
         
         <Button
@@ -168,17 +141,17 @@ export default function ApplicationsScreen() {
     );
   };
 
-  const renderMyApplicationItem = ({ item }: { item: MyApplication }) => (
+  const renderMyApplicationItem = ({ item }: { item: Application }) => (
     <Card style={styles.applicationCard}>
       <View style={styles.applicationHeader}>
         <View style={styles.applicationInfo}>
           <Text style={[styles.applicantName, { color: colors.text.primary }]}>{item.name}</Text>
-          <Text style={[styles.applicationId, { color: colors.text.secondary }]}>ID: {item.application_id}</Text>
+          <Text style={[styles.applicationId, { color: colors.text.secondary }]}>ID: {item.helpdesk_id}</Text>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-          {getStatusIcon(item.status)}
-          <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-            {item.status}
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status || 'Pending') + '20' }]}>
+          {getStatusIcon(item.status || 'Pending')}
+          <Text style={[styles.statusText, { color: getStatusColor(item.status || 'Pending') }]}>
+            {item.status || 'Pending'}
           </Text>
         </View>
       </View>
@@ -187,15 +160,15 @@ export default function ApplicationsScreen() {
         <Text style={[styles.detailText, { color: colors.text.secondary }]}>{t('mobile')}: {item.mobile_number}</Text>
         <Text style={[styles.detailText, { color: colors.text.secondary }]}>{t('helpRequired')}: {item.required_help}</Text>
         <Text style={[styles.detailText, { color: colors.text.secondary }]}>
-          {t('submitted')}: {new Date(item.created_at).toLocaleDateString()}
+          {t('submitted')}: {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}
         </Text>
       </View>
       
       <TouchableOpacity 
         style={styles.viewDetailsButton}
         onPress={() => {
-          console.log('Navigating to application details for:', item.application_id);
-          router.push(`/application-details?applicationId=${item.application_id}`);
+          console.log('Navigating to application details for:', item.helpdesk_id);
+          router.push(`/application-details?applicationId=${item.helpdesk_id}`);
         }}
       >
         <Text style={[styles.viewDetailsText, { color: colors.primary }]}>{t('viewDetails')}</Text>
@@ -218,7 +191,16 @@ export default function ApplicationsScreen() {
         <View style={styles.headerContent}>
           <View style={styles.headerSpacer} />
           <Text style={styles.headerTitle}>{t('applicationsTitle')}</Text>
-          <View style={styles.headerSpacer} />
+          <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+            <RefreshCw 
+              size={20} 
+              color={colors.text.white} 
+              style={[
+                styles.refreshIcon,
+                (applicationsQuery.isFetching || schemesQuery.isFetching) && styles.refreshIconRotated
+              ]} 
+            />
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
       
@@ -301,20 +283,31 @@ export default function ApplicationsScreen() {
             </ScrollView>
           </View>
           
-          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-            {t('availableSchemes')} ({filteredSchemes.length})
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+              {t('availableSchemes')} ({filteredSchemes.length})
+            </Text>
+            {schemesQuery.isFetching && (
+              <RefreshCw size={16} color={colors.text.secondary} style={styles.refreshIconRotated} />
+            )}
+          </View>
           
           <FlatList
             data={filteredSchemes}
             renderItem={renderSchemeItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id || Math.random().toString()}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}
+            refreshing={schemesQuery.isFetching}
+            onRefresh={() => schemesQuery.refetch()}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={[styles.emptyText, { color: colors.text.light }]}>{t('noSchemesFound')}</Text>
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>
+                  {schemesQuery.isLoading ? 'Loading schemes...' : 
+                   schemesQuery.isError ? 'Error loading schemes' : 
+                   t('noSchemesFound')}
+                </Text>
               </View>
             }
           />
@@ -324,20 +317,31 @@ export default function ApplicationsScreen() {
       {/* My Applications Tab */}
       {selectedTab === 'myApplications' && (
         <View style={styles.tabContent}>
-          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-            {t('myApplications')} ({applicationData.total_count})
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+              {t('myApplications')} ({applicationsTotal})
+            </Text>
+            {applicationsQuery.isFetching && (
+              <RefreshCw size={16} color={colors.text.secondary} style={styles.refreshIconRotated} />
+            )}
+          </View>
           
           <FlatList
-            data={applicationData.applications}
+            data={filteredApplications}
             renderItem={renderMyApplicationItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}
+            refreshing={applicationsQuery.isFetching}
+            onRefresh={() => applicationsQuery.refetch()}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <FileText size={48} color={colors.text.light} />
-                <Text style={[styles.emptyText, { color: colors.text.light }]}>{t('noApplicationsFound')}</Text>
+                <Text style={[styles.emptyText, { color: colors.text.light }]}>
+                  {applicationsQuery.isLoading ? 'Loading applications...' : 
+                   applicationsQuery.isError ? 'Error loading applications' : 
+                   t('noApplicationsFound')}
+                </Text>
               </View>
             }
           />
@@ -368,6 +372,18 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   headerSpacer: {
     width: 32,
+  },
+  refreshButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.md,
   },
   headerTitle: {
     ...Typography.title,
@@ -471,7 +487,6 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.subtitle,
-    marginBottom: Spacing.md,
   },
   listContainer: {
     paddingBottom: Spacing.xl,
@@ -574,5 +589,11 @@ const createStyles = (colors: any) => StyleSheet.create({
     ...Typography.body,
     textAlign: 'center',
     marginTop: Spacing.md
+  },
+  refreshIcon: {
+    // Default state
+  },
+  refreshIconRotated: {
+    transform: [{ rotate: '180deg' }],
   },
 });
