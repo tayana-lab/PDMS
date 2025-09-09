@@ -13,7 +13,7 @@ export interface Application {
   name?: string;
   voter_id?: string;
   aadhaar_number?: string;
-  mobileNumber?: string;
+  mobile_number?: string;
   email?: string;
   dob?: string;
   gender?: 'Male' | 'Female' | 'Other';
