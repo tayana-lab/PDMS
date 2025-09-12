@@ -18,21 +18,8 @@ import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import schemeData from './SchemeDetails.json';
-
-interface GovernmentScheme {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  beneficiaries: string;
-  budget: number;
-  status: string;
-  min_age: number;
-  max_age: number;
-  gender: string;
-  official_site?: string | null;
-}
+import { useScheme } from '@/hooks/useApi';
+import { Scheme } from '@/lib/api-client';
 
 interface ApplicationForm {
   // Personal Information
@@ -122,7 +109,7 @@ export default function ApplySchemeScreen() {
     assemblyConstituency?: string;
   }>();
   
-  const [scheme, setScheme] = useState<GovernmentScheme | null>(null);
+  const schemeQuery = useScheme(schemeId || '');
   const [formData, setFormData] = useState<ApplicationForm>(initialFormData);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -130,19 +117,15 @@ export default function ApplySchemeScreen() {
 
   const totalSteps = 4;
 
+  const scheme = schemeQuery.data;
+  
   useEffect(() => {
-    if (schemeId) {
-      const foundScheme = schemeData.items.find(item => item.id === schemeId);
-      if (foundScheme) {
-        setScheme(foundScheme);
-        console.log('ApplyScheme: Found scheme:', foundScheme.name);
-      } else {
-        console.log('ApplyScheme: Scheme not found for ID:', schemeId);
-        Alert.alert('Error', 'Scheme not found');
-        router.back();
-      }
+    if (schemeId && schemeQuery.isError) {
+      console.log('ApplyScheme: Scheme not found for ID:', schemeId);
+      Alert.alert('Error', 'Scheme not found');
+      router.back();
     }
-  }, [schemeId]);
+  }, [schemeId, schemeQuery.isError]);
 
   // Auto-fill form with voter data when available
   useEffect(() => {
@@ -747,10 +730,18 @@ export default function ApplySchemeScreen() {
 
   const styles = createStyles(colors);
 
-  if (!scheme) {
+  if (schemeQuery.isLoading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <Text style={[styles.loadingText, { color: colors.text.primary }]}>Loading scheme details...</Text>
+      </View>
+    );
+  }
+  
+  if (schemeQuery.isError || !scheme) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={[styles.loadingText, { color: colors.text.primary }]}>Scheme not found</Text>
       </View>
     );
   }
